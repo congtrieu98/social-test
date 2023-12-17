@@ -24,6 +24,7 @@ export default async function Navbar() {
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
         <h1 className="font-semibold hover:opacity-75 transition-hover cursor-pointer">
           <Link href="/">Logo</Link>
+          <Link href="/">post</Link>
         </h1>
         <div className="space-x-2 flex items-center">
           <ModeToggle />
@@ -34,9 +35,9 @@ export default async function Navbar() {
                   <AvatarFallback>
                     {nameExists
                       ? session.user.name
-                          ?.split(" ")
-                          .map((word) => word[0].toUpperCase())
-                          .join("")
+                        ?.split(" ")
+                        .map((word) => word[0].toUpperCase())
+                        .join("")
                       : "~"}
                   </AvatarFallback>
                 </Avatar>
