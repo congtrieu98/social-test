@@ -13,6 +13,12 @@ declare module "next-auth" {
   }
 }
 
+const emailPermission = [
+  'trieunguyen2806@gmail.com',
+  'trieunc@suzu.group',
+  'khanh@suzu.vn'
+]
+
 export type AuthSession = {
   session: {
     user: {
@@ -30,9 +36,16 @@ export const authOptions: NextAuthOptions = {
       session.user.id = user.id;
       return session;
     },
+    async signIn({ user }) {
+      if (user.email && emailPermission.includes(user.email)) {
+        return true;
+      } else {
+        return false;
+      }
+    }
   },
   providers: [
-     GoogleProvider({
+    GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
     })

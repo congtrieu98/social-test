@@ -11,8 +11,8 @@ export default function SignIn() {
     return (
       <div className="space-y-3">
         <p>
-          Signed in as{" "}
-          <span className="font-medium">{session.user?.email}</span>
+          Well come to{" "}
+          <span className="font-medium">{session.user?.name}</span>
         </p>
         <Button variant={"destructive"} onClick={() => signOut()}>
           Sign out

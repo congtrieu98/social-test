@@ -22,9 +22,8 @@ export default async function Navbar() {
   if (session?.user) {
     return (
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
-        <h1 className="font-semibold hover:opacity-75 transition-hover cursor-pointer">
+        <h1 className="font-semibold hover:opacity-75 transition-hover cursor-pointer space-x-3">
           <Link href="/">Logo</Link>
-          <Link href="/">post</Link>
         </h1>
         <div className="space-x-2 flex items-center">
           <ModeToggle />
