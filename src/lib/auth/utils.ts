@@ -16,6 +16,7 @@ declare module "next-auth" {
 const emailPermission = [
   'trieunguyen2806@gmail.com',
   'trieunc@suzu.group',
+  'networksocialtest@gmail.com',
   'khanh@suzu.vn'
 ]
 

@@ -14,9 +14,9 @@ export default function SignIn() {
           Well come to{" "}
           <span className="font-medium">{session.user?.name}</span>
         </p>
-        <Button variant={"destructive"} onClick={() => signOut()}>
+        {/* <Button variant={"destructive"} onClick={() => signOut()}>
           Sign out
-        </Button>
+        </Button> */}
       </div>
     );
   }
