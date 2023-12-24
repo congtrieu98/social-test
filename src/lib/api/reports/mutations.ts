@@ -1,11 +1,11 @@
 import { db } from "@/lib/db/index";
-import { 
-  ReportId, 
+import {
+  ReportId,
   NewReportParams,
-  UpdateReportParams, 
+  UpdateReportParams,
   updateReportSchema,
-  insertReportSchema, 
-  reportIdSchema 
+  insertReportSchema,
+  reportIdSchema
 } from "@/lib/db/schema/reports";
 import { getUserAuth } from "@/lib/auth/utils";
 
@@ -27,7 +27,7 @@ export const updateReport = async (id: ReportId, report: UpdateReportParams) => 
   const { id: reportId } = reportIdSchema.parse({ id });
   const newReport = updateReportSchema.parse({ ...report, userId: session?.user.id! });
   try {
-    const r = await db.report.update({ where: { id: reportId, userId: session?.user.id! }, data: newReport})
+    const r = await db.report.update({ where: { id: reportId }, data: newReport })
     return { report: r };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
@@ -40,7 +40,7 @@ export const deleteReport = async (id: ReportId) => {
   const { session } = await getUserAuth();
   const { id: reportId } = reportIdSchema.parse({ id });
   try {
-    const r = await db.report.delete({ where: { id: reportId, userId: session?.user.id! }})
+    const r = await db.report.delete({ where: { id: reportId } })
     return { report: r };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
