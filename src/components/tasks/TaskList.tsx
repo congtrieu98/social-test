@@ -47,8 +47,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 }
 
 const Task = ({ task }: { task: CompleteTask }) => {
-  console.log(task)
-  // const assignedUser = trpc.
   return (
     <TableRow>
       <TableCell className="text-center font-medium">{task.title}</TableCell>
@@ -57,6 +55,7 @@ const Task = ({ task }: { task: CompleteTask }) => {
       <TableCell className="text-center">{task.status}</TableCell>
       <TableCell className="text-center">{'ngày'}</TableCell>
       <TableCell className="text-center">
+        {/* @ts-ignore */}
         <TaskModal task={task} />
       </TableCell>
     </TableRow>

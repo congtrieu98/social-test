@@ -3,10 +3,8 @@ import { CompleteTaskUpdate, relatedTaskUpdateSchema, CompleteReport, relatedRep
 
 export const taskSchema = z.object({
   id: z.string(),
-  title: z.string({
-    message: 'Vui lòng nhập title'
-  }),
-  description: z.string().nullish(),
+  title: z.string(),
+  description: z.string(),
   status: z.string(),
   creator: z.string(),
   createAt: z.date(),
