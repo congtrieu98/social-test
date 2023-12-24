@@ -4,7 +4,7 @@ import { type TaskUpdateId, taskUpdateIdSchema } from "@/lib/db/schema/taskUpdat
 
 export const getTaskUpdates = async () => {
   const { session } = await getUserAuth();
-  const t = await db.taskUpdate.findMany({ where: {userId: session?.user.id!}});
+  const t = await db.taskUpdate.findMany();
   return { taskUpdates: t };
 };
 
@@ -12,7 +12,8 @@ export const getTaskUpdateById = async (id: TaskUpdateId) => {
   const { session } = await getUserAuth();
   const { id: taskUpdateId } = taskUpdateIdSchema.parse({ id });
   const t = await db.taskUpdate.findFirst({
-    where: { id: taskUpdateId, userId: session?.user.id!}});
+    where: { id: taskUpdateId }
+  });
   return { taskUpdates: t };
 };
 
