@@ -24,6 +24,7 @@ export default async function Navbar() {
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
         <h1 className="font-semibold hover:opacity-75 transition-hover cursor-pointer space-x-3">
           <Link href="/">Logo</Link>
+          <Link href="https://github.com/congtrieu98/task">Github</Link>
           <Link href="/tasks">Tasks</Link>
         </h1>
         <div className="space-x-2 flex items-center">

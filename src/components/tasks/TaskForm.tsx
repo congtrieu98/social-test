@@ -166,7 +166,7 @@ const TaskForm = ({
                   <SelectContent>
                     {
                       // @ts-ignore
-                      data.users.map((user: CompleteUser) =>
+                      data?.users?.map((user: CompleteUser) =>
                         <SelectItem value={user.id} key={user.id}>{user.name}</SelectItem>
                       )}
                   </SelectContent>
