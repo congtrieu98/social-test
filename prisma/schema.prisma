@@ -71,9 +71,9 @@ model VerificationToken {
 model Task {
   id          String       @id @default(cuid())
   title       String
-  description String?
+  description String
   status      String
-  note        String?
+  note        String
   creator     String
   createAt    DateTime
   assignedId  String
