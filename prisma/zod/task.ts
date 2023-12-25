@@ -4,7 +4,7 @@ import { CompleteTaskUpdate, relatedTaskUpdateSchema, CompleteReport, relatedRep
 export const taskSchema = z.object({
   id: z.string(),
   title: z.string(),
-  description: z.string(),
+  description: z.string().nullish(),
   status: z.string(),
   creator: z.string(),
   createAt: z.date(),

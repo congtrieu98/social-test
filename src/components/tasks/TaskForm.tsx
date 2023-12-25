@@ -119,7 +119,7 @@ const TaskForm = ({
           render={({ field }) => (<FormItem>
             <FormLabel>Description</FormLabel>
             <FormControl>
-              <Input {...field} />
+              {/* <Input {...field} /> */}
             </FormControl>
 
             <FormMessage />
