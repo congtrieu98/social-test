@@ -8,12 +8,27 @@ import {
   taskIdSchema
 } from "@/lib/db/schema/tasks";
 import { getUserAuth } from "@/lib/auth/utils";
+import { resend } from "@/lib/email";
+import { TaskEmail } from "@/components/emails/TaskEmail";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
   const newTask = insertTaskSchema.parse({ ...task, creator: session?.user.id! });
   try {
     const t = await db.task.create({ data: newTask });
+    if (t) {
+      const user = await db.user.findFirst({ where: { id: newTask?.assignedId }});
+      // @ts-ignore
+      const {name, email } = user;
+      await resend.emails.send({
+        from: `SZG <${process.env.RESEND_EMAIL}>`,
+        to: [email],
+        subject: `Hello ${name}!`,
+        // @ts-ignore
+        react: TaskEmail({ name: user.name, task: t }),
+        text: "Email powered by Resend.",
+      });
+    }
     return { task: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";

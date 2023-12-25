@@ -6,7 +6,7 @@ import { Toaster } from "@/components/ui/toaster";
 import NextAuthProvider from "@/lib/auth/Provider";
 import Navbar from "@/components/Navbar";
 import TrpcProvider from "@/lib/trpc/Provider";
-import SideNavbar from '@/components/Sidebar';
+import StyledComponentsRegistry from '@/lib/AntdRegistry';
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,19 +23,18 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <StyledComponentsRegistry>
           <NextAuthProvider>
             <TrpcProvider>
               <main className="max-w-full mx-auto p-6">
                 <Navbar />
-                {/* <SideNavbar /> */}
                 {children}
               </main>
             </TrpcProvider>
           </NextAuthProvider>
 
           <Toaster />
-        </ThemeProvider>
+          </StyledComponentsRegistry>
       </body>
     </html>
   )

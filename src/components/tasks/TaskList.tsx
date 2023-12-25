@@ -4,15 +4,57 @@
 import { CompleteTask } from "@/lib/db/schema/tasks";
 import { trpc } from "@/lib/trpc/client";
 import TaskModal from "./TaskModal";
-import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from "../ui/table";
-import { format } from "date-fns";
+import { Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { useState } from "react";
 
 
+
+const columns: ColumnsType<CompleteTask> = [
+  {
+    title: 'Tên công việc',
+    dataIndex: 'title',
+    // render: (val) => val
+  },
+  {
+    title: 'Người thực hiện',
+    dataIndex: 'user',
+    render: (val) => val.name,
+  },
+  {
+    title: 'Mô tả',
+    dataIndex: 'description',
+    // render: (val) => val.name,
+  },
+  {
+    title: 'Trạng thái',
+    dataIndex: 'status',
+    render: (val) => {
+      if (val==='new') {
+        return "Mới tạo"
+      } else if(val==='readed') {
+        return "Đã đọc"
+      } else if(val==='inprogress') {
+        return "Đang thực hiện"
+      } else {
+        return 'Đã hoàn thành'
+      }
+    },
+  },
+  {
+    title: 'Action',
+    // dataIndex: 'user',
+    render: (record) => 
+      <TaskModal task={record} />
+  },
+]
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const { data: t } = trpc.tasks.getTasks.useQuery(undefined, {
     initialData: { tasks },
     refetchOnMount: false,
   })
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
 
   const { data: datas } = trpc.users.getUsers.useQuery();
   // console.log(datas)
@@ -21,46 +63,28 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     return <EmptyState />;
   }
 
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+
   return (
     <>
-      <Table>
-        {/* <TableCaption>A list of your recent invoices.</TableCaption> */}
-        <TableHeader>
-          <TableRow>
-            <TableHead className="text-center">Tên công việc</TableHead>
-            <TableHead className="text-center">Người thực hiện</TableHead>
-            <TableHead className="text-center">Mô tả</TableHead>
-            <TableHead className="text-center">Trạng thái</TableHead>
-            <TableHead className="text-center">Ngày tạo</TableHead>
-            <TableHead className="text-center">Action</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {t.tasks.map((task: CompleteTask) => (
-            <Task task={task} key={task.id} />
-          ))}
-        </TableBody>
-      </Table>
+      <Table
+        id="id"
+        rowSelection={rowSelection}
+        columns={columns}
+        dataSource={t.tasks}
+      />
     </>
   )
 
 }
-
-const Task = ({ task }: { task: CompleteTask }) => {
-  return (
-    <TableRow>
-      <TableCell className="text-center font-medium">{task.title}</TableCell>
-      <TableCell className="text-center">{task.user.name}</TableCell>
-      <TableCell className="text-center">{task.description}</TableCell>
-      <TableCell className="text-center">{task.status}</TableCell>
-      <TableCell className="text-center">{'ngày'}</TableCell>
-      <TableCell className="text-center">
-        {/* @ts-ignore */}
-        <TaskModal task={task} />
-      </TableCell>
-    </TableRow>
-  );
-};
 
 const EmptyState = () => {
   return (

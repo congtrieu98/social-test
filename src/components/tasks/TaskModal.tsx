@@ -49,7 +49,7 @@ export default function TaskModal({
           <Button
             variant={editing ? "ghost" : "outline"}
             size={editing ? "sm" : "icon"}
-            className="mx-3 w-auto py-2 px-4"
+            className="w-auto py-2 px-4"
           >
             {editing ? "Edit" : "Thêm công việc"}
           </Button>)}
