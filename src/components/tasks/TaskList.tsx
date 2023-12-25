@@ -4,9 +4,11 @@
 import { CompleteTask } from "@/lib/db/schema/tasks";
 import { trpc } from "@/lib/trpc/client";
 import TaskModal from "./TaskModal";
-import { Table } from 'antd';
+import moment from 'moment';
+import { Layout, Table, Button } from 'antd';;
 import type { ColumnsType } from 'antd/es/table';
 import { useState } from "react";
+import { formatDateFull, formatDatetime } from "@/lib/utils/constant";
 
 
 
@@ -15,8 +17,6 @@ const columns: ColumnsType<CompleteTask> = [
     title: 'Tên công việc',
     dataIndex: 'title',
     width: 150,
-    // fixed: 'left'
-    // render: (val) => val
   },
   {
     title: 'Người thực hiện',
@@ -26,19 +26,18 @@ const columns: ColumnsType<CompleteTask> = [
   {
     title: 'Mô tả',
     dataIndex: 'description',
-    // render: (val) => val.name,
   },
   {
     title: 'Trạng thái',
     dataIndex: 'status',
     render: (val) => {
-      if (val==='new') {
+      if (val === 'new') {
         return "Mới tạo"
-      } else if(val==='readed') {
+      } else if (val === 'readed') {
         return "Đã xem"
-      } else if(val==='inprogress') {
+      } else if (val === 'inprogress') {
         return "Đang thực hiện"
-      } else if(val==='reject') {
+      } else if (val === 'reject') {
         return "Chưa hoàn thành"
       } else {
         return 'Đã hoàn thành'
@@ -70,16 +69,21 @@ const columns: ColumnsType<CompleteTask> = [
     filterSearch: true,
     // @ts-ignore
     onFilter: (value: string, record) => record.status === value,
-    width: '30%',
+    width: '10%',
   },
   {
     title: 'Note',
     dataIndex: 'note',
   },
   {
+    title: 'Ngày tạo',
+    dataIndex: 'createAt',
+    render: (value) => moment(value, formatDateFull).format(formatDatetime)
+  },
+  {
     title: 'Action',
     // dataIndex: 'user',
-    render: (record) => 
+    render: (record) =>
       <TaskModal task={record} />
   },
 ]
@@ -99,7 +103,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   }
 
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
-    console.log('selectedRowKeys changed: ', newSelectedRowKeys);
     setSelectedRowKeys(newSelectedRowKeys);
   };
 
@@ -108,16 +111,42 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     onChange: onSelectChange,
   };
 
+  const extraButton = [
+    selectedRowKeys.length > 0 &&
+    <Button
+      type="primary"
+    >Delete</Button>
+  ]
+
   return (
-    <>
-      <Table
-        id="id"
-        rowSelection={rowSelection}
-        columns={columns}
-        dataSource={t.tasks}
-        scroll={{ x: 1200 }}
-      />
-    </>
+    <Layout className="layoutContent">
+      {/* <PageHeader
+        ghost={false}
+        title={'Delivery order'}
+        extra={extraButton}
+        className=""
+      /> */}
+      <Layout.Content>
+
+        <Table
+          rowKey="id"
+          rowSelection={rowSelection}
+          columns={columns}
+          dataSource={t.tasks}
+          scroll={{ x: 1200 }}
+        />
+      </Layout.Content>
+
+    </Layout>
+    // <>
+    //   <Table
+    //     rowKey="id"
+    //     rowSelection={rowSelection}
+    //     columns={columns}
+    //     dataSource={t.tasks}
+    //     scroll={{ x: 1200 }}
+    //   />
+    // </>
   )
 
 }

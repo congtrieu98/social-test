@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils";
+import { cn } from "@/lib/utils/utils";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
@@ -115,9 +115,8 @@ const TaskForm = ({
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} disabled={session?.user?.email !== 'trieunguyen2806@gmail.com'} />
+                <Input {...field} disabled={(session?.user?.email !== 'trieunguyen2806@gmail.com')} />
               </FormControl>
-
               <FormMessage />
             </FormItem>
           )}
