@@ -17,11 +17,9 @@ export const TaskEmail: React.FC<Readonly<EmailTemplateProps>> = ({
   console.log(pathname)
   return (
     <div>
-    <h1>Welcome, {name}!</h1>
-    <p>Bạn vừa nhận được một công việc mới như sau:</p>
-    <p>Tên cv: {task.title}</p>
+    <p>Công việc <b>{task.title}</b> do <b>{name}</b> thực hiện đã được cập nhật lại trạng thái</p>
     <div>
-      Vui lòng click vào link sau để bắt đầu thực hiện công việc: 
+      Chi tiết xem tại: 
       <a href={`${pathname}/task`}>Click here</a>
     </div>
     <hr />

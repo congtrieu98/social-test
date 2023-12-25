@@ -18,11 +18,16 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
-import { z } from "zod"; import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { z } from "zod";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
@@ -31,6 +36,7 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import { CompleteUser } from "@/lib/db/schema/users";
+import { Textarea } from "../ui/textarea";
 
 const TaskForm = ({
   task,
@@ -58,17 +64,19 @@ const TaskForm = ({
       title: "",
       description: "",
       status: "",
+      note: "",
       assignedId: "",
       creator: session?.user?.id,
-      createAt: new Date()
+      createAt: new Date(),
     },
   });
   // console.log(users)
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tasks.getTasks.invalidate();
     router.refresh();
-    closeModal(); toast({
-      title: 'Success',
+    closeModal();
+    toast({
+      title: "Success",
       description: `Task ${action}d!`,
       variant: "default",
     });
@@ -93,7 +101,7 @@ const TaskForm = ({
     if (editing) {
       updateTask({ ...values, id: task.id });
     } else {
-      console.log(values)
+      // console.log(values)
       createTask(values);
     }
   };
@@ -103,27 +111,27 @@ const TaskForm = ({
         <FormField
           control={form.control}
           name="title"
-          render={({ field }) => (<FormItem>
-            <FormLabel>Title</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Title</FormLabel>
+              <FormControl>
+                <Input {...field} disabled={session?.user?.email !== 'trieunguyen2806@gmail.com'} />
+              </FormControl>
 
-            <FormMessage />
-          </FormItem>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="description"
-          render={({ field }) => (<FormItem>
-            <FormLabel>Description</FormLabel>
-            <FormControl>
-              {/* <Input {...field} /> */}
-            </FormControl>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Description</FormLabel>
+              <FormControl>{/* <Input {...field} /> */}</FormControl>
 
-            <FormMessage />
-          </FormItem>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <FormField
@@ -142,14 +150,15 @@ const TaskForm = ({
                   <SelectItem value="new">Mới tạo</SelectItem>
                   <SelectItem value="readed">Đã xem</SelectItem>
                   <SelectItem value="inprogress">Đang thực hiện</SelectItem>
-                  <SelectItem value="conpleted">Đã hoàn thành</SelectItem>
+                  <SelectItem value="reject">Chưa hoàn thành</SelectItem>
+                  <SelectItem value="completed">Đã hoàn thành</SelectItem>
                 </SelectContent>
               </Select>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
+        {session?.user?.email === 'trieunguyen2806@gmail.com' && <FormField
           control={form.control}
           name="assignedId"
           // @ts-ignore
@@ -157,7 +166,10 @@ const TaskForm = ({
             return (
               <FormItem>
                 <FormLabel>Người thực hiện</FormLabel>
-                <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={field.value}
+                >
                   <FormControl>
                     <SelectTrigger>
                       <SelectValue placeholder="Chọn người thực hiện" />
@@ -166,57 +178,74 @@ const TaskForm = ({
                   <SelectContent>
                     {
                       // @ts-ignore
-                      data?.users?.map((user: CompleteUser) =>
-                        <SelectItem value={user.id} key={user.id}>{user.name}</SelectItem>
-                      )}
+                      data?.users?.map((user: CompleteUser) => (
+                        <SelectItem value={user.id} key={user.id}>
+                          {user.name}
+                        </SelectItem>
+                      ))
+                    }
                   </SelectContent>
                 </Select>
                 <FormMessage />
               </FormItem>
-            )
-
+            );
           }}
-        />
+        />}
         <FormField
           control={form.control}
           name="createAt"
-          render={({ field }) => (<FormItem>
-            <FormLabel>Create At</FormLabel>
-            <br />
-            <Popover>
-              <PopoverTrigger asChild>
-                <FormControl>
-                  <Button
-                    variant={"outline"}
-                    className={cn(
-                      "w-[240px] pl-3 text-left font-normal",
-                      !field.value && "text-muted-foreground"
-                    )}
-                  >
-                    {field.value ? (
-                      format(new Date(field.value), "PPP")
-                    ) : (
-                      <span>Pick a date</span>
-                    )}
-                    <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                  </Button>
-                </FormControl>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0" align="start">
-                <Calendar
-                  mode="single"
-                  selected={new Date(field.value)}
-                  onSelect={field.onChange}
-                  disabled={(date) =>
-                    date > new Date() || date < new Date("1900-01-01")
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Create At</FormLabel>
+              <br />
+              <Popover>
+                <PopoverTrigger asChild>
+                  <FormControl>
+                    <Button
+                      variant={"outline"}
+                      className={cn(
+                        "w-[240px] pl-3 text-left font-normal",
+                        !field.value && "text-muted-foreground"
+                      )}
+                      disabled={session?.user?.email !== 'trieunguyen2806@gmail.com'}
+                    >
+                      {field.value ? (
+                        format(new Date(field.value), "PPP")
+                      ) : (
+                        <span>Pick a date</span>
+                      )}
+                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                    </Button>
+                  </FormControl>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={new Date(field.value)}
+                    onSelect={field.onChange}
+                    disabled={(date) =>
+                      date > new Date() || date < new Date("1900-01-01")
+                    }
+                    initialFocus
+                  />
+                </PopoverContent>
+              </Popover>
 
-            <FormMessage />
-          </FormItem>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="note"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Note</FormLabel>
+              <FormControl>
+                <Textarea {...field} placeholder="Type your message here." />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <Button

@@ -6,6 +6,7 @@ export const taskSchema = z.object({
   title: z.string(),
   description: z.string().nullish(),
   status: z.string(),
+  note: z.string(),
   creator: z.string(),
   createAt: z.date(),
   assignedId: z.string(),

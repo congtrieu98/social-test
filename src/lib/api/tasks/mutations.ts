@@ -5,7 +5,7 @@ import {
   UpdateTaskParams,
   updateTaskSchema,
   insertTaskSchema,
-  taskIdSchema
+  taskIdSchema,
 } from "@/lib/db/schema/tasks";
 import { getUserAuth } from "@/lib/auth/utils";
 import { resend } from "@/lib/email";
@@ -13,21 +13,28 @@ import { TaskEmail } from "@/components/emails/TaskEmail";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
-  const newTask = insertTaskSchema.parse({ ...task, creator: session?.user.id! });
+  const newTask = insertTaskSchema.parse({
+    ...task,
+    creator: session?.user.id!,
+  });
   try {
     const t = await db.task.create({ data: newTask });
     if (t) {
-      const user = await db.user.findFirst({ where: { id: newTask?.assignedId }});
-      // @ts-ignore
-      const {name, email } = user;
-      await resend.emails.send({
-        from: `SZG <${process.env.RESEND_EMAIL}>`,
-        to: [email],
-        subject: `Hello ${name}!`,
+      console.log("tttttttttttt:", t)
+      const user = await db.user.findFirst({ where: { id: t?.assignedId } });
+      console.log("uesssssssssss:", user)
+      if (user) {
         // @ts-ignore
-        react: TaskEmail({ name: user.name, task: t }),
-        text: "Email powered by Resend.",
-      });
+        const { name, email } = user;
+        await resend.emails.send({
+          from: `SZG <${process.env.RESEND_EMAIL}>`,
+          to: [email as string],
+          subject: `Hello ${name}!`,
+          // @ts-ignore
+          react: TaskEmail({ name: user.name, task: t }),
+          text: "Email powered by Resend.",
+        });
+      }
     }
     return { task: t };
   } catch (err) {
@@ -40,9 +47,27 @@ export const createTask = async (task: NewTaskParams) => {
 export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
   const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
-  const newTask = updateTaskSchema.parse({ ...task, assignedId: session?.user.id! });
+  const newTask = updateTaskSchema.parse({...task});
   try {
-    const t = await db.task.update({ where: { id: taskId, creator: session?.user.id! }, data: newTask })
+    const t = await db.task.update({
+      where: { id: taskId },
+      data: newTask,
+    });
+    const user = await db.user.findFirst({ where: { id: t?.creator } });
+    const userAssignded = await db.user.findFirst({ where: { id: t?.assignedId } });
+      console.log("uesssssssssss:", user)
+      if (user) {
+        // @ts-ignore
+        const { name, email } = user;
+        await resend.emails.send({
+          from: `SZG <${process.env.RESEND_EMAIL}>`,
+          to: [email as string],
+          subject: `Hello ${name}!`,
+          // @ts-ignore
+          react: TaskEmail({ name: userAssignded.name, task: t }),
+          text: "Email powered by Resend.",
+        });
+      }
     return { task: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
@@ -55,7 +80,9 @@ export const deleteTask = async (id: TaskId) => {
   const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
   try {
-    const t = await db.task.delete({ where: { id: taskId, creator: session?.user.id! } })
+    const t = await db.task.delete({
+      where: { id: taskId, creator: session?.user.id! },
+    });
     return { task: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
@@ -63,4 +90,3 @@ export const deleteTask = async (id: TaskId) => {
     return { error: message };
   }
 };
-

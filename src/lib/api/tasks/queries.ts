@@ -4,8 +4,15 @@ import { type TaskId, taskIdSchema } from "@/lib/db/schema/tasks";
 
 export const getTasks = async () => {
   const { session } = await getUserAuth();
-  const t = await db.task.findMany({ include: { user: true } });
-  return { tasks: t };
+  const emailCreator = session?.user?.email
+  if (emailCreator === 'trieunguyen2806@gmail.com') {
+    const t = await db.task.findMany({include: { user: true } });
+    return { tasks: t };
+  } else {
+    const t = await db.task.findMany({ where: { assignedId: session?.user?.id }, include: { user: true } });
+    return { tasks: t };
+  }
+  
 };
 
 export const getTaskById = async (id: TaskId) => {

@@ -73,6 +73,7 @@ model Task {
   title       String
   description String?
   status      String
+  note        String?
   creator     String
   createAt    DateTime
   assignedId  String

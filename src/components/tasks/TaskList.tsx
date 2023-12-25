@@ -14,6 +14,8 @@ const columns: ColumnsType<CompleteTask> = [
   {
     title: 'Tên công việc',
     dataIndex: 'title',
+    width: 150,
+    // fixed: 'left'
     // render: (val) => val
   },
   {
@@ -33,13 +35,46 @@ const columns: ColumnsType<CompleteTask> = [
       if (val==='new') {
         return "Mới tạo"
       } else if(val==='readed') {
-        return "Đã đọc"
+        return "Đã xem"
       } else if(val==='inprogress') {
         return "Đang thực hiện"
+      } else if(val==='reject') {
+        return "Chưa hoàn thành"
       } else {
         return 'Đã hoàn thành'
       }
     },
+    filters: [
+      {
+        text: 'Mới tạo',
+        value: 'new',
+      },
+      {
+        text: 'Đã xem',
+        value: 'readed',
+      },
+      {
+        text: 'Đang thực hiện',
+        value: 'inprogress',
+      },
+      {
+        text: 'Chưa hoàn thành',
+        value: 'reject',
+      },
+      {
+        text: 'Đã hoàn thành',
+        value: 'completed',
+      },
+    ],
+    filterMode: 'tree',
+    filterSearch: true,
+    // @ts-ignore
+    onFilter: (value: string, record) => record.status === value,
+    width: '30%',
+  },
+  {
+    title: 'Note',
+    dataIndex: 'note',
   },
   {
     title: 'Action',
@@ -80,6 +115,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
         rowSelection={rowSelection}
         columns={columns}
         dataSource={t.tasks}
+        scroll={{ x: 1200 }}
       />
     </>
   )
