@@ -115,7 +115,7 @@ const TaskForm = ({
             <FormItem>
               <FormLabel>Title</FormLabel>
               <FormControl>
-                <Input {...field} disabled={(session?.user?.email !== 'trieunguyen2806@gmail.com')} />
+                <Input {...field} disabled={(editing && session?.user?.email !== 'trieunguyen2806@gmail.com')} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -128,7 +128,7 @@ const TaskForm = ({
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Input {...field} />
+                <Input {...field} disabled={editing && session?.user?.email !== 'trieunguyen2806@gmail.com'} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -207,7 +207,7 @@ const TaskForm = ({
                         "w-[240px] pl-3 text-left font-normal",
                         !field.value && "text-muted-foreground"
                       )}
-                      disabled={session?.user?.email !== 'trieunguyen2806@gmail.com'}
+                      disabled={editing && session?.user?.email !== 'trieunguyen2806@gmail.com'}
                     >
                       {field.value ? (
                         format(new Date(field.value), "PPP")

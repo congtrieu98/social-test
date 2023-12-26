@@ -10,6 +10,8 @@ import {
 import { getUserAuth } from "@/lib/auth/utils";
 import { resend } from "@/lib/email";
 import { TaskEmail } from "@/components/emails/TaskEmail";
+import { UpdateTask } from "@/components/emails/UpdateTask";
+import { getBaseUrl } from "@/lib/trpc/utils";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
@@ -23,6 +25,7 @@ export const createTask = async (task: NewTaskParams) => {
       console.log("tttttttttttt:", t)
       const user = await db.user.findFirst({ where: { id: t?.assignedId } });
       console.log("uesssssssssss:", user)
+      const baseUrl = getBaseUrl()
       if (user) {
         // @ts-ignore
         const { name, email } = user;
@@ -31,7 +34,7 @@ export const createTask = async (task: NewTaskParams) => {
           to: [email as string],
           subject: `Hello ${name}!`,
           // @ts-ignore
-          react: TaskEmail({ name: user.name, task: t }),
+          react: TaskEmail({ baseUrl: baseUrl, name: user.name, task: t }),
           text: "Email powered by Resend.",
         });
       }
@@ -48,6 +51,7 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
   const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
   const newTask = updateTaskSchema.parse({ ...task });
+  const baseUrl = getBaseUrl()
   try {
     const t = await db.task.update({
       where: { id: taskId },
@@ -64,7 +68,7 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
         to: [email as string],
         subject: `Hello ${name}!`,
         // @ts-ignore
-        react: TaskEmail({ name: userAssignded.name, task: t }),
+        react: UpdateTask({ baseUrl: baseUrl, name: userAssignded.name, task: t }),
         text: "Email powered by Resend.",
       });
     }
