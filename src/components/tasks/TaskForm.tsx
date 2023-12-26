@@ -53,7 +53,6 @@ const TaskForm = ({
   const utils = trpc.useContext();
   const { data: session } = useSession();
   const { data: data } = trpc.users.getUsers.useQuery();
-  // console.log(data)
 
   const form = useForm<z.infer<typeof insertTaskParams>>({
     // latest Zod release has introduced a TS error with zodResolver

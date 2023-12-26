@@ -9,21 +9,14 @@ export default function SignIn() {
 
   if (session) {
     return (
-      <div className="space-y-3">
-        <p>
-          Well come to{" "}
-          <span className="font-medium">{session.user?.name}</span>
-        </p>
-        {/* <Button variant={"destructive"} onClick={() => signOut()}>
-          Sign out
-        </Button> */}
-      </div>
+      <Button onClick={() => signOut()}>
+        SignOut
+      </Button>
     );
   }
   return (
-    <div className="space-y-3">
-      <p>Not signed in </p>
-      <Button onClick={() => signIn()}>Sign in</Button>
+    <div className="">
+      <Button onClick={() => signIn("google")}>Sign in</Button>
     </div>
   );
 }

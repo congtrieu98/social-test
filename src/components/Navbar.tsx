@@ -9,6 +9,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { signOut } from "next-auth/react";
+import SignOutButton from "./auth/SignOutButton";
 
 // import { ModeToggle } from "@/components/ui/ThemeToggle";
 
@@ -25,10 +27,8 @@ export default async function Navbar() {
         <h1 className="font-semibold hover:opacity-75 transition-hover cursor-pointer space-x-3">
           <Link href="/">Logo</Link>
           <Link href="https://github.com/congtrieu98/task">Github</Link>
-          <Link href="/tasks">Tasks</Link>
         </h1>
         <div className="space-x-2 flex items-center">
-          {/* <ModeToggle /> */}
           {session ? (
             <DropdownMenu>
               <DropdownMenuTrigger>
@@ -55,11 +55,7 @@ export default async function Navbar() {
                     Account
                   </DropdownMenuItem>
                 </Link>
-                <Link href="/api/auth/signout">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Sign out
-                  </DropdownMenuItem>
-                </Link>
+                <SignOutButton />
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (

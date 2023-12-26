@@ -23,7 +23,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-      <StyledComponentsRegistry>
+        <StyledComponentsRegistry>
           <NextAuthProvider>
             <TrpcProvider>
               <main className="max-w-full mx-auto p-6">
@@ -34,7 +34,7 @@ export default function RootLayout({
           </NextAuthProvider>
 
           <Toaster />
-          </StyledComponentsRegistry>
+        </StyledComponentsRegistry>
       </body>
     </html>
   )
