@@ -10,7 +10,6 @@ export const insertTaskUpdateParams = taskUpdateSchema.extend({
   updateAt: z.coerce.date()
 }).omit({
   id: true,
-  taskId: true
 });
 
 export const updateTaskUpdateSchema = taskUpdateSchema;

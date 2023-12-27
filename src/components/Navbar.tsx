@@ -9,7 +9,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { signOut } from "next-auth/react";
 import SignOutButton from "./auth/SignOutButton";
 
 // import { ModeToggle } from "@/components/ui/ThemeToggle";

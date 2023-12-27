@@ -30,7 +30,7 @@ import {
 } from "@/components/ui/popover";
 import { CalendarIcon } from "lucide-react";
 import { Calendar } from "@/components/ui/calendar";
-import { cn } from "@/lib/utils/utils";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
@@ -146,8 +146,8 @@ const TaskForm = ({
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="new">Mới tạo</SelectItem>
-                  <SelectItem value="readed">Đã xem</SelectItem>
+                  <SelectItem value="new" spellCheck >Mới tạo</SelectItem>
+                  {/* <SelectItem value="readed">Đã xem</SelectItem> */}
                   <SelectItem value="inprogress">Đang thực hiện</SelectItem>
                   <SelectItem value="reject">Chưa hoàn thành</SelectItem>
                   <SelectItem value="completed">Đã hoàn thành</SelectItem>

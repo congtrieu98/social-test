@@ -16,7 +16,10 @@ export default function SignIn() {
   }
   return (
     <div className="">
-      <Button onClick={() => signIn("google")}>Sign in</Button>
+      <Button onClick={() => 
+        signIn("google")}>
+          Sign in
+          </Button>
     </div>
   );
 }

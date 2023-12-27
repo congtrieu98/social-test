@@ -4,7 +4,7 @@ import { type TaskUpdateId, taskUpdateIdSchema } from "@/lib/db/schema/taskUpdat
 
 export const getTaskUpdates = async () => {
   const { session } = await getUserAuth();
-  const t = await db.taskUpdate.findMany();
+  const t = await db.taskUpdate.findMany({include: {user: true}});
   return { taskUpdates: t };
 };
 

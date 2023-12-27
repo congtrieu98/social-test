@@ -6,7 +6,7 @@ export const getTasks = async () => {
   const { session } = await getUserAuth();
   const emailCreator = session?.user?.email
   if (emailCreator === 'trieunguyen2806@gmail.com') {
-    const t = await db.task.findMany({include: { user: true } });
+    const t = await db.task.findMany({ include: { user: true } });
     return { tasks: t };
   } else {
     const t = await db.task.findMany({ where: { assignedId: session?.user?.id }, include: { user: true } });
@@ -19,7 +19,8 @@ export const getTaskById = async (id: TaskId) => {
   const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
   const t = await db.task.findFirst({
-    where: { id: taskId }
+    where: { id: taskId },
+    include: { user: true } 
   });
   return { tasks: t };
 };
