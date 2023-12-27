@@ -7,15 +7,16 @@ import {
   deleteTaskUpdate,
   updateTaskUpdate,
 } from "@/lib/api/taskUpdates/mutations";
-import { 
+import {
   taskUpdateIdSchema,
   insertTaskUpdateParams,
-  updateTaskUpdateParams 
+  updateTaskUpdateParams
 } from "@/lib/db/schema/taskUpdates";
 
 export async function POST(req: Request) {
   try {
     const validatedData = insertTaskUpdateParams.parse(await req.json());
+    // @ts-ignore
     const { taskUpdate, error } = await createTaskUpdate(validatedData);
     if (error) return NextResponse.json({ error }, { status: 500 });
     revalidatePath("/taskUpdates"); // optional - assumes you will have named route same as entity

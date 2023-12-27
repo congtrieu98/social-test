@@ -14,15 +14,13 @@ export const createTaskUpdate = async (taskUpdate: NewTaskUpdateParams) => {
   const newTaskUpdate = insertTaskUpdateSchema.parse({ ...taskUpdate, userId: session?.user.id! });
   try {
     const checkTaskUp = await db.taskUpdate.findFirst({
-      where: {updateBy: taskUpdate?.updateBy, taskId: taskUpdate?.taskId}
+      where: { updateBy: taskUpdate?.updateBy, taskId: taskUpdate?.taskId }
     })
     if (checkTaskUp) {
       return null
-    } 
+    }
     const t = await db.taskUpdate.create({ data: newTaskUpdate });
     console.log("taskUpppppppppp:", t)
-    console.log("taskUpppppppppp:")
-    console.log("taskUpppppppppp:")
     console.log("taskUpppppppppp:")
     return { taskUpdate: t };
   } catch (err) {
@@ -42,7 +40,7 @@ export const updateTaskUpdate = async (id: TaskUpdateId, taskUpdate: UpdateTaskU
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
-    return { error: message }; 
+    return { error: message };
   }
 };
 
