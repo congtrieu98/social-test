@@ -108,7 +108,7 @@ const columns: ColumnsType<CompleteTask> = [
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const router = useRouter();
   const utils = trpc.useContext();
-  const {data: session} = useSession()
+  const { data: session } = useSession()
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tasks.getTasks.invalidate();
     router.refresh();
@@ -142,16 +142,16 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     // console.log(record);
     const data = taskUp?.taskUpdates?.filter(item => item?.taskId === record?.id)
     const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [
-      { 
+      {
         title: "User",
         key: "user",
         render(record) {
           return (
-             record?.user?.name
+            record?.user?.name
           );
-        } 
+        }
       },
-      { 
+      {
         title: "Truy cập lúc",
         dataIndex: "updateAt",
         key: "truy cap",
@@ -161,7 +161,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
         title: "Status",
         key: "state",
         dataIndex: "status",
-        // render: () => <Badge status="success" text="Finished" />,
+        render: (val) => <Badge status="success" text={val === 'readed' ? 'Đã xem' : ''} />,
       },
       {
         title: "Action",
@@ -219,7 +219,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             rowSelection={rowSelection}
             columns={columns}
             // @ts-ignore
-            expandable={ session?.user?.email === 'trieunguyen2806@gmail.com' && { expandedRowRender }}
+            expandable={session?.user?.email === 'trieunguyen2806@gmail.com' && { expandedRowRender }}
             dataSource={t.tasks}
             scroll={{ x: 1200 }}
           />
@@ -230,7 +230,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 }
 
 const EmptyState = () => {
-  const {data: session} = useSession()
+  const { data: session } = useSession()
   return (
     <div className="text-center">
       <h3 className="mt-2 text-sm font-semibold text-gray-900">No tasks</h3>

@@ -12,7 +12,7 @@ export const getTasks = async () => {
     const t = await db.task.findMany({ where: { assignedId: session?.user?.id }, include: { user: true } });
     return { tasks: t };
   }
-  
+
 };
 
 export const getTaskById = async (id: TaskId) => {
@@ -20,7 +20,7 @@ export const getTaskById = async (id: TaskId) => {
   const { id: taskId } = taskIdSchema.parse({ id });
   const t = await db.task.findFirst({
     where: { id: taskId },
-    include: { user: true } 
+    include: { user: true, taskUpdates: true }
   });
   return { tasks: t };
 };

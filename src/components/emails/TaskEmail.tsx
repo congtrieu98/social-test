@@ -19,7 +19,7 @@ export const TaskEmail: React.FC<Readonly<EmailTemplateProps>> = ({
       <p>Tên cv: {task.title}</p>
       <div>
         Vui lòng click vào link sau để bắt đầu thực hiện công việc:
-        <a href={`${baseUrl}/tasks`}>Click here</a>
+        <a href={`${baseUrl}/tasks/${task?.id}`}>Click here</a>
       </div>
       <hr />
     </div>
