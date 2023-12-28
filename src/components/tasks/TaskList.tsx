@@ -211,10 +211,10 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             rowKey="id"
             loading={isDeleting}
             // @ts-ignore
-            rowSelection={['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(session?.user?.email as string) && rowSelection}
+            rowSelection={['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && rowSelection}
             columns={columns}
             // @ts-ignore
-            expandable={['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(session?.user?.email as string) && { expandedRowRender }}
+            expandable={['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && { expandedRowRender }}
             dataSource={t.tasks}
             scroll={{ x: 1200 }}
           />
@@ -233,7 +233,7 @@ const EmptyState = () => {
         Get started by creating a new task.
       </p>
       <div className="mt-6">
-        {['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(session?.user?.email as string) && <TaskModal emptyState={true} />}
+        {['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && <TaskModal emptyState={true} />}
       </div>
     </div>
   );
