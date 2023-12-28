@@ -16,7 +16,6 @@ export const getTasks = async () => {
 };
 
 export const getTaskById = async (id: TaskId) => {
-  const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
   const t = await db.task.findFirst({
     where: { id: taskId },

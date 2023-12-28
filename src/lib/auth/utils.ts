@@ -35,6 +35,7 @@ export const authOptions: NextAuthOptions = {
   callbacks: {
     session: ({ session, user }) => {
       session.user.id = user.id;
+      // session.user.role = user.role
       return session;
     },
     async signIn({ user }) {
@@ -49,6 +50,15 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
+      // @ts-ignore
+      // profile(profile) {
+      //   if (['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(profile.email) !== -1) {
+      //     return { role: profile.role === 'admin' }
+      //   } else {
+      //     return { role: profile.role === 'member' }
+      //   }
+
+      // }
     })
   ],
 };
@@ -61,6 +71,6 @@ export const getUserAuth = async () => {
 
 export const checkAuth = async () => {
   const { session } = await getUserAuth();
-  if (!session) redirect("/api/auth/signin");
+  if (!session) redirect("/");
 };
 

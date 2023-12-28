@@ -23,11 +23,9 @@ import { useState } from "react";
 import { formatDateFull, formatDatetime } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
-import { getTasks } from "@/lib/api/tasks/queries";
 import Link from "next/link";
 import { CompleteTaskUpdate } from "@/lib/db/schema/taskUpdates";
 import { useSession } from "next-auth/react";
-import TaskUpModal from "../task-up/TaskUpModal";
 
 const columns: ColumnsType<CompleteTask> = [
   {
@@ -163,11 +161,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
         dataIndex: "status",
         render: (val) => <Badge status="success" text={val === 'readed' ? 'Đã xem' : ''} />,
       },
-      {
-        title: "Action",
-        // dataIndex: 'user',
-        render: (record) => <TaskUpModal taskUp={record} />,
-      },
     ];
     return (
       <Table
@@ -216,6 +209,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
         <Layout.Content>
           <Table
             rowKey="id"
+            loading={isDeleting}
             rowSelection={rowSelection}
             columns={columns}
             // @ts-ignore
