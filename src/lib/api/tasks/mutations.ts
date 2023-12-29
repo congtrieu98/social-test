@@ -22,9 +22,7 @@ export const createTask = async (task: NewTaskParams) => {
   try {
     const t = await db.task.create({ data: newTask });
     if (t) {
-      console.log("tttttttttttt:", t)
       const user = await db.user.findFirst({ where: { id: t?.assignedId } });
-      console.log("uesssssssssss:", user)
       const baseUrl = getBaseUrl()
       if (user) {
         // @ts-ignore

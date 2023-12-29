@@ -24,7 +24,7 @@ import { formatDateFull, formatDatetime } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import Link from "next/link";
-import { CompleteTaskUpdate } from "@/lib/db/schema/taskUpdates";
+import { CompleteTaskUpdate, TaskUpdate } from "@/lib/db/schema/taskUpdates";
 import { useSession } from "next-auth/react";
 
 const columns: ColumnsType<CompleteTask> = [
@@ -138,7 +138,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 
   const expandedRowRender = (record: CompleteTask) => {
     // console.log(record);
-    const data = taskUp?.taskUpdates?.filter(item => item?.taskId === record?.id)
+    const data = taskUp?.taskUpdates?.filter((item : TaskUpdate) => item?.taskId === record?.id)
     const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [
       {
         title: "User",
