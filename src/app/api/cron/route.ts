@@ -10,7 +10,7 @@ export async function GET() {
     const data = await resend.emails.send({
       from: `SZG <${process.env.RESEND_EMAIL}>`,
       to: [email],
-      subject: "Hello world!",
+      subject: "Hello world Cron Job!",
       react: EmailTemplate({ firstName: firstName }),
       text: "Email powered by Resend creon job.",
     });
