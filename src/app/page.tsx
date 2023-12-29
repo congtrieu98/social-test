@@ -14,8 +14,7 @@ const { Header, Sider, Content } = Layout;
 
 export default function Home() {
   const router = useRouter();
-  const { data: session, status } = useSession();
-console.log(session)
+  const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
   return (
     <Layout className="layout">
