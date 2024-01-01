@@ -1,9 +1,10 @@
-import { getTaskById, getTasks } from "@/lib/api/tasks/queries";
+import { getTaskById, getTaskByUserAssign, getTasks } from "@/lib/api/tasks/queries";
 import { publicProcedure, router } from "@/lib/server/trpc";
 import {
   taskIdSchema,
   insertTaskParams,
   updateTaskParams,
+  taskAssignedIdSchema,
 } from "@/lib/db/schema/tasks";
 import { createTask, deleteTask, updateTask } from "@/lib/api/tasks/mutations";
 
@@ -13,6 +14,9 @@ export const tasksRouter = router({
   }),
   getTaskById: publicProcedure.input(taskIdSchema).query(async ({ input }) => {
     return getTaskById(input.id);
+  }),
+  getTaskByUserAssign: publicProcedure.input(taskAssignedIdSchema).query(async ({ input }) => {
+    return getTaskByUserAssign(input.assignedId);
   }),
   createTask: publicProcedure
     .input(insertTaskParams)

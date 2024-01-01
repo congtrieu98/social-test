@@ -256,7 +256,7 @@ const TaskForm = ({
             ? `Sav${isUpdating ? "ing..." : "e"}`
             : `Creat${isCreating ? "ing..." : "e"}`}
         </Button>
-        {['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && editing ? (
+        {session?.user.role === 'ADMIN' && editing ? (
           <Button
             type="button"
             variant={"destructive"}

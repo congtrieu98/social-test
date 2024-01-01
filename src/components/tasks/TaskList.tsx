@@ -138,7 +138,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 
   const expandedRowRender = (record: CompleteTask) => {
     // console.log(record);
-    const data = taskUp?.taskUpdates?.filter((item : TaskUpdate) => item?.taskId === record?.id)
+    const data = taskUp?.taskUpdates?.filter((item: TaskUpdate) => item?.taskId === record?.id)
     const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [
       {
         title: "User",
@@ -174,6 +174,34 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
+  // const taskComplete: ({ user: { id: string; name: string | null; email: string | null; emailVerified: Date | null; image: string | null; role: string | null; }; } & { id: string; title: string; description: string; status: string; note: string; creator: string; createAt: Date; assignedId: string; })[] = []
+  // const taskInprogress: ({ user: { id: string; name: string | null; email: string | null; emailVerified: Date | null; image: string | null; role: string | null; }; } & { id: string; title: string; description: string; status: string; note: string; creator: string; createAt: Date; assignedId: string; })[] = []
+  // const taskNew: ({ user: { id: string; name: string | null; email: string | null; emailVerified: Date | null; image: string | null; role: string | null; }; } & { id: string; title: string; description: string; status: string; note: string; creator: string; createAt: Date; assignedId: string; })[] = []
+  // t?.tasks.map((item: CompleteTask) => {
+  //   // const curentId = session.user.id
+  //   // if ()
+  //   if (item?.status === 'completed') {
+  //     taskComplete.push(item)
+  //   } else if (item?.status === 'inprogress') {
+  //     taskInprogress.push(item)
+  //   } else if (item?.status === 'new' || item?.status === 'readed') {
+  //     taskNew.push(item)
+  //   }
+  // })
+
+
+
+  // if (t?.tasks !== undefined) {
+  //   const percenTaskCompleted = Math.round((taskComplete?.length / t.tasks?.length) * 100)
+  //   const percenTaskInprogress = Math.round((taskInprogress?.length / t.tasks?.length) * 100)
+  //   const percenTaskNew = Math.round((taskNew?.length / t.tasks?.length) * 100)
+
+  //   console.log("percenTaskCompleted:", percenTaskCompleted)
+  //   console.log("percenTaskInprogress:", percenTaskInprogress)
+  //   console.log("percenTaskNew:", percenTaskNew)
+  // }
+
+
 
   return (
     <div className="relative">
@@ -211,10 +239,10 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             rowKey="id"
             loading={isDeleting}
             // @ts-ignore
-            rowSelection={['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && rowSelection}
+            rowSelection={session?.user.role === 'ADMIN' && rowSelection}
             columns={columns}
             // @ts-ignore
-            expandable={['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && { expandedRowRender }}
+            expandable={session?.user.role === 'ADMIN' && { expandedRowRender }}
             dataSource={t.tasks}
             scroll={{ x: 1200 }}
           />

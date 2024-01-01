@@ -1,22 +1,12 @@
 import * as z from "zod"
-import { CompleteTask, relatedTaskSchema } from "./index"
 
 export const reportSchema = z.object({
   id: z.string(),
-  isComplete: z.boolean(),
+  assignedTo: z.string(),
   reportDate: z.date(),
-  taskId: z.string(),
+  jobCompleted: z.number().int(),
+  jobUnfinished: z.number().int(),
+  jobCompletedPrecent: z.number().int(),
+  jobUnfinishedPercent: z.number().int(),
+  kpi: z.string(),
 })
-
-export interface CompleteReport extends z.infer<typeof reportSchema> {
-  task: CompleteTask
-}
-
-/**
- * relatedReportSchema contains all relations on your model in addition to the scalars
- *
- * NOTE: Lazy required in case of potential circular dependencies within schema
- */
-export const relatedReportSchema: z.ZodSchema<CompleteReport> = z.lazy(() => reportSchema.extend({
-  task: relatedTaskSchema,
-}))

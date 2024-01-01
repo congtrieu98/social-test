@@ -57,7 +57,6 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
     });
     const user = await db.user.findFirst({ where: { id: t?.creator } });
     const userAssignded = await db.user.findFirst({ where: { id: t?.assignedId } });
-    console.log("uesssssssssss:", user)
     if (user) {
       // @ts-ignore
       const { name, email } = user;

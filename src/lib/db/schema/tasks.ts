@@ -20,6 +20,7 @@ export const updateTaskParams = updateTaskSchema.extend({
 });
 
 export const taskIdSchema = updateTaskSchema.pick({ id: true });
+export const taskAssignedIdSchema = updateTaskSchema.pick({ assignedId: true });
 
 // Types for tasks - used to type API request params and within Components
 export type Task = z.infer<typeof updateTaskSchema>;

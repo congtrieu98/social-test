@@ -17,21 +17,21 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   const { mutate: createTaskUpdate } =
     trpc.taskUpdates.createTaskUpdate.useMutation();
   useEffect(() => {
-      if (params?.id && session?.user?.email !== "trieunguyen2806@gmail.com") {
-        if (t?.tasks) {
-          const checktTaskUp = t?.tasks?.taskUpdates?.some(
-            (item: TaskUpdate) => item?.taskId === t?.tasks?.id
-          );
-          if (!checktTaskUp) {
-            return createTaskUpdate({
-              status: "readed",
-              updateAt: new Date(),
-              updateBy: session?.user?.id as string,
-              taskId: params?.id as string,
-            });
-          }
+    if (params?.id && session?.user?.role !== 'ADMIN') {
+      if (t?.tasks) {
+        const checktTaskUp = t?.tasks?.taskUpdates?.some(
+          (item: TaskUpdate) => item?.taskId === t?.tasks?.id
+        );
+        if (!checktTaskUp) {
+          return createTaskUpdate({
+            status: "readed",
+            updateAt: new Date(),
+            updateBy: session?.user?.id as string,
+            taskId: params?.id as string,
+          });
         }
       }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.id, t]);
 

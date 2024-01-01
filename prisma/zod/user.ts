@@ -1,4 +1,5 @@
 import * as z from "zod"
+import { UserRole } from "@prisma/client"
 import { CompleteAccount, relatedAccountSchema, CompleteSession, relatedSessionSchema, CompleteTask, relatedTaskSchema, CompleteTaskUpdate, relatedTaskUpdateSchema } from "./index"
 
 export const userSchema = z.object({
@@ -7,7 +8,7 @@ export const userSchema = z.object({
   email: z.string().nullish(),
   emailVerified: z.date().nullish(),
   image: z.string().nullish(),
-  role: z.string().nullish(),
+  role: z.nativeEnum(UserRole),
 })
 
 export interface CompleteUser extends z.infer<typeof userSchema> {

@@ -7,11 +7,9 @@ import { getReports } from "@/lib/api/reports/queries";
 export const insertReportSchema = reportSchema.omit({ id: true });
 
 export const insertReportParams = reportSchema.extend({
-  isComplete: z.coerce.boolean(),
   reportDate: z.coerce.date()
 }).omit({
   id: true,
-  taskId: true
 });
 
 export const updateReportSchema = reportSchema;
@@ -19,9 +17,7 @@ export const updateReportSchema = reportSchema;
 export const updateReportParams = updateReportSchema.extend({
   isComplete: z.coerce.boolean(),
   reportDate: z.coerce.date()
-}).omit({
-  taskId: true
-});
+}).omit({});
 
 export const reportIdSchema = updateReportSchema.pick({ id: true });
 

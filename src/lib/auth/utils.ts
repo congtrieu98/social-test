@@ -9,6 +9,7 @@ declare module "next-auth" {
   interface Session {
     user: DefaultSession["user"] & {
       id: string;
+      role: "ADMIN" | "USER"
     };
   }
 }
@@ -26,6 +27,7 @@ export type AuthSession = {
       id: string;
       name?: string;
       email?: string;
+      role?: string;
     };
   } | null;
 };
@@ -34,8 +36,14 @@ export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(db),
   callbacks: {
     session: ({ session, user }) => {
-      session.user.id = user.id;
-      // session.user.role = user.role
+      if (session.user) {
+        session.user.id = user.id;
+        if (['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].includes(user.email)) {
+          session.user.role = 'ADMIN'
+        } else {
+          session.user.role = 'USER'
+        }
+      }
       return session;
     },
     async signIn({ user }) {
@@ -50,15 +58,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      // @ts-ignore
-      // profile(profile) {
-      //   if (['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(profile.email) !== -1) {
-      //     return { role: profile.role === 'admin' }
-      //   } else {
-      //     return { role: profile.role === 'member' }
-      //   }
-
-      // }
     })
   ],
 };
