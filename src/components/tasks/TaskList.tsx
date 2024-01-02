@@ -174,32 +174,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
-  // const taskComplete: ({ user: { id: string; name: string | null; email: string | null; emailVerified: Date | null; image: string | null; role: string | null; }; } & { id: string; title: string; description: string; status: string; note: string; creator: string; createAt: Date; assignedId: string; })[] = []
-  // const taskInprogress: ({ user: { id: string; name: string | null; email: string | null; emailVerified: Date | null; image: string | null; role: string | null; }; } & { id: string; title: string; description: string; status: string; note: string; creator: string; createAt: Date; assignedId: string; })[] = []
-  // const taskNew: ({ user: { id: string; name: string | null; email: string | null; emailVerified: Date | null; image: string | null; role: string | null; }; } & { id: string; title: string; description: string; status: string; note: string; creator: string; createAt: Date; assignedId: string; })[] = []
-  // t?.tasks.map((item: CompleteTask) => {
-  //   // const curentId = session.user.id
-  //   // if ()
-  //   if (item?.status === 'completed') {
-  //     taskComplete.push(item)
-  //   } else if (item?.status === 'inprogress') {
-  //     taskInprogress.push(item)
-  //   } else if (item?.status === 'new' || item?.status === 'readed') {
-  //     taskNew.push(item)
-  //   }
-  // })
-
-
-
-  // if (t?.tasks !== undefined) {
-  //   const percenTaskCompleted = Math.round((taskComplete?.length / t.tasks?.length) * 100)
-  //   const percenTaskInprogress = Math.round((taskInprogress?.length / t.tasks?.length) * 100)
-  //   const percenTaskNew = Math.round((taskNew?.length / t.tasks?.length) * 100)
-
-  //   console.log("percenTaskCompleted:", percenTaskCompleted)
-  //   console.log("percenTaskInprogress:", percenTaskInprogress)
-  //   console.log("percenTaskNew:", percenTaskNew)
-  // }
+  console.log(session?.user)
 
 
 
