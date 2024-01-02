@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-// 'use client'
+'use client'
 import { EmailTemplate } from "@/components/emails/FirstEmail";
 import { resend } from "@/lib/email/index";
 import { trpc } from "@/lib/trpc/client";
