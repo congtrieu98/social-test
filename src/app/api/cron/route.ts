@@ -10,7 +10,7 @@ export async function GET() {
   const firstName = 'cong trieu suzu tesst dataa'
   
   try {
-    const { report, error } = await createReport({
+    const { report } = await createReport({
       assignedTo: 'trieukaaaa',
       reportDate: new Date(),
       jobCompleted: 1,
