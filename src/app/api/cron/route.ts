@@ -31,7 +31,7 @@ const getTask = async () => {
         }
 
         const result = await db.report.create({ data: dataReport })
-        listTaskByUser = []
+        listTaskByUser.length = 0
         console.log("resultttttttttttt:", result)
         return result
       }
