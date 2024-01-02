@@ -10,7 +10,12 @@ import {
 import { Layout, Menu } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
+import { Table } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { formatDateFull, formatDatetime } from '@/utils/constant';
+import moment from 'moment';
+import { Report } from '@/lib/db/schema/reports';
 
 const { Header, Sider, Content } = Layout;
 
@@ -18,48 +23,71 @@ export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
+  const { data: r } = trpc.reports.getReports.useQuery()
+  console.log(r)
 
-//   const { data: t } = trpc.tasks.getTasks.useQuery()
-//   const { data: u } = trpc.users.getUsers.useQuery()
-//   const { data: r } = trpc.reports.getReports.useQuery()
-//   const { mutate: createReport, isLoading: isCreating } = trpc.reports.createReport.useMutation();
-// console.log("userssss:", u)
-// console.log("reportttttt:", r)
-//   useEffect(() => {
-//   console.log("hello")
-//   if (t?.tasks !== undefined) {
-//     u?.users.map(async (user) => {
-//       if (['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(user.email as string) === -1) {
-//         let taskComplete = []
-//         let taskUnfinished = []
-//         t?.tasks.map((item) => {
-//           if (item?.assignedId === user?.id) {
-//             if (item?.status === 'completed') {
-//               taskComplete.push(item)
-//             } else {
-//               taskUnfinished.push(item)
-//             }
-//           }
-//         })
 
-//         const percenTaskCompleted = Math.round(((taskComplete?.length ? taskComplete?.length : 0) / t.tasks?.length) * 100)
-//         const percenTaskUnfinished = Math.round(((taskUnfinished?.length ? taskUnfinished?.length : 0) / t.tasks?.length) * 100)
-        
-//         createReport({
-//           assignedTo: user.name as string,
-//           reportDate: new Date(),
-//           jobCompleted: taskComplete?.length,
-//           jobUnfinished: taskUnfinished?.length,
-//           jobCompletedPrecent: percenTaskCompleted || 0,
-//           jobUnfinishedPercent: percenTaskUnfinished || 0,
-//           kpi: percenTaskCompleted >= 50 ? 'Đạt' : 'Không đạt',
-//         });
-//         taskComplete = []
-//         taskUnfinished = []
-//       }
-//     })
-//   }
-// }, [t])
+  // interface DataType {
+
+  // }
+
+  const columns: ColumnsType<Report> = [
+    {
+      title: 'Ngày',
+      dataIndex: 'reportDate',
+      key: 'name',
+      fixed: 'left',
+      render: (val) => moment(val, formatDateFull).format(formatDatetime)
+    },
+    {
+      title: 'Người thực hiện',
+      dataIndex: 'assignedTo'
+    },
+    {
+      title: 'Công việc(SL)',
+      children: [
+        {
+          title: 'Hoàn thành',
+          dataIndex: 'jobCompleted',
+          key: 'age',
+        },
+        {
+          title: 'Chưa hoàn thành',
+          dataIndex: 'jobUnfinished',
+        },
+      ],
+    },
+    {
+      title: 'Tỉ lệ(%)',
+      children: [
+        {
+          title: 'Hoàn thành',
+          dataIndex: 'jobCompletedPrecent',
+          key: 'companyAddress',
+          width: 200,
+        },
+        {
+          title: 'Chưa hoàn thành',
+          dataIndex: 'jobUnfinishedPercent',
+          key: 'companyName',
+        },
+      ],
+    },
+    {
+      title: 'KPI',
+      dataIndex: 'kpi',
+      key: 'gender',
+      // width: 80,
+      fixed: 'right',
+    },
+    {
+      title: 'Action',
+      dataIndex: 'gender',
+      key: 'gender',
+      // width: 80,
+      fixed: 'right',
+    },
+  ];
 
 
   return (
@@ -105,7 +133,13 @@ export default function Home() {
             padding: 24,
           }}
         >
-          Report
+          <Table
+            columns={columns}
+            dataSource={r?.reports}
+            bordered
+            size="middle"
+            scroll={{ x: 'calc(700px + 50%)', y: 240 }}
+          />
         </Content>
       </Layout>
     </Layout>
