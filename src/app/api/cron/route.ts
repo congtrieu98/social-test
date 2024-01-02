@@ -1,9 +1,6 @@
 
 import { EmailTemplate } from "@/components/emails/FirstEmail";
-import { createReport } from "@/lib/api/reports/mutations";
-import { Report } from "@/lib/db/schema/reports";
 import { resend } from "@/lib/email/index";
-import { trpc } from "@/lib/trpc/client";
 import { NextResponse } from "next/server";
 
 export async function GET() {
@@ -32,8 +29,4 @@ export async function GET() {
   } catch (error) {
     return NextResponse.json({ error });
   }
-}
-
-export async function POST(req: Request) {
-
 }

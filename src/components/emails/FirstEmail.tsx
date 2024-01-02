@@ -1,4 +1,3 @@
-import { Report } from "@/lib/db/schema/reports";
 import * as React from "react";
 
 interface EmailTemplateProps {

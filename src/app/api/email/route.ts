@@ -1,6 +1,4 @@
 import { EmailTemplate } from "@/components/emails/FirstEmail";
-import { createReport } from "@/lib/api/reports/mutations";
-import { Report } from "@/lib/db/schema/reports";
 import { resend } from "@/lib/email/index";
 import { emailSchema } from "@/lib/email/utils";
 import { NextResponse } from "next/server";
