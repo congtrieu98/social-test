@@ -8,16 +8,17 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const email = 'trieunguyen2806@gmail.com'
   const firstName = 'cong trieu suzu tesst dataa'
-  const { report, error } = await createReport({
-    assignedTo: 'trieuka',
-    reportDate: new Date(),
-    jobCompleted: 1,
-    jobUnfinished: 2,
-    jobCompletedPrecent:3,
-    jobUnfinishedPercent: 4,
-    kpi: 'dat'
-});
+  
   try {
+    const { report, error } = await createReport({
+      assignedTo: 'trieukaaaa',
+      reportDate: new Date(),
+      jobCompleted: 1,
+      jobUnfinished: 2,
+      jobCompletedPrecent:3,
+      jobUnfinishedPercent: 4,
+      kpi: 'dat'
+  });
     const data = await resend.emails.send({
       from: `SZG <${process.env.RESEND_EMAIL}>`,
       to: [email],
