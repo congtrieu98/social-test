@@ -15,7 +15,6 @@ export const insertReportParams = reportSchema.extend({
 export const updateReportSchema = reportSchema;
 
 export const updateReportParams = updateReportSchema.extend({
-  isComplete: z.coerce.boolean(),
   reportDate: z.coerce.date()
 }).omit({});
 
