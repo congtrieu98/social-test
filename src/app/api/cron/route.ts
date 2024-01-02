@@ -40,4 +40,4 @@ const getTask = async () => {
 
 }
 
-export default getTask
+getTask()
