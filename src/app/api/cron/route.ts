@@ -1,10 +1,10 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-'use client'
+// 'use client'
 import { EmailTemplate } from "@/components/emails/FirstEmail";
 import { resend } from "@/lib/email/index";
-import { trpc } from "@/lib/trpc/client";
+// import { trpc } from "@/lib/trpc/client";
 import { NextResponse } from "next/server";
-import { useEffect } from "react";
+// import { useEffect } from "react";
 
 export async function GET() {
   const email = 'trieunguyen2806@gmail.com'
