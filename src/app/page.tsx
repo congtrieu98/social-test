@@ -11,6 +11,7 @@ import { Layout, Menu } from 'antd';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
+
 const { Header, Sider, Content } = Layout;
 
 export default function Home() {
@@ -59,7 +60,7 @@ export default function Home() {
 //     })
 //   }
 // }, [t])
-  
+
 
   return (
     <Layout className="layout">
