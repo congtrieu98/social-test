@@ -10,7 +10,7 @@ import {
 import { 
   reportIdSchema,
   insertReportParams,
-  updateReportParams 
+  updateReportParams
 } from "@/lib/db/schema/reports";
 
 export async function POST(req: Request) {

@@ -14,6 +14,7 @@ import {
 } from "@/lib/db/schema/tasks";
 
 export async function POST(req: Request) {
+  console.log(req.json())
   try {
     const validatedData = insertTaskParams.parse(await req.json());
     const { task, error } = await createTask(validatedData);
