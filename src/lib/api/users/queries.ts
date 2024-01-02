@@ -4,7 +4,7 @@ import { userIdSchema } from "@/lib/db/schema/users";
 
 export const getUsers = async () => {
     const { session } = await getUserAuth();
-    const u = await db.user.findMany({ where: { id: { not: session?.user.id } } });
+    const u = await db.user.findMany({ where: { id: { not: session?.user.id } }, include: {tasks: true} });
     return { users: u };
 };
 // export const getUserById = async () => {
