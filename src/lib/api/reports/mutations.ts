@@ -11,8 +11,9 @@ import { getUserAuth } from "@/lib/auth/utils";
 
 export const createReport = async (report: NewReportParams) => {
   const { session } = await getUserAuth();
-  const newReport = insertReportSchema.parse({ ...report, userId: session?.user.id! });
+  const newReport = insertReportSchema.parse({ ...report });
   try {
+    // @ts-ignore
     const r = await db.report.create({ data: newReport });
     return { report: r };
   } catch (err) {
