@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/index";
 import { CompleteTask } from "@/lib/db/schema/tasks";
 
-const getTask = async () => {
+export async function POST() {
   try {
     const t = await db.task.findMany({ include: { user: true } })
     const u = await db.user.findMany()
@@ -38,7 +38,4 @@ const getTask = async () => {
   } catch (error) {
     console.log(error)
   }
-
 }
-
-getTask()
