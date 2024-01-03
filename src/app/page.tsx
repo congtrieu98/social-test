@@ -29,13 +29,14 @@ export default function Home() {
     {
       title: 'Ngày',
       dataIndex: 'reportDate',
-      key: 'name',
+      key: 'reportDate',
       fixed: 'left',
       render: (val) => moment(val, formatDateFull).format(formatDatetime)
     },
     {
       title: 'Người thực hiện',
-      dataIndex: 'assignedTo'
+      dataIndex: 'assignedTo',
+      key: 'assignedTo'
     },
     {
       title: 'Công việc(SL)',
@@ -43,11 +44,12 @@ export default function Home() {
         {
           title: 'Hoàn thành',
           dataIndex: 'jobCompleted',
-          key: 'age',
+          key: 'jobCompleted',
         },
         {
           title: 'Chưa hoàn thành',
           dataIndex: 'jobUnfinished',
+          key: 'jobUnfinished',
         },
       ],
     },
@@ -57,28 +59,24 @@ export default function Home() {
         {
           title: 'Hoàn thành',
           dataIndex: 'jobCompletedPrecent',
-          key: 'companyAddress',
+          key: 'jobCompletedPrecent',
           width: 200,
         },
         {
           title: 'Chưa hoàn thành',
           dataIndex: 'jobUnfinishedPercent',
-          key: 'companyName',
+          key: 'jobUnfinishedPercent',
         },
       ],
     },
     {
       title: 'KPI',
       dataIndex: 'kpi',
-      key: 'gender',
-      // width: 80,
+      key: 'kpi',
       fixed: 'right',
     },
     {
       title: 'Action',
-      dataIndex: 'gender',
-      key: 'gender',
-      // width: 80,
       fixed: 'right',
     },
   ];
@@ -127,6 +125,7 @@ export default function Home() {
             padding: 24,
           }}
         >
+          <div className='text-2xl font-semibold mb-5'>Report</div>
           <Table
             columns={columns}
             dataSource={r?.reports}
