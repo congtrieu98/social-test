@@ -7,7 +7,7 @@ const getTask = async () => {
     const u = await db.user.findMany()
 
     let listTaskByUser: CompleteTask[] = []
-    u.map(async (user) => {
+    u.map(async (user, index) => {
       if (['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(user.email as string) === -1) {
         t.map((task) => {
           if (user.id === task.user.id) {
@@ -31,10 +31,12 @@ const getTask = async () => {
         }
 
         const result = await db.report.create({ data: dataReport })
-        listTaskByUser.length = 0
         console.log("resultttttttttttt:", result)
         return result
       }
+      index && (listTaskByUser.length = 0)
+      console.log("listTaskByUser:", listTaskByUser)
+      // index && (listTaskByUser = listTaskByUser.slice(0, listTaskByUser.length))
     })
   } catch (error) {
     console.log(error)
