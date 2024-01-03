@@ -1,7 +1,7 @@
 import { db } from "@/lib/db/index";
 import { CompleteTask } from "@/lib/db/schema/tasks";
 
-export async function POST() {
+export async function GET() {
   try {
     const t = await db.task.findMany({ include: { user: true } })
     const u = await db.user.findMany()

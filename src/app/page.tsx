@@ -81,7 +81,6 @@ export default function Home() {
     },
   ];
 
-
   return (
     <Layout className="layout">
       <Sider trigger={null} collapsible collapsed={collapsed}>
