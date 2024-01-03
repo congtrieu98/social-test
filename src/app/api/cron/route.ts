@@ -1,8 +1,8 @@
 import { db } from "@/lib/db/index";
 import { CompleteTask } from "@/lib/db/schema/tasks";
-// import { NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 
-export async function GET() {
+export async function POST() {
   try {
     const t = await db.task.findMany({ include: { user: true } })
     const u = await db.user.findMany()
@@ -34,9 +34,9 @@ export async function GET() {
 
         const result = await db.report.create({ data: dataReport })
         console.log("resultttttttttttt:", result)
-        return Response.json({data: result});
+        return NextResponse.json({data: result});
     })
   } catch (error) {
-    return Response.json({ error: error })
+    return NextResponse.json({ error: error })
   }
 }
