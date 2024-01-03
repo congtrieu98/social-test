@@ -1,5 +1,6 @@
 import { db } from "@/lib/db/index";
 import { CompleteTask } from "@/lib/db/schema/tasks";
+import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
@@ -33,9 +34,9 @@ export async function GET() {
 
         const result = await db.report.create({ data: dataReport })
         console.log("resultttttttttttt:", result)
-        return result
+        return NextResponse.json(result);
     })
   } catch (error) {
-    console.log(error)
+    return NextResponse.json({ error })
   }
 }
