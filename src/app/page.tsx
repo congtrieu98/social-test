@@ -24,12 +24,6 @@ export default function Home() {
   const { data: session } = useSession();
   const [collapsed, setCollapsed] = useState(false);
   const { data: r } = trpc.reports.getReports.useQuery()
-  console.log(r)
-
-
-  // interface DataType {
-
-  // }
 
   const columns: ColumnsType<Report> = [
     {

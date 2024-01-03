@@ -6,9 +6,10 @@ const getTask = async () => {
     const t = await db.task.findMany({ include: { user: true } })
     const u = await db.user.findMany()
 
+    const listUserNotAdmin = u.filter(item => ['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(item.email as string) === -1 )
     let listTaskByUser: CompleteTask[] = []
-    u.map(async (user, index) => {
-      if (['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].indexOf(user.email as string) === -1) {
+    listUserNotAdmin.map(async (user) => {
+      listTaskByUser = [];
         t.map((task) => {
           if (user.id === task.user.id) {
             listTaskByUser.push(task)
@@ -33,10 +34,6 @@ const getTask = async () => {
         const result = await db.report.create({ data: dataReport })
         console.log("resultttttttttttt:", result)
         return result
-      }
-      index && (listTaskByUser.length = 0)
-      console.log("listTaskByUser:", listTaskByUser)
-      // index && (listTaskByUser = listTaskByUser.slice(0, listTaskByUser.length))
     })
   } catch (error) {
     console.log(error)
