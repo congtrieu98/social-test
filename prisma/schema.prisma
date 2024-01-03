@@ -3,6 +3,7 @@
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["fullTextSearch"]
 }
 
 enum UserRole {
@@ -82,9 +83,19 @@ model Task {
   note        String
   creator     String
   createAt    DateTime
+  deadlines   DateTime
+  priority    String
   assignedId  String
   taskUpdates TaskUpdate[]
+  medias      Media[]
   user        User         @relation(fields: [assignedId], references: [id], onDelete: Cascade)
+}
+
+model Media {
+  id     String @id @default(cuid())
+  url    String
+  taskId String
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 model TaskUpdate {

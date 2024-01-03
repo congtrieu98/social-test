@@ -41,8 +41,8 @@ const columns: ColumnsType<CompleteTask> = [
     render: (val) => val.name,
   },
   {
-    title: "Mô tả",
-    dataIndex: "description",
+    title: "Mức độ ưu tiên",
+    dataIndex: "priority",
   },
   {
     title: "Trạng thái",
@@ -106,7 +106,7 @@ const columns: ColumnsType<CompleteTask> = [
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const router = useRouter();
   const utils = trpc.useContext();
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tasks.getTasks.invalidate();
     router.refresh();
@@ -138,16 +138,16 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 
   const expandedRowRender = (record: CompleteTask) => {
     // console.log(record);
-    const data = taskUp?.taskUpdates?.filter((item: TaskUpdate) => item?.taskId === record?.id)
+    const data = taskUp?.taskUpdates?.filter(
+      (item: TaskUpdate) => item?.taskId === record?.id
+    );
     const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [
       {
         title: "User",
         key: "user",
         render(record) {
-          return (
-            record?.user?.name
-          );
-        }
+          return record?.user?.name;
+        },
       },
       {
         title: "Truy cập lúc",
@@ -159,24 +159,20 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
         title: "Status",
         key: "state",
         dataIndex: "status",
-        render: (val) => <Badge status="success" text={val === 'readed' ? 'Đã xem' : ''} />,
+        render: (val) => (
+          <Badge status="success" text={val === "readed" ? "Đã xem" : ""} />
+        ),
       },
     ];
     return (
-      <Table
-        columns={columnsTaskUp}
-        dataSource={data}
-        pagination={false}
-      />
+      <Table columns={columnsTaskUp} dataSource={data} pagination={false} />
     );
   };
 
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
-  console.log(session?.user)
-
-
+  console.log(t?.tasks);
 
   return (
     <div className="relative">
@@ -214,10 +210,10 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             rowKey="id"
             loading={isDeleting}
             // @ts-ignore
-            rowSelection={session?.user.role === 'ADMIN' && rowSelection}
+            rowSelection={session?.user.role === "ADMIN" && rowSelection}
             columns={columns}
             // @ts-ignore
-            expandable={session?.user.role === 'ADMIN' && { expandedRowRender }}
+            expandable={session?.user.role === "ADMIN" && { expandedRowRender }}
             dataSource={t.tasks}
             scroll={{ x: 1200 }}
           />
@@ -228,7 +224,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 }
 
 const EmptyState = () => {
-  const { data: session } = useSession()
+  const { data: session } = useSession();
   return (
     <div className="text-center">
       <h3 className="mt-2 text-sm font-semibold text-gray-900">No tasks</h3>
@@ -236,7 +232,9 @@ const EmptyState = () => {
         Get started by creating a new task.
       </p>
       <div className="mt-6">
-        {['trieunguyen2806@gmail.com', 'khanh@suzu.vn'].some(item => item === session?.user?.email as string) && <TaskModal emptyState={true} />}
+        {["trieunguyen2806@gmail.com", "khanh@suzu.vn"].some(
+          (item) => item === (session?.user?.email as string)
+        ) && <TaskModal emptyState={true} />}
       </div>
     </div>
   );

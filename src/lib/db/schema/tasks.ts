@@ -16,10 +16,10 @@ export const updateTaskSchema = taskSchema;
 
 export const updateTaskParams = updateTaskSchema.extend({
   createAt: z.coerce.date()
-}).omit({
-});
+}).omit({});
 
 export const taskIdSchema = updateTaskSchema.pick({ id: true });
+export const taskTitleSchema = updateTaskSchema.pick({ title: true });
 export const taskAssignedIdSchema = updateTaskSchema.pick({ assignedId: true });
 
 // Types for tasks - used to type API request params and within Components
@@ -28,6 +28,7 @@ export type NewTask = z.infer<typeof insertTaskSchema>;
 export type NewTaskParams = z.infer<typeof insertTaskParams>;
 export type UpdateTaskParams = z.infer<typeof updateTaskParams>;
 export type TaskId = z.infer<typeof taskIdSchema>["id"];
+export type TaskTitle = z.infer<typeof taskTitleSchema>["title"];
 
 // this type infers the return from getTasks() - meaning it will include any joins
 export type CompleteTask = Awaited<ReturnType<typeof getTasks>>["tasks"][number];
