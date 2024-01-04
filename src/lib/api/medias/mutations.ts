@@ -38,7 +38,6 @@ export const updateMedia = async (id: MediaId, media: UpdateMediaParams) => {
 export const deleteMedia = async (id: MediaId) => {
   const { id: mediaId } = mediaIdSchema.parse({ id });
   try {
-    //@ts-ignore
     const m = await db.media.delete({ where: { id: mediaId } })
     return { media: m };
   } catch (err) {

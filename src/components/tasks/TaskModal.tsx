@@ -10,13 +10,13 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import TaskForm from "./TaskForm";
-import { Task } from "@/lib/db/schema/tasks";
+import { CompleteTask, Task } from "@/lib/db/schema/tasks";
 
 export default function TaskModal({
   task,
   emptyState,
 }: {
-  task?: Task;
+  task?: CompleteTask;
   emptyState?: boolean;
 }) {
   const [open, setOpen] = useState(false);

@@ -12,7 +12,7 @@ export const getTasks = async () => {
   } else {
     const t = await db.task.findMany({
       where: { assignedId: session?.user?.id },
-      include: { user: true },
+      include: { user: true, medias: true },
     });
     return { tasks: t };
   }

@@ -62,7 +62,7 @@ const TaskForm = ({
 
   const editing = !!task?.id;
   const [files, setFiles] = useState<File[]>([]);
-
+  const [loading, setLoading] = useState<Boolean>(false)
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -115,13 +115,35 @@ const TaskForm = ({
 
   const { mutate: updateTask, isLoading: isUpdating } =
     trpc.tasks.updateTask.useMutation({
-      onSuccess: () => onSuccess("update"),
+      onSuccess: async ({ task }) => {
+        if (files.length > 0 && task) {
+          files.forEach((file: FileWithPreview) => {
+            if (file.preview) {
+              const taskId = task.id;
+              mutation.mutate({ taskId: taskId, url: file.preview });
+            }
+          });
+          onSuccess("update");
+        }
+      },
     });
 
   const { mutate: deleteTask, isLoading: isDeleting } =
     trpc.tasks.deleteTask.useMutation({
       onSuccess: () => onSuccess("delete"),
     });
+
+  const { mutate: deleteImage, isLoading: isImageDeleting, status } = trpc.medias.deleteMedia.useMutation({
+    onSuccess: () => {
+      isImageDeleting ? setLoading(true) : setLoading(false)
+      router.refresh();
+      toast({
+        title: "Success",
+        description: `Image deledated!`,
+        variant: "default",
+      });
+    }
+  });
 
   const handleSubmit = (values: NewTaskParams) => {
     if (editing) {
@@ -406,7 +428,7 @@ const TaskForm = ({
         />
         <div className="">Image</div>
         <section className="border border-gray-100 p-5 rounded-xl shadow-md">
-          <div {...getRootProps()}>
+          <div {...getRootProps()} className="p-2 border border-dashed border-gray-300">
             <input {...getInputProps()} />
             <div className="flex flex-col items-center justify-center gap-4">
               <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
@@ -418,21 +440,22 @@ const TaskForm = ({
             </div>
           </div>
           {/* Accepted files */}
-          <h3 className="title text-lg font-semibold text-neutral-600 mt-10 border-b pb-3">
+          <h3 className="title text-lg font-semibold text-neutral-600 mt-4 border-b pb-3">
             Accepted Files
           </h3>
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
             {
               // @ts-ignore
               task?.medias.length > 0 &&
-                task?.medias.map((item, index) => (
-                  <li
-                    key={index}
-                    className="relative h-[100px] rounded-md shadow-lg"
-                  >
-                    {item.loading ? (
+              task?.medias.map((item, index) => (
+                <li
+                  key={index}
+                  className="relative h-auto rounded-md"
+                >
+                  {
+                    loading ? (
                       <svg
-                        className="absolute top-10 right-6 animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                        className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -452,24 +475,33 @@ const TaskForm = ({
                         ></path>
                       </svg>
                     ) : (
-                      <img
-                        src={item.url}
-                        alt={item.url}
-                        className="h-[100px] w-[100px] object-contain rounded-md"
-                      />
+                      <>
+                        <img
+                          src={item.url}
+                          alt={item.url}
+                          className="h-full w-full object-contain rounded-md"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => { deleteImage({ id: item.id }) }}
+                          className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
+                        >
+                          <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                        </button>
+                        {/* <Alert id={item?.id} task={task} setLoading={setLoading} /> */}
+                      </>
                     )}
-                    {/* <FeedAlert id={item?.id} feed={feed} /> */}
-                  </li>
-                ))
+                </li>
+              ))
             }
             {files.map((file: FileWithPreview, index) => (
               <li
                 key={index}
-                className="relative h-[100px] rounded-md shadow-lg"
+                className="relative h-auto rounded-md"
               >
                 {file.loading ? (
                   <svg
-                    className="absolute top-10 right-6 animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                    className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -489,23 +521,25 @@ const TaskForm = ({
                     ></path>
                   </svg>
                 ) : (
-                  <img
-                    src={file.preview}
-                    alt={file.name}
-                    onLoad={() => {
-                      URL.revokeObjectURL(file.preview as string);
-                    }}
-                    className="h-[100px] w-[100px] object-contain rounded-md"
-                  />
-                )}
+                  <>
+                    <img
+                      src={file.preview}
+                      alt={file.name}
+                      onLoad={() => {
+                        URL.revokeObjectURL(file.preview as string);
+                      }}
+                      className="h-full w-full object-contain rounded-md"
+                    />
+                    <button
+                      type="button"
+                      className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
+                      onClick={() => removeFile(file.path as string)}
+                    >
+                      <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                    </button>
+                  </>
 
-                <button
-                  type="button"
-                  className="w-7 h-7 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
-                  onClick={() => removeFile(file.path as string)}
-                >
-                  <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
-                </button>
+                )}
                 <div className=" text-neutral-500 text-[12px] font-medium">
                   {/* {file.path} */}
                 </div>
