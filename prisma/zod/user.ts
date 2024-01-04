@@ -1,6 +1,6 @@
 import * as z from "zod"
 import { UserRole } from "@prisma/client"
-import { CompleteAccount, relatedAccountSchema, CompleteSession, relatedSessionSchema, CompleteTask, relatedTaskSchema, CompleteTaskUpdate, relatedTaskUpdateSchema } from "./index"
+import { CompleteAccount, relatedAccountSchema, CompleteSession, relatedSessionSchema, CompleteTask, relatedTaskSchema, CompleteTodoList, relatedTodoListSchema } from "./index"
 
 export const userSchema = z.object({
   id: z.string(),
@@ -15,7 +15,7 @@ export interface CompleteUser extends z.infer<typeof userSchema> {
   accounts: CompleteAccount[]
   sessions: CompleteSession[]
   tasks: CompleteTask[]
-  taskUpdates: CompleteTaskUpdate[]
+  taskUpdates: CompleteTodoList[]
 }
 
 /**
@@ -27,5 +27,5 @@ export const relatedUserSchema: z.ZodSchema<CompleteUser> = z.lazy(() => userSch
   accounts: relatedAccountSchema.array(),
   sessions: relatedSessionSchema.array(),
   tasks: relatedTaskSchema.array(),
-  taskUpdates: relatedTaskUpdateSchema.array(),
+  taskUpdates: relatedTodoListSchema.array(),
 }))

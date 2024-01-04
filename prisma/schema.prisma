@@ -3,7 +3,6 @@
 
 generator client {
   provider = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
 }
 
 enum UserRole {
@@ -55,16 +54,16 @@ model Session {
 }
 
 model User {
-  id            String       @id @default(cuid())
+  id            String     @id @default(cuid())
   name          String?
-  email         String?      @unique
+  email         String?    @unique
   emailVerified DateTime?
   image         String?
-  role          UserRole     @default(USER)
+  role          UserRole   @default(USER)
   accounts      Account[]
   sessions      Session[]
   tasks         Task[]
-  taskUpdates   TaskUpdate[]
+  taskUpdates   TodoList[]
 }
 
 model VerificationToken {
@@ -76,7 +75,7 @@ model VerificationToken {
 }
 
 model Task {
-  id          String       @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
   description String
   status      String
@@ -86,9 +85,8 @@ model Task {
   deadlines   DateTime
   priority    String
   assignedId  String
-  taskUpdates TaskUpdate[]
   medias      Media[]
-  user        User         @relation(fields: [assignedId], references: [id], onDelete: Cascade)
+  user        User     @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
 
 model Media {
@@ -98,14 +96,12 @@ model Media {
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
-model TaskUpdate {
-  id       String   @id @default(cuid())
-  status   String
-  updateAt DateTime
-  taskId   String
-  updateBy String
-  task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [updateBy], references: [id], onDelete: Cascade)
+model TodoList {
+  id         String  @id @default(cuid())
+  checked    Boolean @default(false)
+  content    String
+  assignedId String
+  user       User    @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
 
 model Report {

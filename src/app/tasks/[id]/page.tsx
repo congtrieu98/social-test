@@ -1,7 +1,6 @@
 /* eslint-disable @next/next/no-async-client-component */
 "use client";
 
-import { TaskUpdate } from "@/lib/db/schema/taskUpdates";
 import { trpc } from "@/lib/trpc/client";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect } from "react";
@@ -14,22 +13,28 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     }
   });
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
-  const { mutate: createTaskUpdate } =
-    trpc.taskUpdates.createTaskUpdate.useMutation();
+  const { mutate: updateTask } =
+    trpc.tasks.updateTask.useMutation();
   useEffect(() => {
     if (params?.id && session?.user?.role !== 'ADMIN') {
       if (t?.tasks) {
-        const checktTaskUp = t?.tasks?.taskUpdates?.some(
-          (item: TaskUpdate) => item?.taskId === t?.tasks?.id
-        );
-        if (!checktTaskUp) {
-          return createTaskUpdate({
-            status: "readed",
-            updateAt: new Date(),
-            updateBy: session?.user?.id as string,
-            taskId: params?.id as string,
-          });
-        }
+        // const checktTaskUp = t?.tasks?.taskUpdates?.some(
+        //   (item: TaskUpdate) => item?.taskId === t?.tasks?.id
+        // );
+        // if (!checktTaskUp) {
+        return updateTask({
+          id: params?.id,
+          status: "readed",
+          title: t.tasks.title,
+          description: t.tasks.description,
+          note: t.tasks.note,
+          creator: t.tasks.creator,
+          createAt: t.tasks.createAt,
+          deadlines: t.tasks.deadlines,
+          priority: t.tasks.priority,
+          assignedId: t.tasks.assignedId,
+        });
+        // }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

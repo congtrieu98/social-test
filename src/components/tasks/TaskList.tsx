@@ -136,38 +136,38 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     onChange: onSelectChange,
   };
 
-  const expandedRowRender = (record: CompleteTask) => {
-    // console.log(record);
-    const data = taskUp?.taskUpdates?.filter(
-      (item: TaskUpdate) => item?.taskId === record?.id
-    );
-    const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [
-      {
-        title: "User",
-        key: "user",
-        render(record) {
-          return record?.user?.name;
-        },
-      },
-      {
-        title: "Truy cập lúc",
-        dataIndex: "updateAt",
-        key: "truy cap",
-        render: (value) => moment(value, formatDateFull).format(formatDatetime),
-      },
-      {
-        title: "Status",
-        key: "state",
-        dataIndex: "status",
-        render: (val) => (
-          <Badge status="success" text={val === "readed" ? "Đã xem" : ""} />
-        ),
-      },
-    ];
-    return (
-      <Table columns={columnsTaskUp} dataSource={data} pagination={false} />
-    );
-  };
+  // const expandedRowRender = (record: CompleteTask) => {
+  //   // console.log(record);
+  //   const data = taskUp?.taskUpdates?.filter(
+  //     (item: TaskUpdate) => item?.taskId === record?.id
+  //   );
+  //   const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [
+  //     {
+  //       title: "User",
+  //       key: "user",
+  //       render(record) {
+  //         return record?.user?.name;
+  //       },
+  //     },
+  //     {
+  //       title: "Truy cập lúc",
+  //       dataIndex: "updateAt",
+  //       key: "truy cap",
+  //       render: (value) => moment(value, formatDateFull).format(formatDatetime),
+  //     },
+  //     {
+  //       title: "Status",
+  //       key: "state",
+  //       dataIndex: "status",
+  //       render: (val) => (
+  //         <Badge status="success" text={val === "readed" ? "Đã xem" : ""} />
+  //       ),
+  //     },
+  //   ];
+  //   return (
+  //     <Table columns={columnsTaskUp} dataSource={data} pagination={false} />
+  //   );
+  // };
 
   if (t.tasks.length === 0) {
     return <EmptyState />;
@@ -213,7 +213,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             rowSelection={session?.user.role === "ADMIN" && rowSelection}
             columns={columns}
             // @ts-ignore
-            expandable={session?.user.role === "ADMIN" && { expandedRowRender }}
+            // expandable={session?.user.role === "ADMIN" && { expandedRowRender }}
             dataSource={t.tasks}
             scroll={{ x: 1200 }}
           />
