@@ -170,7 +170,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
-  console.log(t?.tasks);
 
   return (
     <div className="relative">

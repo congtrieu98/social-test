@@ -4,9 +4,7 @@ import { CompleteMedia, relatedMediaSchema, CompleteUser, relatedUserSchema } fr
 export const taskSchema = z.object({
   id: z.string(),
   title: z.string(),
-  description: z.string(),
   status: z.string(),
-  note: z.string(),
   creator: z.string(),
   createAt: z.date(),
   deadlines: z.date(),

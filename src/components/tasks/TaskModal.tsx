@@ -52,7 +52,8 @@ export default function TaskModal({
             className="w-auto py-2 px-4"
           >
             {editing ? "Edit" : "Thêm công việc"}
-          </Button>)}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5">

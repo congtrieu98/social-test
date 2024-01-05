@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -40,10 +41,38 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import { CompleteUser } from "@/lib/db/schema/users";
-import { Textarea } from "../ui/textarea";
 import { useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
+import { Checkbox } from "@/components/ui/checkbox";
+import Modal from "../general/modal";
+
+const taskDetail = [
+  {
+    id: "recents",
+    label: "recents",
+  },
+  {
+    id: "home",
+    label: "Home",
+  },
+  {
+    id: "applications",
+    label: "Applications",
+  },
+  {
+    id: "desktop",
+    label: "Desktop",
+  },
+  {
+    id: "downloads",
+    label: "Downloads",
+  },
+  {
+    id: "documents",
+    label: "Documents",
+  },
+] as const;
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -62,7 +91,8 @@ const TaskForm = ({
 
   const editing = !!task?.id;
   const [files, setFiles] = useState<File[]>([]);
-  const [loading, setLoading] = useState<Boolean>(false)
+  const [loading, setLoading] = useState<Boolean>(false);
+  const [userSelected, setUserSelected] = useState("");
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -75,11 +105,10 @@ const TaskForm = ({
     resolver: zodResolver(insertTaskParams),
     defaultValues: task ?? {
       title: "",
-      description: "",
       status: "",
-      note: "",
       assignedId: "",
       priority: "",
+      // taskDetail: ["recents", "home"],
       creator: session?.user?.id,
       createAt: new Date(),
       deadlines: new Date(),
@@ -133,24 +162,35 @@ const TaskForm = ({
       onSuccess: () => onSuccess("delete"),
     });
 
-  const { mutate: deleteImage, isLoading: isImageDeleting, status } = trpc.medias.deleteMedia.useMutation({
-    onSuccess: () => {
-      isImageDeleting ? setLoading(true) : setLoading(false)
-      router.refresh();
-      toast({
-        title: "Success",
-        description: `Image deledated!`,
-        variant: "default",
-      });
-    }
-  });
-
+  const { mutate: deleteImage, isLoading: isImageDeleting } =
+    trpc.medias.deleteMedia.useMutation({
+      onSuccess: () => {
+        isImageDeleting ? setLoading(true) : setLoading(false);
+        router.refresh();
+        toast({
+          title: "Success",
+          description: `Image deledated!`,
+          variant: "default",
+        });
+      },
+    });
+  console.log("userSelected:", userSelected);
   const handleSubmit = (values: NewTaskParams) => {
     if (editing) {
       updateTask({ ...values, id: task.id });
     } else {
-      // console.log(values)
-      createTask(values);
+      console.log("taskForm", values);
+      // createTask(values);
+      // toast({
+      //   title: "You submitted the following values:",
+      //   description: (
+      //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
+      //       <code className="text-white">
+      //         {JSON.stringify(values, null, 2)}
+      //       </code>
+      //     </pre>
+      //   ),
+      // });
     }
   };
 
@@ -227,25 +267,6 @@ const TaskForm = ({
             </FormItem>
           )}
         />
-        {/* <FormField
-          control={form.control}
-          name="description"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Description</FormLabel>
-              <FormControl>
-                <Input
-                  {...field}
-                  disabled={
-                    editing &&
-                    session?.user?.email !== "trieunguyen2806@gmail.com"
-                  }
-                />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
         <FormField
           control={form.control}
           name="priority"
@@ -300,13 +321,12 @@ const TaskForm = ({
           <FormField
             control={form.control}
             name="assignedId"
-            // @ts-ignore
             render={({ field }) => {
               return (
                 <FormItem>
                   <FormLabel>Người thực hiện</FormLabel>
                   <Select
-                    onValueChange={field.onChange}
+                    onValueChange={setUserSelected}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -428,7 +448,10 @@ const TaskForm = ({
         />
         <div className="">Image</div>
         <section className="border border-gray-100 p-5 rounded-xl shadow-md">
-          <div {...getRootProps()} className="p-2 border border-dashed border-gray-300">
+          <div
+            {...getRootProps()}
+            className="p-2 border border-dashed border-gray-300"
+          >
             <input {...getInputProps()} />
             <div className="flex flex-col items-center justify-center gap-4">
               <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
@@ -447,13 +470,9 @@ const TaskForm = ({
             {
               // @ts-ignore
               task?.medias.length > 0 &&
-              task?.medias.map((item, index) => (
-                <li
-                  key={index}
-                  className="relative h-auto rounded-md"
-                >
-                  {
-                    loading ? (
+                task?.medias.map((item, index) => (
+                  <li key={index} className="relative h-auto rounded-md">
+                    {loading ? (
                       <svg
                         className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
                         xmlns="http://www.w3.org/2000/svg"
@@ -483,7 +502,9 @@ const TaskForm = ({
                         />
                         <button
                           type="button"
-                          onClick={() => { deleteImage({ id: item.id }) }}
+                          onClick={() => {
+                            deleteImage({ id: item.id });
+                          }}
                           className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
                         >
                           <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
@@ -491,14 +512,11 @@ const TaskForm = ({
                         {/* <Alert id={item?.id} task={task} setLoading={setLoading} /> */}
                       </>
                     )}
-                </li>
-              ))
+                  </li>
+                ))
             }
             {files.map((file: FileWithPreview, index) => (
-              <li
-                key={index}
-                className="relative h-auto rounded-md"
-              >
+              <li key={index} className="relative h-auto rounded-md">
                 {file.loading ? (
                   <svg
                     className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
@@ -538,7 +556,6 @@ const TaskForm = ({
                       <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
                     </button>
                   </>
-
                 )}
                 <div className=" text-neutral-500 text-[12px] font-medium">
                   {/* {file.path} */}
@@ -547,7 +564,7 @@ const TaskForm = ({
             ))}
           </ul>
         </section>
-        <FormField
+        {/* <FormField
           control={form.control}
           name="note"
           render={({ field }) => (
@@ -559,7 +576,59 @@ const TaskForm = ({
               <FormMessage />
             </FormItem>
           )}
-        />
+        /> */}
+
+        {/* <FormField
+          control={form.control}
+          name="taskDetail"
+          render={() => (
+            <FormItem>
+              <div className="mb-4">
+                <FormLabel className="text-base">Sidebar</FormLabel>
+                <FormDescription>
+                  Select the items you want to display in the sidebar.
+                </FormDescription>
+              </div>
+              {taskDetail.map((item) => (
+                <FormField
+                  key={item.id}
+                  control={form.control}
+                  name="taskDetail"
+                  render={({ field }) => {
+                    return (
+                      <FormItem
+                        key={item.id}
+                        className="flex flex-row items-start space-x-3 space-y-0"
+                      >
+                        <FormControl>
+                          <Checkbox
+                            checked={field.value?.includes(item.id)}
+                            onCheckedChange={(checked) => {
+                              return checked
+                                ? field.onChange([...field.value, item.id])
+                                : field.onChange(
+                                    field.value?.filter(
+                                      (value) => value !== item.id
+                                    )
+                                  );
+                            }}
+                          />
+                        </FormControl>
+                        <FormLabel className="text-sm font-normal">
+                          {item.label}
+                        </FormLabel>
+                      </FormItem>
+                    );
+                  }}
+                />
+              ))}
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
+
+        <Modal userSelected={userSelected} />
+
         <Button
           type="submit"
           className="mr-1"

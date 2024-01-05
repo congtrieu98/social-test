@@ -62,6 +62,7 @@ model User {
   role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
+  todoList      TodoList[]
   tasks         Task[]
 }
 
@@ -76,9 +77,7 @@ model VerificationToken {
 model Task {
   id          String   @id @default(cuid())
   title       String
-  description String
   status      String
-  note        String
   creator     String
   createAt    DateTime
   deadlines   DateTime
@@ -109,6 +108,7 @@ model Report {
 model TodoList {
   id        String   @id @default(cuid())
   content   String
-  isChecked Boolean? 
-  taskId    String
+  isChecked String[] 
+  userId    String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
