@@ -22,7 +22,7 @@ export const getTaskById = async (id: TaskId) => {
   const { id: taskId } = taskIdSchema.parse({ id });
   const t = await db.task.findFirst({
     where: { id: taskId },
-    include: { user: true, taskUpdates: true },
+    include: { user: true },
   });
   return { tasks: t };
 };

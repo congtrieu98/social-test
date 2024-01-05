@@ -54,16 +54,15 @@ model Session {
 }
 
 model User {
-  id            String     @id @default(cuid())
+  id            String    @id @default(cuid())
   name          String?
-  email         String?    @unique
+  email         String?   @unique
   emailVerified DateTime?
   image         String?
-  role          UserRole   @default(USER)
+  role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
   tasks         Task[]
-  taskUpdates   TodoList[]
 }
 
 model VerificationToken {
@@ -96,14 +95,6 @@ model Media {
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
-model TodoList {
-  id         String  @id @default(cuid())
-  checked    Boolean @default(false)
-  content    String
-  assignedId String
-  user       User    @relation(fields: [assignedId], references: [id], onDelete: Cascade)
-}
-
 model Report {
   id                   String   @id @default(cuid())
   assignedTo           String
@@ -113,4 +104,11 @@ model Report {
   jobCompletedPrecent  Int
   jobUnfinishedPercent Int
   kpi                  String
+}
+
+model TodoList {
+  id        String   @id @default(cuid())
+  content   String
+  isChecked Boolean? 
+  taskId    String
 }

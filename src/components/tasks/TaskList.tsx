@@ -24,7 +24,6 @@ import { formatDateFull, formatDatetime } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import Link from "next/link";
-import { CompleteTaskUpdate, TaskUpdate } from "@/lib/db/schema/taskUpdates";
 import { useSession } from "next-auth/react";
 
 const columns: ColumnsType<CompleteTask> = [
@@ -119,7 +118,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const { data: t } = trpc.tasks.getTasks.useQuery(undefined, {
     initialData: { tasks },
   });
-  const { data: taskUp } = trpc.taskUpdates.getTaskUpdates.useQuery();
 
   const { mutate: deleteTask, isLoading: isDeleting } =
     trpc.tasks.deleteTask.useMutation({
@@ -138,7 +136,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 
   // const expandedRowRender = (record: CompleteTask) => {
   //   // console.log(record);
-  //   const data = taskUp?.taskUpdates?.filter(
+  //   const data = taskUp?.todoList?.filter(
   //     (item: TaskUpdate) => item?.taskId === record?.id
   //   );
   //   const columnsTaskUp: ColumnsType<CompleteTaskUpdate> = [

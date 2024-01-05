@@ -3,24 +3,23 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import {
-  createTaskUpdate,
-  deleteTaskUpdate,
-  updateTaskUpdate,
-} from "@/lib/api/taskUpdates/mutations";
-import {
-  taskUpdateIdSchema,
-  insertTaskUpdateParams,
-  updateTaskUpdateParams
-} from "@/lib/db/schema/taskUpdates";
+  createTodoList,
+  deleteTodoList,
+  updateTodoList,
+} from "@/lib/api/todoLists/mutations";
+import { 
+  todoListIdSchema,
+  insertTodoListParams,
+  updateTodoListParams 
+} from "@/lib/db/schema/todoLists";
 
 export async function POST(req: Request) {
   try {
-    const validatedData = insertTaskUpdateParams.parse(await req.json());
-    // @ts-ignore
-    const { taskUpdate, error } = await createTaskUpdate(validatedData);
+    const validatedData = insertTodoListParams.parse(await req.json());
+    const { todoList, error } = await createTodoList(validatedData);
     if (error) return NextResponse.json({ error }, { status: 500 });
-    revalidatePath("/taskUpdates"); // optional - assumes you will have named route same as entity
-    return NextResponse.json(taskUpdate, { status: 201 });
+    revalidatePath("/todoLists"); // optional - assumes you will have named route same as entity
+    return NextResponse.json(todoList, { status: 201 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
@@ -36,13 +35,13 @@ export async function PUT(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    const validatedData = updateTaskUpdateParams.parse(await req.json());
-    const validatedParams = taskUpdateIdSchema.parse({ id });
+    const validatedData = updateTodoListParams.parse(await req.json());
+    const validatedParams = todoListIdSchema.parse({ id });
 
-    const { taskUpdate, error } = await updateTaskUpdate(validatedParams.id, validatedData);
+    const { todoList, error } = await updateTodoList(validatedParams.id, validatedData);
 
     if (error) return NextResponse.json({ error }, { status: 500 });
-    return NextResponse.json(taskUpdate, { status: 200 });
+    return NextResponse.json(todoList, { status: 200 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });
@@ -57,11 +56,11 @@ export async function DELETE(req: Request) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
 
-    const validatedParams = taskUpdateIdSchema.parse({ id });
-    const { taskUpdate, error } = await deleteTaskUpdate(validatedParams.id);
+    const validatedParams = todoListIdSchema.parse({ id });
+    const { todoList, error } = await deleteTodoList(validatedParams.id);
     if (error) return NextResponse.json({ error }, { status: 500 });
 
-    return NextResponse.json(taskUpdate, { status: 200 });
+    return NextResponse.json(todoList, { status: 200 });
   } catch (err) {
     if (err instanceof z.ZodError) {
       return NextResponse.json({ error: err.issues }, { status: 400 });

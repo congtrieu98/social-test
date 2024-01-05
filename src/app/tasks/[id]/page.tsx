@@ -9,16 +9,15 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   const { data: session } = useSession({
     required: true,
     onUnauthenticated() {
-      signIn("google")
-    }
+      signIn("google");
+    },
   });
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
-  const { mutate: updateTask } =
-    trpc.tasks.updateTask.useMutation();
+  const { mutate: updateTask } = trpc.tasks.updateTask.useMutation();
   useEffect(() => {
-    if (params?.id && session?.user?.role !== 'ADMIN') {
+    if (params?.id && session?.user?.role !== "ADMIN") {
       if (t?.tasks) {
-        // const checktTaskUp = t?.tasks?.taskUpdates?.some(
+        // const checktTaskUp = t?.tasks?.todoList?.some(
         //   (item: TaskUpdate) => item?.taskId === t?.tasks?.id
         // );
         // if (!checktTaskUp) {
