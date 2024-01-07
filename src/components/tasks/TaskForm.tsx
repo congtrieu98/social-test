@@ -11,7 +11,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -41,38 +40,10 @@ import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
 import { CompleteUser } from "@/lib/db/schema/users";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { Checkbox } from "@/components/ui/checkbox";
-import Modal from "../general/modal";
-
-const taskDetail = [
-  {
-    id: "recents",
-    label: "recents",
-  },
-  {
-    id: "home",
-    label: "Home",
-  },
-  {
-    id: "applications",
-    label: "Applications",
-  },
-  {
-    id: "desktop",
-    label: "Desktop",
-  },
-  {
-    id: "downloads",
-    label: "Downloads",
-  },
-  {
-    id: "documents",
-    label: "Documents",
-  },
-] as const;
+import { TiDelete } from "react-icons/ti";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -92,11 +63,13 @@ const TaskForm = ({
   const editing = !!task?.id;
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
-  const [userSelected, setUserSelected] = useState("");
+  const [job, setJob] = useState('');
+  const [jobs, setJobs] = useState<string[]>(task?.description as string[] || []);
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
   const { data: data } = trpc.users.getUsers.useQuery();
+  const inputRef = useRef(null);
 
   const form = useForm<z.infer<typeof insertTaskParams>>({
     // latest Zod release has introduced a TS error with zodResolver
@@ -108,7 +81,8 @@ const TaskForm = ({
       status: "",
       assignedId: "",
       priority: "",
-      // taskDetail: ["recents", "home"],
+      checked: [""] as string[],
+      description: jobs,
       creator: session?.user?.id,
       createAt: new Date(),
       deadlines: new Date(),
@@ -174,26 +148,30 @@ const TaskForm = ({
         });
       },
     });
-  console.log("userSelected:", userSelected);
   const handleSubmit = (values: NewTaskParams) => {
     if (editing) {
+      values.description = jobs
       updateTask({ ...values, id: task.id });
     } else {
-      console.log("taskForm", values);
-      // createTask(values);
-      // toast({
-      //   title: "You submitted the following values:",
-      //   description: (
-      //     <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-      //       <code className="text-white">
-      //         {JSON.stringify(values, null, 2)}
-      //       </code>
-      //     </pre>
-      //   ),
-      // });
+      values.description = jobs
+      createTask(values);
     }
   };
 
+  const handleAddJobDescription = () => {
+    if (job) {
+      // @ts-ignore
+      setJobs((prev) => [...prev, job])
+      // @ts-ignore
+      inputRef.current?.focus()
+      setJob('')
+    }
+  }
+  const handleDeleteJob = (job: any) => {
+    if (jobs.length > 0) {
+      setJobs((prev) => prev.filter((item) => item !== job));
+    }
+  }
   const onDrop = useCallback((acceptedFiles: Array<FileWithPreview>) => {
     if (acceptedFiles?.length) {
       setFiles((previousFiles) => [
@@ -307,7 +285,7 @@ const TaskForm = ({
                   <SelectItem value="new" spellCheck>
                     Mới tạo
                   </SelectItem>
-                  {/* <SelectItem value="readed">Đã xem</SelectItem> */}
+                  {editing && <SelectItem value="readed">Đã xem</SelectItem>}
                   <SelectItem value="inprogress">Đang thực hiện</SelectItem>
                   <SelectItem value="reject">Chưa hoàn thành</SelectItem>
                   <SelectItem value="completed">Đã hoàn thành</SelectItem>
@@ -326,7 +304,7 @@ const TaskForm = ({
                 <FormItem>
                   <FormLabel>Người thực hiện</FormLabel>
                   <Select
-                    onValueChange={setUserSelected}
+                    onValueChange={field.onChange}
                     defaultValue={field.value}
                   >
                     <FormControl>
@@ -470,50 +448,50 @@ const TaskForm = ({
             {
               // @ts-ignore
               task?.medias.length > 0 &&
-                task?.medias.map((item, index) => (
-                  <li key={index} className="relative h-auto rounded-md">
-                    {loading ? (
-                      <svg
-                        className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="none"
-                        viewBox="0 0 24 24"
+              task?.medias.map((item, index) => (
+                <li key={index} className="relative h-auto rounded-md">
+                  {loading ? (
+                    <svg
+                      className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="black"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="black"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                  ) : (
+                    <>
+                      <img
+                        src={item.url}
+                        alt={item.url}
+                        className="h-full w-full object-contain rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => {
+                          deleteImage({ id: item.id });
+                        }}
+                        className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
                       >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="black"
-                          strokeWidth="4"
-                        ></circle>
-                        <path
-                          className="opacity-75"
-                          fill="black"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        ></path>
-                      </svg>
-                    ) : (
-                      <>
-                        <img
-                          src={item.url}
-                          alt={item.url}
-                          className="h-full w-full object-contain rounded-md"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            deleteImage({ id: item.id });
-                          }}
-                          className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
-                        >
-                          <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
-                        </button>
-                        {/* <Alert id={item?.id} task={task} setLoading={setLoading} /> */}
-                      </>
-                    )}
-                  </li>
-                ))
+                        <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                      </button>
+                      {/* <Alert id={item?.id} task={task} setLoading={setLoading} /> */}
+                    </>
+                  )}
+                </li>
+              ))
             }
             {files.map((file: FileWithPreview, index) => (
               <li key={index} className="relative h-auto rounded-md">
@@ -564,70 +542,43 @@ const TaskForm = ({
             ))}
           </ul>
         </section>
-        {/* <FormField
-          control={form.control}
-          name="note"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Note</FormLabel>
-              <FormControl>
-                <Textarea {...field} placeholder="Type your message here." />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
 
-        {/* <FormField
-          control={form.control}
-          name="taskDetail"
-          render={() => (
-            <FormItem>
-              <div className="mb-4">
-                <FormLabel className="text-base">Sidebar</FormLabel>
-                <FormDescription>
-                  Select the items you want to display in the sidebar.
-                </FormDescription>
+        <h1>Description</h1>
+        <ul>
+          {
+            // task?.description ? task?.description.map((job, index) => (
+            //   <div key={index} className="flex space-x-4">
+            //     <li className="max-w-md">- {job}</li>
+            //     <div className="cursor-pointer" onClick={() => handleDeleteJob(job)}>
+            //       <TiDelete />
+            //     </div>
+            //   </div>
+
+            // )) :
+            jobs.map((job, index) => (
+              <div key={index} className="flex space-x-4">
+                <li className="max-w-md">- {job}</li>
+                <div className="cursor-pointer" onClick={() => handleDeleteJob(job)}>
+                  <TiDelete />
+                </div>
               </div>
-              {taskDetail.map((item) => (
-                <FormField
-                  key={item.id}
-                  control={form.control}
-                  name="taskDetail"
-                  render={({ field }) => {
-                    return (
-                      <FormItem
-                        key={item.id}
-                        className="flex flex-row items-start space-x-3 space-y-0"
-                      >
-                        <FormControl>
-                          <Checkbox
-                            checked={field.value?.includes(item.id)}
-                            onCheckedChange={(checked) => {
-                              return checked
-                                ? field.onChange([...field.value, item.id])
-                                : field.onChange(
-                                    field.value?.filter(
-                                      (value) => value !== item.id
-                                    )
-                                  );
-                            }}
-                          />
-                        </FormControl>
-                        <FormLabel className="text-sm font-normal">
-                          {item.label}
-                        </FormLabel>
-                      </FormItem>
-                    );
-                  }}
-                />
-              ))}
-              <FormMessage />
-            </FormItem>
-          )}
-        /> */}
+            ))}
+        </ul>
+        <div className="flex w-full">
+          <input
+            ref={inputRef} type="text"
+            className="border border-solid border-gray-100 w-full outline-none shadow-sm p-2"
+            value={job}
+            onChange={(e) => setJob(e.target.value)}
+          />
+          <div
+            className="bg-gray-200 py-2 px-4 cursor-pointer"
+            onClick={handleAddJobDescription}
+          >
+            Add
+          </div>
 
-        <Modal userSelected={userSelected} />
+        </div>
 
         <Button
           type="submit"
@@ -648,7 +599,9 @@ const TaskForm = ({
           </Button>
         ) : null}
       </form>
+
     </Form>
+
   );
 };
 

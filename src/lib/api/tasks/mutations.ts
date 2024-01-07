@@ -12,6 +12,7 @@ import { resend } from "@/lib/email";
 import { TaskEmail } from "@/components/emails/TaskEmail";
 import { UpdateTask } from "@/components/emails/UpdateTask";
 import { getBaseUrl } from "@/lib/trpc/utils";
+import { z } from "zod";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
@@ -37,6 +38,11 @@ export const createTask = async (task: NewTaskParams) => {
         });
       }
     }
+    const NewTodoList = {
+      taskId: t.id,
+      isChecked: [] as string[]
+    }
+    await db.todoList.create({ data: NewTodoList });
     return { task: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";

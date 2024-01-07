@@ -10,7 +10,7 @@ import {
   DialogTrigger,
 } from "../ui/dialog";
 import TaskForm from "./TaskForm";
-import { CompleteTask, Task } from "@/lib/db/schema/tasks";
+import { CompleteTask } from "@/lib/db/schema/tasks";
 
 export default function TaskModal({
   task,

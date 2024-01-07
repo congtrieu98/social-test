@@ -62,7 +62,6 @@ model User {
   role          UserRole  @default(USER)
   accounts      Account[]
   sessions      Session[]
-  todoList      TodoList[]
   tasks         Task[]
 }
 
@@ -75,7 +74,7 @@ model VerificationToken {
 }
 
 model Task {
-  id          String   @id @default(cuid())
+  id          String     @id @default(cuid())
   title       String
   status      String
   creator     String
@@ -83,8 +82,11 @@ model Task {
   deadlines   DateTime
   priority    String
   assignedId  String
+  description String[]
+  checked     String[]
   medias      Media[]
-  user        User     @relation(fields: [assignedId], references: [id], onDelete: Cascade)
+  todoList    TodoList[]
+  user        User       @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
 
 model Media {
@@ -107,8 +109,7 @@ model Report {
 
 model TodoList {
   id        String   @id @default(cuid())
-  content   String
-  isChecked String[] 
-  userId    String
-  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  isChecked String[]
+  taskId    String
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }

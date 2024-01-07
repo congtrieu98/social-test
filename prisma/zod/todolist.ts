@@ -1,15 +1,14 @@
 import * as z from "zod"
-import { CompleteUser, relatedUserSchema } from "./index"
+import { CompleteTask, relatedTaskSchema } from "./index"
 
 export const todoListSchema = z.object({
   id: z.string(),
-  content: z.string(),
   isChecked: z.string().array(),
-  userId: z.string(),
+  taskId: z.string(),
 })
 
 export interface CompleteTodoList extends z.infer<typeof todoListSchema> {
-  user: CompleteUser
+  task: CompleteTask
 }
 
 /**
@@ -18,5 +17,5 @@ export interface CompleteTodoList extends z.infer<typeof todoListSchema> {
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
 export const relatedTodoListSchema: z.ZodSchema<CompleteTodoList> = z.lazy(() => todoListSchema.extend({
-  user: relatedUserSchema,
+  task: relatedTaskSchema,
 }))

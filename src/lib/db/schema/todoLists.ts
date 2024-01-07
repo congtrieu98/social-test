@@ -11,7 +11,7 @@ export const insertTodoListParams = todoListSchema
   })
   .omit({
     id: true,
-    isChecked: true,
+    taskId: true,
   });
 
 export const updateTodoListSchema = todoListSchema;
