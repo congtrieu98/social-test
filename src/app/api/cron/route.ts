@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 export async function POST() {
   try {
-    const t = await db.task.findMany({ include: { user: true } });
+    const t = await db.task.findMany({ include: { user: true, medias: true } });
     const u = await db.user.findMany();
 
     const listUserNotAdmin = u.filter(

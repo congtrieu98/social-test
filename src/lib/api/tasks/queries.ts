@@ -6,6 +6,11 @@ export const getTasks = async () => {
   const { session } = await getUserAuth();
   if (session?.user.role === "ADMIN") {
     const t = await db.task.findMany({
+      orderBy: [
+        {
+          createAt: "desc",
+        },
+      ],
       include: { user: true, medias: true },
     });
     return { tasks: t };
@@ -22,7 +27,7 @@ export const getTaskById = async (id: TaskId) => {
   const { id: taskId } = taskIdSchema.parse({ id });
   const t = await db.task.findFirst({
     where: { id: taskId },
-    include: { user: true },
+    include: { user: true, medias: true },
   });
   return { tasks: t };
 };

@@ -63,8 +63,10 @@ const TaskForm = ({
   const editing = !!task?.id;
   const [files, setFiles] = useState<File[]>([]);
   const [loading, setLoading] = useState<Boolean>(false);
-  const [job, setJob] = useState('');
-  const [jobs, setJobs] = useState<string[]>(task?.description as string[] || []);
+  const [job, setJob] = useState("");
+  const [jobs, setJobs] = useState<string[]>(
+    (task?.description as string[]) || []
+  );
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -150,10 +152,10 @@ const TaskForm = ({
     });
   const handleSubmit = (values: NewTaskParams) => {
     if (editing) {
-      values.description = jobs
+      values.description = jobs;
       updateTask({ ...values, id: task.id });
     } else {
-      values.description = jobs
+      values.description = jobs;
       createTask(values);
     }
   };
@@ -161,17 +163,17 @@ const TaskForm = ({
   const handleAddJobDescription = () => {
     if (job) {
       // @ts-ignore
-      setJobs((prev) => [...prev, job])
+      setJobs((prev) => [...prev, job]);
       // @ts-ignore
-      inputRef.current?.focus()
-      setJob('')
+      inputRef.current?.focus();
+      setJob("");
     }
-  }
+  };
   const handleDeleteJob = (job: any) => {
     if (jobs.length > 0) {
       setJobs((prev) => prev.filter((item) => item !== job));
     }
-  }
+  };
   const onDrop = useCallback((acceptedFiles: Array<FileWithPreview>) => {
     if (acceptedFiles?.length) {
       setFiles((previousFiles) => [
@@ -334,7 +336,7 @@ const TaskForm = ({
           name="createAt"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Create At</FormLabel>
+              <FormLabel>Start</FormLabel>
               <br />
               <Popover>
                 <PopoverTrigger asChild>
@@ -382,7 +384,7 @@ const TaskForm = ({
           name="deadlines"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Deadlines</FormLabel>
+              <FormLabel>Due</FormLabel>
               <br />
               <Popover>
                 <PopoverTrigger asChild>
@@ -445,9 +447,7 @@ const TaskForm = ({
             Accepted Files
           </h3>
           <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
-            {
-              // @ts-ignore
-              task?.medias.length > 0 &&
+            {(task?.medias.length as number) > 0 &&
               task?.medias.map((item, index) => (
                 <li key={index} className="relative h-auto rounded-md">
                   {loading ? (
@@ -483,16 +483,14 @@ const TaskForm = ({
                         onClick={() => {
                           deleteImage({ id: item.id });
                         }}
-                        className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
+                        className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
                       >
                         <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
                       </button>
-                      {/* <Alert id={item?.id} task={task} setLoading={setLoading} /> */}
                     </>
                   )}
                 </li>
-              ))
-            }
+              ))}
             {files.map((file: FileWithPreview, index) => (
               <li key={index} className="relative h-auto rounded-md">
                 {file.loading ? (
@@ -528,7 +526,7 @@ const TaskForm = ({
                     />
                     <button
                       type="button"
-                      className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-red-500"
+                      className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
                       onClick={() => removeFile(file.path as string)}
                     >
                       <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
@@ -545,28 +543,22 @@ const TaskForm = ({
 
         <h1>Description</h1>
         <ul>
-          {
-            // task?.description ? task?.description.map((job, index) => (
-            //   <div key={index} className="flex space-x-4">
-            //     <li className="max-w-md">- {job}</li>
-            //     <div className="cursor-pointer" onClick={() => handleDeleteJob(job)}>
-            //       <TiDelete />
-            //     </div>
-            //   </div>
-
-            // )) :
-            jobs.map((job, index) => (
-              <div key={index} className="flex space-x-4">
-                <li className="max-w-md">- {job}</li>
-                <div className="cursor-pointer" onClick={() => handleDeleteJob(job)}>
-                  <TiDelete />
-                </div>
+          {jobs.map((job, index) => (
+            <div key={index} className="flex space-x-4">
+              <li className="max-w-md">- {job}</li>
+              <div
+                className="cursor-pointer"
+                onClick={() => handleDeleteJob(job)}
+              >
+                <TiDelete />
               </div>
-            ))}
+            </div>
+          ))}
         </ul>
         <div className="flex w-full">
           <input
-            ref={inputRef} type="text"
+            ref={inputRef}
+            type="text"
             className="border border-solid border-gray-100 w-full outline-none shadow-sm p-2"
             value={job}
             onChange={(e) => setJob(e.target.value)}
@@ -577,7 +569,6 @@ const TaskForm = ({
           >
             Add
           </div>
-
         </div>
 
         <Button
@@ -599,9 +590,7 @@ const TaskForm = ({
           </Button>
         ) : null}
       </form>
-
     </Form>
-
   );
 };
 

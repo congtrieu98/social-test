@@ -9,8 +9,14 @@ import {
   insertTaskParams,
   updateTaskParams,
   taskAssignedIdSchema,
+  updateTaskParamsOnlyChecked,
 } from "@/lib/db/schema/tasks";
-import { createTask, deleteTask, updateTask } from "@/lib/api/tasks/mutations";
+import {
+  createTask,
+  deleteTask,
+  updateTask,
+  updateTaskOnlyChecked,
+} from "@/lib/api/tasks/mutations";
 
 export const tasksRouter = router({
   getTasks: publicProcedure.query(async () => {
@@ -33,6 +39,11 @@ export const tasksRouter = router({
     .input(updateTaskParams)
     .mutation(async ({ input }) => {
       return updateTask(input.id, input);
+    }),
+  updateTaskOnlyChecked: publicProcedure
+    .input(updateTaskParamsOnlyChecked)
+    .mutation(async ({ input }) => {
+      return updateTaskOnlyChecked(input.id, input);
     }),
   deleteTask: publicProcedure
     .input(taskIdSchema)

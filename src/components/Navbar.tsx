@@ -15,17 +15,24 @@ import SignOutButton from "./auth/SignOutButton";
 
 export default async function Navbar() {
   const { session } = await getUserAuth();
-  const nameExists =
-    !!session?.user.name &&
-    session?.user.name.length > 5;
-
+  const nameExists = !!session?.user.name && session?.user.name.length > 5;
 
   if (session?.user) {
     return (
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
-        <h1 className="font-semibold hover:opacity-75 transition-hover cursor-pointer space-x-3">
-          <Link href="/">Logo</Link>
-          <Link href="https://github.com/congtrieu98/task">Github</Link>
+        <h1 className="font-semibold transition-hover cursor-pointer space-x-3">
+          <Link href="/" className="hover:opacity-75">
+            Logo
+          </Link>
+          <Link href="/tasks" className="hover:opacity-75">
+            Tasks
+          </Link>
+          <Link
+            href="https://github.com/congtrieu98/task"
+            className="hover:opacity-75"
+          >
+            Github
+          </Link>
         </h1>
         <div className="space-x-2 flex items-center">
           {session ? (
@@ -34,10 +41,12 @@ export default async function Navbar() {
                 <Avatar>
                   <AvatarFallback>
                     {nameExists
-                      ? session.user.name
-                        ?.split(" ")
-                        .map((word) => word[0].toUpperCase())
-                        .join("")
+                      ? session.user.role === "ADMIN"
+                        ? "AD"
+                        : session.user.name
+                            ?.split(" ")
+                            .map((word) => word[0].toUpperCase())
+                            .join("")
                       : "~"}
                   </AvatarFallback>
                 </Avatar>
@@ -60,7 +69,6 @@ export default async function Navbar() {
           ) : (
             <Link href="/sign-in">Sign in</Link>
           )}
-
         </div>
       </nav>
     );

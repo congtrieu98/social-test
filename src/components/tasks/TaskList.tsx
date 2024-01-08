@@ -88,12 +88,13 @@ const columns: ColumnsType<CompleteTask> = [
     width: "10%",
   },
   {
-    title: "Note",
-    dataIndex: "note",
+    title: "Thời gian bắt đầu",
+    dataIndex: "createAt",
+    render: (value) => moment(value, formatDateFull).format(formatDatetime),
   },
   {
-    title: "Ngày tạo",
-    dataIndex: "createAt",
+    title: "Thời gian kết thúc",
+    dataIndex: "deadlines",
     render: (value) => moment(value, formatDateFull).format(formatDatetime),
   },
   {
