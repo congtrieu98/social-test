@@ -24,29 +24,11 @@ import { useRouter } from "next/navigation";
 import { useDropzone } from "react-dropzone";
 import { uploadVercel } from "@/lib/utils";
 import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import { BellIcon, CheckIcon } from "@radix-ui/react-icons";
 
-import { cn } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateFull, formatDatetime } from "@/utils/constant";
 import moment from "moment";
 
-const notifications = [
-  {
-    title: "Your call has been confirmed.",
-    description: "1 hour ago",
-  },
-  {
-    title: "You have a new message!",
-    description: "1 hour ago",
-  },
-  {
-    title: "Your subscription is expiring soon!",
-    description: "2 hours ago",
-  },
-];
-
-type CardProps = React.ComponentProps<typeof Card>;
 interface FileWithPreview extends File {
   preview?: string;
   loading?: boolean;
@@ -274,18 +256,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     console.log(checked);
                                     return checked
                                       ? field.onChange(
-                                          field.value?.length > 0
-                                            ? [...field.value, item.id]
-                                            : [...arrayJob, item.id]
-                                        )
+                                        field.value?.length > 0
+                                          ? [...field.value, item.id]
+                                          : [...arrayJob, item.id]
+                                      )
                                       : field.onChange(
-                                          (field.value?.length > 0
-                                            ? field.value
-                                            : arrayJob
-                                          )?.filter(
-                                            (value) => value !== item.id
-                                          )
-                                        );
+                                        (field.value?.length > 0
+                                          ? field.value
+                                          : arrayJob
+                                        )?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
                                   }}
                                 />
                               </FormControl>

@@ -24,6 +24,7 @@ import {
   InputNumber,
   Layout,
   Popconfirm,
+  Select,
   Table,
   Typography,
 } from "antd";
@@ -107,8 +108,8 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     children,
     ...restProps
   }) => {
-    const inputNode = inputType === "number" ? <InputNumber /> : <Input />;
-
+    const inputNode = inputType === "number" ? <InputNumber /> : <Select />;
+    console.log(dataIndex)
     return (
       <td {...restProps}>
         {editing ? (
@@ -140,10 +141,10 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     },
     {
       title: "Người thực hiện",
-      dataIndex: "user",
-      render: (val) => val.name,
+      dataIndex: ["user", "name"],
+      // render: (val) => val.name,
       //@ts-ignore
-      editable: true,
+      // editable: true,
     },
     {
       title: "Mức độ ưu tiên",
@@ -208,7 +209,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       render: (value) => moment(value, formatDateFull).format(formatDatetime),
     },
     {
-      title: "operation",
+      title: "Edit nhanh",
       dataIndex: "operation",
       render: (_: any, record: CompleteTask) => {
         const editable = isEditing(record);
@@ -229,7 +230,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             disabled={editingKey !== ""}
             onClick={() => edit(record)}
           >
-            Edit
+            fastEdit
           </Typography.Link>
         );
       },
