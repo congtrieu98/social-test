@@ -169,6 +169,23 @@ const TaskForm = ({
       setJob("");
     }
   };
+
+  const handleEnterKeyPress = (event: {
+    preventDefault: any; key: string;
+  }) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      if (job) {
+        // @ts-ignore
+        setJobs((prev) => [...prev, job]);
+        // @ts-ignore
+        inputRef.current?.focus();
+        setJob("");
+      }
+
+    }
+  };
+
   const handleDeleteJob = (job: any) => {
     if (jobs.length > 0) {
       setJobs((prev) => prev.filter((item) => item !== job));
@@ -571,6 +588,7 @@ const TaskForm = ({
                 className="border border-solid border-gray-100 w-full outline-none shadow-sm p-2"
                 value={job}
                 onChange={(e) => setJob(e.target.value)}
+                onKeyDown={handleEnterKeyPress}
               />
               <div
                 className="bg-gray-200 py-2 px-4 cursor-pointer"

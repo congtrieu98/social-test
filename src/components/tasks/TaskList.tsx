@@ -85,7 +85,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       title: "Mức độ ưu tiên",
       dataIndex: "priority",
       render: (val) => {
-        console.log(val)
         if (val === 'hight') {
           return <Tag className="bg-red-600 p-1 text-white">{val}</Tag>
         } else if (val === 'medium') {
