@@ -64,7 +64,7 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
     const userAssignded = await db.user.findFirst({
       where: { id: t?.assignedId },
     });
-    if (user) {
+    if (user?.role !== 'ADMIN') {
       // @ts-ignore
       const { name, email } = user;
       await resend.emails.send({

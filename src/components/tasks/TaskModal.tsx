@@ -22,7 +22,6 @@ export default function TaskModal({
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
   const editing = !!task?.id;
-
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
