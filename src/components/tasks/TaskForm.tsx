@@ -113,8 +113,8 @@ const TaskForm = ({
               mutation.mutate({ taskId: taskId, url: file.preview });
             }
           });
-          onSuccess("create");
         }
+        onSuccess("create");
       },
     });
 
@@ -128,8 +128,8 @@ const TaskForm = ({
               mutation.mutate({ taskId: taskId, url: file.preview });
             }
           });
-          onSuccess("update");
         }
+        onSuccess("update");
       },
     });
 
