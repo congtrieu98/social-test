@@ -63,6 +63,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   tasks         Task[]
+  histories     History[]
 }
 
 model VerificationToken {
@@ -86,6 +87,7 @@ model Task {
   checked     String[]
   medias      Media[]
   todoList    TodoList[]
+  history     History[]
   user        User       @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
 
@@ -112,4 +114,14 @@ model TodoList {
   isChecked String[]
   taskId    String
   task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model History {
+  id       String   @id @default(cuid())
+  content  String
+  taskId   String
+  createAt DateTime
+  userId   String
+  task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

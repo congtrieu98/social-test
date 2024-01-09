@@ -28,6 +28,7 @@ import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateFull, formatDatetime } from "@/utils/constant";
 import moment from "moment";
+import { Tag } from "antd";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -199,6 +200,36 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               <CardContent className="grid gap-4">
                 <div>
                   <div className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                    <div className="space-y-2 mb-4">
+                      <p className="text-base font-medium leading-none">
+                        Người thực hiện: <span className="font-semibold">{t?.tasks?.user?.name}</span>
+                      </p>
+                    </div>
+                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                    <div className="space-y-2 mb-4">
+                      <p className="text-base font-medium leading-none">
+                        Trạng thái: {" "}
+                        <span className="">{
+                          t?.tasks?.status === 'new' ? 'Mới tạo' :
+                            t?.tasks?.status === 'readed' ? 'Đã xem' :
+                              t?.tasks?.status === 'inprogress' ? 'Đang thực hiện' :
+                                t?.tasks?.status === 'reject' ? 'Chưa hoàn thành' :
+                                  'Đã hoàn thành'}
+                        </span>
+                      </p>
+                    </div>
+                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                    <div className="space-y-2 mb-4">
+                      <p className="text-base font-medium leading-none">
+                        Mức độ ưu tiên: {" "}
+                        <span className="">{
+                          t?.tasks?.priority === 'hight' ? <Tag className="bg-red-600 p-1 text-white">Cao</Tag> :
+                            t?.tasks?.priority === 'medium' ? <Tag className="bg-yellow-500 p-1">Bình thường</Tag> :
+                              <Tag className="bg-gray-300 p-1">Thấp</Tag>}
+                        </span>
+                      </p>
+                    </div>
                     <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
                     <div className="space-y-2 mb-4">
                       <p className="text-base font-medium leading-none">
