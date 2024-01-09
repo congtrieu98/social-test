@@ -18,6 +18,11 @@ export const getTasks = async () => {
     const t = await db.task.findMany({
       where: { assignedId: session?.user?.id },
       include: { user: true, medias: true },
+      orderBy: [
+        {
+          createAt: "desc",
+        },
+      ],
     });
     return { tasks: t };
   }
