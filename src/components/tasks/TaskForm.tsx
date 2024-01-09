@@ -103,6 +103,7 @@ const TaskForm = ({
   };
 
   const mutation = trpc.medias.createMedia.useMutation();
+  const mutationHistories = trpc.histories.createHistory.useMutation();
   const { mutate: createTask, isLoading: isCreating } =
     trpc.tasks.createTask.useMutation({
       onSuccess: async ({ task }) => {
@@ -113,6 +114,14 @@ const TaskForm = ({
               mutation.mutate({ taskId: taskId, url: file.preview });
             }
           });
+        }
+        if (task) {
+          mutationHistories.mutate({
+            taskId: task?.id as string,
+            createAt: new Date(),
+            content: 'đã tạo một task mới',
+            userId: session?.user?.id as string
+          })
         }
         onSuccess("create");
       },

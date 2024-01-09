@@ -38,11 +38,11 @@ export const createTask = async (task: NewTaskParams) => {
         });
       }
     }
-    const NewTodoList = {
-      taskId: t.id,
-      isChecked: [] as string[],
-    };
-    await db.todoList.create({ data: NewTodoList });
+    // const NewTodoList = {
+    //   taskId: t.id,
+    //   isChecked: [] as string[],
+    // };
+    // await db.todoList.create({ data: NewTodoList });
     return { task: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";

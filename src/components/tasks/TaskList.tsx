@@ -68,7 +68,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
-
+  console.log("taskList:", t?.tasks)
   const columns: ColumnsType<CompleteTask> = [
     {
       title: "Tên công việc",

@@ -58,6 +58,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   };
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
   const { mutate: updateTask } = trpc.tasks.updateTask.useMutation();
+  const mutationHistories = trpc.histories.createHistory.useMutation();
 
   const mutation = trpc.medias.createMedia.useMutation();
   const { mutate: updateTaskOnlyChecked, isLoading: isUpdateOnlyChecked } =
@@ -70,8 +71,16 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               mutation.mutate({ taskId: taskId, url: file.preview });
             }
           });
-          onSuccess();
         }
+        if (task) {
+          mutationHistories.mutate({
+            taskId: params?.id as string,
+            createAt: new Date(),
+            content: 'đã cập nhật lại công việc thực hiện',
+            userId: session?.user?.id as string
+          })
+        }
+        onSuccess();
       },
     });
 
@@ -79,6 +88,12 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     trpc.medias.deleteMedia.useMutation({
       onSuccess: () => {
         isImageDeleting ? setLoading(true) : setLoading(false);
+        mutationHistories.mutate({
+          taskId: params?.id as string,
+          createAt: new Date(),
+          content: 'đã xóa ảnh',
+          userId: session?.user?.id as string
+        })
         router.refresh();
         toast({
           title: "Success",
@@ -142,7 +157,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   useEffect(() => {
     if (params?.id && session?.user?.role !== "ADMIN") {
       if (t?.tasks) {
-        return updateTask({
+        updateTask({
           id: params?.id,
           status: "readed",
           title: t.tasks.title,
@@ -154,6 +169,13 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
           assignedId: t.tasks.assignedId,
           checked: t.tasks.checked,
         });
+
+        mutationHistories.mutate({
+          taskId: params?.id as string,
+          createAt: new Date(),
+          content: 'đã xem task',
+          userId: session?.user?.id as string
+        })
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -284,7 +306,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     : arrayJob
                                   )?.includes(item.id)}
                                   onCheckedChange={(checked) => {
-                                    console.log(checked);
                                     return checked
                                       ? field.onChange(
                                         field.value?.length > 0
