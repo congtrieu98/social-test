@@ -32,7 +32,7 @@ export const getTaskById = async (id: TaskId) => {
   const { id: taskId } = taskIdSchema.parse({ id });
   const t = await db.task.findFirst({
     where: { id: taskId },
-    include: { user: true, medias: true },
+    include: { user: true, medias: true, history: true },
   });
   return { tasks: t };
 };

@@ -28,7 +28,9 @@ import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { formatDateFull, formatDatetime } from "@/utils/constant";
 import moment from "moment";
-import { Tag } from "antd";
+import { Table, Tag } from "antd";
+import { CompleteHistory } from "@/lib/db/schema/histories";
+import { ColumnsType } from "antd/es/table";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -57,6 +59,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     });
   };
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
+  const { data: u } = trpc.users.getUsers.useQuery();
   const { mutate: updateTask } = trpc.tasks.updateTask.useMutation();
   const mutationHistories = trpc.histories.createHistory.useMutation();
 
@@ -209,252 +212,313 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       checked: values?.checked,
     });
   };
+
+  const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
+  const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
+    setSelectedRowKeys(newSelectedRowKeys);
+  };
+  const rowSelection = {
+    selectedRowKeys,
+    onChange: onSelectChange,
+  };
+  console.log(t?.tasks?.history)
+  const columns: ColumnsType<CompleteHistory> = [
+    {
+      title: "Người truy câp",
+      dataIndex: "userId",
+      render: (val) => {
+        console.log(u?.users)
+        console.log(val)
+        const findUser = u?.users?.find((item) => item?.id === val)
+        if (findUser) {
+          return findUser?.name
+        }
+      }
+    },
+    {
+      title: "Thao tác",
+      width: 150,
+      dataIndex: "content"
+      // render: (record) => {
+      //   // return <Link href={`/tasks/${record.id}`}>{record.title}</Link>;
+      // },
+    },
+    {
+      title: "Truy cập lúc",
+      dataIndex: "createAt",
+      render: (value) => moment(value, formatDateFull).format(formatDatetime),
+    },
+    // {
+    //   title: "Action",
+    //   // dataIndex: 'user',
+    //   render: (record) => <TaskModal task={record} />,
+    // },
+  ];
   return (
     <>
       {session ? (
-        <div className="max-w-xl mx-auto items-center">
-          <div className="text-2xl font-semibold mb-4">Chi tiết công việc</div>
-          <div className="pb-3 border-b mb-8">
-            <Card className="mb-4">
-              <CardHeader>
-                <CardTitle>{t?.tasks?.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="grid gap-4">
-                <div>
-                  <div className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                    <div className="space-y-2 mb-4">
-                      <p className="text-base font-medium leading-none">
-                        Người thực hiện: <span className="font-semibold">{t?.tasks?.user?.name}</span>
-                      </p>
-                    </div>
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                    <div className="space-y-2 mb-4">
-                      <p className="text-base font-medium leading-none">
-                        Trạng thái: {" "}
-                        <span className="">{
-                          t?.tasks?.status === 'new' ? 'Mới tạo' :
-                            t?.tasks?.status === 'readed' ? 'Đã xem' :
-                              t?.tasks?.status === 'inprogress' ? 'Đang thực hiện' :
-                                t?.tasks?.status === 'reject' ? 'Chưa hoàn thành' :
-                                  'Đã hoàn thành'}
-                        </span>
-                      </p>
-                    </div>
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                    <div className="space-y-2 mb-4">
-                      <p className="text-base font-medium leading-none">
-                        Mức độ ưu tiên: {" "}
-                        <span className="">{
-                          t?.tasks?.priority === 'hight' ? <Tag className="bg-red-600 p-1 text-white">Cao</Tag> :
-                            t?.tasks?.priority === 'medium' ? <Tag className="bg-yellow-500 p-1">Bình thường</Tag> :
-                              <Tag className="bg-gray-300 p-1">Thấp</Tag>}
-                        </span>
-                      </p>
-                    </div>
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                    <div className="space-y-2 mb-4">
-                      <p className="text-base font-medium leading-none">
-                        Thời gian bắt đầu
-                      </p>
-                      <p className="text-sm font-medium leading-none">
-                        {moment(t?.tasks?.createAt, formatDateFull).format(
-                          formatDatetime
-                        )}
-                      </p>
-                    </div>
-                    <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
-                    <div className="space-y-2">
-                      <p className="text-base font-medium leading-none">
-                        Thời gian kết thúc
-                      </p>
-                      <p className="text-sm font-medium leading-none">
-                        {moment(t?.tasks?.deadlines, formatDateFull).format(
-                          formatDatetime
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-          <div className="text-xl font-semibold mb-4">Công việc thực hiện</div>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="checked"
-                render={() => (
-                  <FormItem>
-                    {listDescript?.map((item) => (
-                      <FormField
-                        key={item.id}
-                        control={form.control}
-                        name="checked"
-                        render={({ field }) => {
-                          console.log(field.value);
-                          return (
-                            <FormItem
-                              key={item.id}
-                              className="flex flex-row items-start space-x-3 space-y-0"
-                            >
-                              <FormControl>
-                                <Checkbox
-                                  checked={(field.value?.length > 0
-                                    ? field.value
-                                    : arrayJob
-                                  )?.includes(item.id)}
-                                  onCheckedChange={(checked) => {
-                                    return checked
-                                      ? field.onChange(
-                                        field.value?.length > 0
-                                          ? [...field.value, item.id]
-                                          : [...arrayJob, item.id]
-                                      )
-                                      : field.onChange(
-                                        (field.value?.length > 0
-                                          ? field.value
-                                          : arrayJob
-                                        )?.filter(
-                                          (value) => value !== item.id
-                                        )
-                                      );
-                                  }}
-                                />
-                              </FormControl>
-                              <FormLabel className="text-sm font-normal">
-                                {item.content}
-                              </FormLabel>
-                            </FormItem>
-                          );
-                        }}
-                      />
-                    ))}
-                    <FormMessage />
-                  </FormItem>
-                )}
+        <div className="w-full items-center">
+          <div className="grid md:grid-cols-2 grid-cols-1 gap-4">
+            <div className="col-2">
+              <div className="text-2xl font-semibold mb-4">Lịch sử truy cập</div>
+              <Table
+                rowKey="id"
+                // loading={isDeleting}
+                // @ts-ignore
+                rowSelection={session?.user.role === "ADMIN" && rowSelection}
+                columns={columns}
+                // @ts-ignore
+                // expandable={session?.user.role === "ADMIN" && { expandedRowRender }}
+                dataSource={t?.tasks?.history}
+                rowClassName="editable-row"
+                scroll={{ x: 1200 }}
               />
-
-              <div className="text-xl font-semibold">Image</div>
-              <section className="border border-gray-100 p-5 rounded-xl shadow-md max-w-xl">
-                <div
-                  {...getRootProps()}
-                  className="p-2 border border-dashed border-gray-300"
-                >
-                  <input {...getInputProps()} />
-                  <div className="flex flex-col items-center justify-center gap-4">
-                    <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
-                    {isDragActive ? (
-                      <p>Drop the files here ...</p>
-                    ) : (
-                      <p>Drag & drop files here, or click to select files</p>
-                    )}
-                  </div>
-                </div>
-                {/* Accepted files */}
-                <h3 className="title text-lg font-semibold text-neutral-600 mt-4 border-b pb-3">
-                  Accepted Files
-                </h3>
-                <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
-                  {(t?.tasks?.medias?.length as number) > 0 &&
-                    t?.tasks?.medias.map((item, index) => (
-                      <li key={index} className="relative h-auto rounded-md">
-                        {loading ? (
-                          <svg
-                            className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                          >
-                            <circle
-                              className="opacity-25"
-                              cx="12"
-                              cy="12"
-                              r="10"
-                              stroke="black"
-                              strokeWidth="4"
-                            ></circle>
-                            <path
-                              className="opacity-75"
-                              fill="black"
-                              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                            ></path>
-                          </svg>
-                        ) : (
-                          <>
-                            <img
-                              src={item.url}
-                              alt={item.url}
-                              className="h-full w-full object-contain rounded-md"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => {
-                                deleteImage({ id: item.id });
-                              }}
-                              className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
-                            >
-                              <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
-                            </button>
-                          </>
-                        )}
-                      </li>
-                    ))}
-                  {files.map((file: FileWithPreview, index) => (
-                    <li key={index} className="relative h-auto rounded-md">
-                      {file.loading ? (
-                        <svg
-                          className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
-                          xmlns="http://www.w3.org/2000/svg"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                        >
-                          <circle
-                            className="opacity-25"
-                            cx="12"
-                            cy="12"
-                            r="10"
-                            stroke="black"
-                            strokeWidth="4"
-                          ></circle>
-                          <path
-                            className="opacity-75"
-                            fill="black"
-                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                          ></path>
-                        </svg>
-                      ) : (
-                        <>
-                          <img
-                            src={file.preview}
-                            alt={file.name}
-                            onLoad={() => {
-                              URL.revokeObjectURL(file.preview as string);
-                            }}
-                            className="h-full w-full object-contain rounded-md"
-                          />
-                          <button
-                            type="button"
-                            className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
-                            onClick={() => removeFile(file.path as string)}
-                          >
-                            <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
-                          </button>
-                        </>
-                      )}
-                      <div className=" text-neutral-500 text-[12px] font-medium">
-                        {/* {file.path} */}
+            </div>
+            <div className="col-1">
+              <div className="text-2xl font-semibold mb-4">Chi tiết công việc</div>
+              <div className="pb-3 border-b mb-8">
+                <Card className="mb-4">
+                  <CardHeader>
+                    <CardTitle>{t?.tasks?.title}</CardTitle>
+                  </CardHeader>
+                  <CardContent className="grid gap-4">
+                    <div>
+                      <div className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                        <div className="space-y-2 mb-4">
+                          <p className="text-base font-medium leading-none">
+                            Người thực hiện: <span className="font-semibold">{t?.tasks?.user?.name}</span>
+                          </p>
+                        </div>
+                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                        <div className="space-y-2 mb-4">
+                          <p className="text-base font-medium leading-none">
+                            Trạng thái: {" "}
+                            <span className="">{
+                              t?.tasks?.status === 'new' ? 'Mới tạo' :
+                                t?.tasks?.status === 'readed' ? 'Đã xem' :
+                                  t?.tasks?.status === 'inprogress' ? 'Đang thực hiện' :
+                                    t?.tasks?.status === 'reject' ? 'Chưa hoàn thành' :
+                                      'Đã hoàn thành'}
+                            </span>
+                          </p>
+                        </div>
+                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                        <div className="space-y-2 mb-4">
+                          <p className="text-base font-medium leading-none">
+                            Mức độ ưu tiên: {" "}
+                            <span className="">{
+                              t?.tasks?.priority === 'hight' ? <Tag className="bg-red-600 p-1 text-white">Cao</Tag> :
+                                t?.tasks?.priority === 'medium' ? <Tag className="bg-yellow-500 p-1">Bình thường</Tag> :
+                                  <Tag className="bg-gray-300 p-1">Thấp</Tag>}
+                            </span>
+                          </p>
+                        </div>
+                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                        <div className="space-y-2 mb-4">
+                          <p className="text-base font-medium leading-none">
+                            Thời gian bắt đầu
+                          </p>
+                          <p className="text-sm font-medium leading-none">
+                            {moment(t?.tasks?.createAt, formatDateFull).format(
+                              formatDatetime
+                            )}
+                          </p>
+                        </div>
+                        <span className="flex h-2 w-2 translate-y-1 rounded-full bg-sky-500" />
+                        <div className="space-y-2">
+                          <p className="text-base font-medium leading-none">
+                            Thời gian kết thúc
+                          </p>
+                          <p className="text-sm font-medium leading-none">
+                            {moment(t?.tasks?.deadlines, formatDateFull).format(
+                              formatDatetime
+                            )}
+                          </p>
+                        </div>
                       </div>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-              <Button type="submit">
-                Submit{isUpdateOnlyChecked ? "ing..." : ""}
-              </Button>
-            </form>
-          </Form>
+                    </div>
+                  </CardContent>
+                </Card>
+              </div>
+              <div className="text-xl font-semibold mb-4">Công việc thực hiện</div>
+              <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                  <FormField
+                    control={form.control}
+                    name="checked"
+                    render={() => (
+                      <FormItem>
+                        {listDescript?.map((item) => (
+                          <FormField
+                            key={item.id}
+                            control={form.control}
+                            name="checked"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={item.id}
+                                  className="flex flex-row items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={(field.value?.length > 0
+                                        ? field.value
+                                        : arrayJob
+                                      )?.includes(item.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange(
+                                            field.value?.length > 0
+                                              ? [...field.value, item.id]
+                                              : [...arrayJob, item.id]
+                                          )
+                                          : field.onChange(
+                                            (field.value?.length > 0
+                                              ? field.value
+                                              : arrayJob
+                                            )?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          );
+                                      }}
+                                    />
+                                  </FormControl>
+                                  <FormLabel className="text-sm font-normal">
+                                    {item.content}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                        ))}
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="text-xl font-semibold">Image</div>
+                  <section className="border border-gray-100 p-5 rounded-xl shadow-md max-w-xl">
+                    <div
+                      {...getRootProps()}
+                      className="p-2 border border-dashed border-gray-300"
+                    >
+                      <input {...getInputProps()} />
+                      <div className="flex flex-col items-center justify-center gap-4">
+                        <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
+                        {isDragActive ? (
+                          <p>Drop the files here ...</p>
+                        ) : (
+                          <p>Drag & drop files here, or click to select files</p>
+                        )}
+                      </div>
+                    </div>
+                    {/* Accepted files */}
+                    <h3 className="title text-lg font-semibold text-neutral-600 mt-4 border-b pb-3">
+                      Accepted Files
+                    </h3>
+                    <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
+                      {(t?.tasks?.medias?.length as number) > 0 &&
+                        t?.tasks?.medias.map((item, index) => (
+                          <li key={index} className="relative h-auto rounded-md">
+                            {loading ? (
+                              <svg
+                                className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                              >
+                                <circle
+                                  className="opacity-25"
+                                  cx="12"
+                                  cy="12"
+                                  r="10"
+                                  stroke="black"
+                                  strokeWidth="4"
+                                ></circle>
+                                <path
+                                  className="opacity-75"
+                                  fill="black"
+                                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                ></path>
+                              </svg>
+                            ) : (
+                              <>
+                                <img
+                                  src={item.url}
+                                  alt={item.url}
+                                  className="h-full w-full object-contain rounded-md"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    deleteImage({ id: item.id });
+                                  }}
+                                  className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
+                                >
+                                  <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                                </button>
+                              </>
+                            )}
+                          </li>
+                        ))}
+                      {files.map((file: FileWithPreview, index) => (
+                        <li key={index} className="relative h-auto rounded-md">
+                          {file.loading ? (
+                            <svg
+                              className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                              xmlns="http://www.w3.org/2000/svg"
+                              fill="none"
+                              viewBox="0 0 24 24"
+                            >
+                              <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="black"
+                                strokeWidth="4"
+                              ></circle>
+                              <path
+                                className="opacity-75"
+                                fill="black"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                              ></path>
+                            </svg>
+                          ) : (
+                            <>
+                              <img
+                                src={file.preview}
+                                alt={file.name}
+                                onLoad={() => {
+                                  URL.revokeObjectURL(file.preview as string);
+                                }}
+                                className="h-full w-full object-contain rounded-md"
+                              />
+                              <button
+                                type="button"
+                                className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
+                                onClick={() => removeFile(file.path as string)}
+                              >
+                                <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                              </button>
+                            </>
+                          )}
+                          <div className=" text-neutral-500 text-[12px] font-medium">
+                            {/* {file.path} */}
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </section>
+                  <Button type="submit">
+                    Submit{isUpdateOnlyChecked ? "ing..." : ""}
+                  </Button>
+                </form>
+              </Form>
+            </div>
+          </div>
+
         </div>
       ) : null}
     </>
