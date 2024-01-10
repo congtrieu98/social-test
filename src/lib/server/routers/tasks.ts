@@ -10,11 +10,15 @@ import {
   updateTaskParams,
   taskAssignedIdSchema,
   updateTaskParamsOnlyChecked,
+  updateTaskParamsStatus,
+  updateTaskParamsPriority,
 } from "@/lib/db/schema/tasks";
 import {
   createTask,
   deleteTask,
   updateTask,
+  updateTaskByPriority,
+  updateTaskByStatus,
   updateTaskOnlyChecked,
 } from "@/lib/api/tasks/mutations";
 
@@ -39,6 +43,16 @@ export const tasksRouter = router({
     .input(updateTaskParams)
     .mutation(async ({ input }) => {
       return updateTask(input.id, input);
+    }),
+  updateTaskByStatus: publicProcedure
+    .input(updateTaskParamsStatus)
+    .mutation(async ({ input }) => {
+      return updateTaskByStatus(input.id, input);
+    }),
+  updateTaskByPriority: publicProcedure
+    .input(updateTaskParamsPriority)
+    .mutation(async ({ input }) => {
+      return updateTaskByPriority(input.id, input);
     }),
   updateTaskOnlyChecked: publicProcedure
     .input(updateTaskParamsOnlyChecked)

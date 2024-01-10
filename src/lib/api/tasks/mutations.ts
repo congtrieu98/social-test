@@ -7,6 +7,8 @@ import {
   insertTaskSchema,
   taskIdSchema,
   UpdateTaskParamsOnlyChecked,
+  UpdateTaskByStatus,
+  UpdateTaskByPriority,
 } from "@/lib/db/schema/tasks";
 import { getUserAuth } from "@/lib/auth/utils";
 import { resend } from "@/lib/email";
@@ -64,7 +66,7 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
     const userAssignded = await db.user.findFirst({
       where: { id: t?.assignedId },
     });
-    if (user?.role !== 'ADMIN') {
+    if (user?.role !== "ADMIN") {
       // @ts-ignore
       const { name, email } = user;
       await resend.emails.send({
@@ -91,6 +93,32 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
 export const updateTaskOnlyChecked = async (
   id: TaskId,
   task: UpdateTaskParamsOnlyChecked
+) => {
+  const { id: taskId } = taskIdSchema.parse({ id });
+  // const newTask = updateTaskSchema.parse({ ...task });
+  const t = await db.task.update({
+    where: { id: taskId },
+    data: task,
+  });
+  return { task: t };
+};
+
+export const updateTaskByStatus = async (
+  id: TaskId,
+  task: UpdateTaskByStatus
+) => {
+  const { id: taskId } = taskIdSchema.parse({ id });
+  // const newTask = updateTaskSchema.parse({ ...task });
+  const t = await db.task.update({
+    where: { id: taskId },
+    data: task,
+  });
+  return { task: t };
+};
+
+export const updateTaskByPriority = async (
+  id: TaskId,
+  task: UpdateTaskByPriority
 ) => {
   const { id: taskId } = taskIdSchema.parse({ id });
   // const newTask = updateTaskSchema.parse({ ...task });

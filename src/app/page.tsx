@@ -22,8 +22,7 @@ const { Header, Sider, Content } = Layout;
 export default function Home() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [collapsed, setCollapsed] = useState(false);
-  const { data: r } = trpc.reports.getReports.useQuery();
+  // const { data: r } = trpc.reports.getReports.useQuery();
 
   const columns: ColumnsType<Report> = [
     {
@@ -82,61 +81,11 @@ export default function Home() {
   ];
 
   return (
-    <Layout className="layout">
-      <Sider trigger={null} collapsible collapsed={collapsed}>
-        <div className="logo" />
-        <Menu
-          theme="dark"
-          mode="inline"
-          defaultSelectedKeys={["/"]}
-          onClick={(e) => router.push(e.key)}
-          items={[
-            {
-              key: "/",
-              icon: <UserOutlined />,
-              label: "dashboard",
-            },
-            session && {
-              key: "tasks",
-              icon: <VideoCameraOutlined />,
-              label: "Danh sách công việc",
-            },
-          ]}
-        />
-        <SignIn />
-      </Sider>
-      <Layout className="site-layout">
-        <Header
-          className="site-layout-background"
-          style={{
-            padding: 0,
-          }}
-        >
-          {React.createElement(
-            collapsed ? MenuUnfoldOutlined : MenuFoldOutlined,
-            {
-              className: "trigger",
-              onClick: () => setCollapsed(!collapsed),
-            }
-          )}
-        </Header>
-        <Content
-          className="site-layout-background"
-          style={{
-            margin: "24px 16px",
-            padding: 24,
-          }}
-        >
-          <div className="text-2xl font-semibold mb-5">Report</div>
-          <Table
-            columns={columns}
-            dataSource={r?.reports}
-            bordered
-            size="middle"
-            scroll={{ x: "calc(700px + 50%)", y: 240 }}
-          />
-        </Content>
-      </Layout>
-    </Layout>
+    <>
+      <div className="text-base">
+        Welcome to <span className="font-semibold">{session?.user?.name}</span>{" "}
+        come back!
+      </div>
+    </>
   );
 }

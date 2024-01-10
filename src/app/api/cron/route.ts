@@ -18,7 +18,7 @@ export async function POST() {
       let listTaskByUser: CompleteTask[] = [];
       t.map((task) => {
         if (user.id === task.user.id) {
-          listTaskByUser.push(task);
+          listTaskByUser.push(task as CompleteTask);
         }
       });
       const taskCompleted = listTaskByUser.filter(
