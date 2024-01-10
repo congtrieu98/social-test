@@ -50,7 +50,7 @@ export default function TaskModal({
             size={editing ? "sm" : "icon"}
             className="w-auto py-2 px-4"
           >
-            {editing ? "Edit" : "Thêm công việc"}
+            {editing ? "Edit" : "New Task"}
           </Button>
         )}
       </DialogTrigger>
