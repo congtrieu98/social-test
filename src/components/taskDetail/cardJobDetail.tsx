@@ -1,6 +1,5 @@
 'use client'
 
-import { CompleteTask } from "@/lib/db/schema/tasks";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
 import moment from "moment";
@@ -8,10 +7,18 @@ import { formatDateFull, formatDatetime } from "@/utils/constant";
 import { trpc } from "@/lib/trpc/client";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
+import { AlarmClockOff, AudioLines, Loader, Timer, Users } from "lucide-react";
+import { Badge } from "../ui/badge";
+import { useSession } from "next-auth/react";
 
 const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
-    console.log("taskId:", taskId)
+    // console.log(t)
+    const { data: session } = useSession()
     const router = useRouter()
+
+    const { mutate: createHistories } = trpc.histories.createHistory.useMutation()
+    const { mutate: updateHistories } = trpc.histories.updateHistory.useMutation()
+
     const { mutate: updateTaskByStatus, isLoading: updateStatus } =
         trpc.tasks.updateTaskByStatus.useMutation({
             onSuccess: () => {
@@ -41,6 +48,25 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
             id: taskId,
             status: val,
         });
+        if (t?.tasks?.status !== val) {
+            updateHistories({
+                id: 'abc',
+                taskId: taskId,
+                action: val,
+                createAt: new Date(),
+                content: `đã thay đổi status thành ${val}`,
+                userId: session?.user?.id as string,
+            });
+        } else {
+            createHistories({
+                taskId: taskId,
+                createAt: new Date(),
+                action: val,
+                content: `đã thay đổi status thành ${val}`,
+                userId: session?.user?.id as string,
+            });
+        }
+
     };
 
     const handlerChangePriority = (val: string) => {
@@ -66,23 +92,7 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
                         <div>
                             <div className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
                                 <span className="flex mr-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        className="lucide lucide-users"
-                                    >
-                                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                                        <circle cx="9" cy="7" r="4" />
-                                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                                    </svg>
+                                    <Users />
                                 </span>
                                 <div className="space-y-2 mb-4">
                                     <p className="text-base font-medium">
@@ -93,31 +103,24 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
                                     </p>
                                 </div>
                                 <span className="flex mr-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        className="lucide lucide-loader"
-                                    >
-                                        <line x1="12" x2="12" y1="2" y2="6" />
-                                        <line x1="12" x2="12" y1="18" y2="22" />
-                                        <line x1="4.93" x2="7.76" y1="4.93" y2="7.76" />
-                                        <line x1="16.24" x2="19.07" y1="16.24" y2="19.07" />
-                                        <line x1="2" x2="6" y1="12" y2="12" />
-                                        <line x1="18" x2="22" y1="12" y2="12" />
-                                        <line x1="4.93" x2="7.76" y1="19.07" y2="16.24" />
-                                        <line x1="16.24" x2="19.07" y1="7.76" y2="4.93" />
-                                    </svg>
+                                    <Loader />
                                 </span>
                                 <div className="space-y-2 mb-4">
                                     <p className="text-base font-medium">
-                                        Trạng thái:{" "}
+                                        <div className="mb-2">Trạng thái: <Badge
+                                            variant='default'
+                                            className={
+                                                t?.tasks?.status === 'new' ?
+                                                    'bg-gray-300' :
+                                                    t?.tasks?.status === 'readed' ?
+                                                        'bg-blue-300' :
+                                                        t?.tasks?.status === 'inprogress' ?
+                                                            'bg-yellow-300' :
+                                                            t?.tasks?.status === 'reject' ?
+                                                                'bg-red-400' :
+                                                                'bg-green-500'
+                                            }
+                                        >{t?.tasks?.status}</Badge></div>
                                         <Select
                                             onValueChange={(val) => handlerChangeStatus(val)}
                                         >
@@ -146,15 +149,18 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
                                                                 ></path>
                                                             </svg>
                                                         ) :
-                                                            t?.tasks?.status === "readed" ? (
-                                                                "Đã xem"
-                                                            ) : t?.tasks?.status === "inprogress" ? (
-                                                                "Đang thực hiện"
-                                                            ) : t?.tasks?.status === "reject" ? (
-                                                                "CHưa hoàn thành"
-                                                            ) : (
-                                                                "Đã hoàn thành"
-                                                            )
+                                                            t?.tasks?.status === "new" ? (
+                                                                "Mới tạo"
+                                                            ) :
+                                                                t?.tasks?.status === "readed" ? (
+                                                                    "Đã xem"
+                                                                ) : t?.tasks?.status === "inprogress" ? (
+                                                                    "Đang thực hiện"
+                                                                ) : t?.tasks?.status === "reject" ? (
+                                                                    "Chưa hoàn thành"
+                                                                ) : (
+                                                                    "Đã hoàn thành"
+                                                                )
                                                     }
                                                 />
                                             </SelectTrigger>
@@ -176,29 +182,20 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
                                     </p>
                                 </div>
                                 <span className="flex mr-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        className="lucide lucide-audio-lines"
-                                    >
-                                        <path d="M2 10v3" />
-                                        <path d="M6 6v11" />
-                                        <path d="M10 3v18" />
-                                        <path d="M14 8v7" />
-                                        <path d="M18 5v13" />
-                                        <path d="M22 10v3" />
-                                    </svg>
+                                    <AudioLines />
                                 </span>
                                 <div className="space-y-2 mb-4">
                                     <p className="text-base font-medium">
-                                        Mức độ ưu tiên:{" "}
+                                        <div className="mb-2">Mức độ ưu tiên:
+                                            <Badge variant={
+                                                t?.tasks?.priority === 'hight' ?
+                                                    'destructive' :
+                                                    t?.tasks?.priority === 'medium' ?
+                                                        'secondary' :
+                                                        'outline'
+                                            }
+                                                className="ml-2">{t?.tasks?.priority}</Badge>
+                                        </div>
                                         <Select
                                             onValueChange={(val) => handlerChangePriority(val)}
                                         >
@@ -226,22 +223,7 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
                                     </p>
                                 </div>
                                 <span className="flex mr-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        className="lucide lucide-timer"
-                                    >
-                                        <line x1="10" x2="14" y1="2" y2="2" />
-                                        <line x1="12" x2="15" y1="14" y2="11" />
-                                        <circle cx="12" cy="14" r="8" />
-                                    </svg>
+                                    <Timer />
                                 </span>
                                 <div className="space-y-2 mb-4">
                                     <p className="text-base font-medium ">
@@ -254,24 +236,7 @@ const CardJobDetail = ({ t, taskId }: { t: any, taskId: string }) => {
                                     </p>
                                 </div>
                                 <span className="flex mr-2">
-                                    <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        width="24"
-                                        height="24"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        className="lucide lucide-timer-off"
-                                    >
-                                        <path d="M10 2h4" />
-                                        <path d="M4.6 11a8 8 0 0 0 1.7 8.7 8 8 0 0 0 8.7 1.7" />
-                                        <path d="M7.4 7.4a8 8 0 0 1 10.3 1 8 8 0 0 1 .9 10.2" />
-                                        <path d="m2 2 20 20" />
-                                        <path d="M12 12v-2" />
-                                    </svg>
+                                    <AlarmClockOff />
                                 </span>
                                 <div className="space-y-2">
                                     <p className="text-base font-medium ">

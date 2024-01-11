@@ -29,6 +29,7 @@ import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
+import { Badge } from "../ui/badge";
 
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
@@ -68,7 +69,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
-  console.log("taskList:", t?.tasks)
+  // console.log("taskList:", t?.tasks)
   const columns: ColumnsType<CompleteTask> = [
     {
       title: "Tên công việc",
@@ -86,11 +87,11 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       dataIndex: "priority",
       render: (val) => {
         if (val === 'hight') {
-          return <Tag className="bg-red-600 p-1 text-white">{val}</Tag>
+          return <Badge variant="destructive">{val}</Badge>
         } else if (val === 'medium') {
-          return <Tag className="bg-yellow-500 p-1">{val}</Tag>
+          return <Badge variant="secondary">{val}</Badge>
         } else {
-          return <Tag className="bg-gray-300 p-1">{val}</Tag>
+          return <Badge variant="outline">{val}</Badge>
         }
       }
     },

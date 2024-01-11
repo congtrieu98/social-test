@@ -1,9 +1,10 @@
 import * as z from "zod"
-import { CompleteTask, relatedTaskSchema, CompleteUser, relatedUserSchema } from "./index"
+import { CompleteTask, relatedTaskSchema } from "./index"
 
 export const historySchema = z.object({
   id: z.string(),
   content: z.string(),
+  action: z.string(),
   taskId: z.string(),
   createAt: z.date(),
   userId: z.string(),
@@ -11,7 +12,6 @@ export const historySchema = z.object({
 
 export interface CompleteHistory extends z.infer<typeof historySchema> {
   task: CompleteTask
-  user: CompleteUser
 }
 
 /**
@@ -21,5 +21,4 @@ export interface CompleteHistory extends z.infer<typeof historySchema> {
  */
 export const relatedHistorySchema: z.ZodSchema<CompleteHistory> = z.lazy(() => historySchema.extend({
   task: relatedTaskSchema,
-  user: relatedUserSchema,
 }))

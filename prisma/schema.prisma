@@ -63,7 +63,6 @@ model User {
   accounts      Account[]
   sessions      Session[]
   tasks         Task[]
-  histories     History[]
 }
 
 model VerificationToken {
@@ -119,9 +118,9 @@ model TodoList {
 model History {
   id       String   @id @default(cuid())
   content  String
+  action   String
   taskId   String
   createAt DateTime
   userId   String
   task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

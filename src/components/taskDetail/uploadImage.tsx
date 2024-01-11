@@ -2,15 +2,13 @@
 'use client'
 
 import { uploadVercel } from "@/lib/utils";
-import { ArrowUpTrayIcon, XMarkIcon } from "@heroicons/react/24/solid";
 import { Dispatch, Key, SetStateAction, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
 import { trpc } from "@/lib/trpc/client";
 import { useSession } from "next-auth/react";
-
-
+import { Upload, XCircle } from "lucide-react";
 interface FileWithPreview extends File {
     preview?: string;
     loading?: boolean;
@@ -29,6 +27,7 @@ const UploadImage = ({ t, taskId, files, setFiles }: { t: any, taskId: string, f
                     taskId: taskId as string,
                     createAt: new Date(),
                     content: "đã xóa ảnh",
+                    action: 'deleteImage',
                     userId: session?.user?.id as string,
                 });
                 router.refresh();
@@ -101,7 +100,7 @@ const UploadImage = ({ t, taskId, files, setFiles }: { t: any, taskId: string, f
                 >
                     <input {...getInputProps()} />
                     <div className="flex flex-col items-center justify-center gap-4">
-                        <ArrowUpTrayIcon className="w-5 h-5 fill-current" />
+                        <Upload />
                         {isDragActive ? (
                             <p>Drop the files here ...</p>
                         ) : (
@@ -114,8 +113,8 @@ const UploadImage = ({ t, taskId, files, setFiles }: { t: any, taskId: string, f
                     Accepted Files
                 </h3>
                 <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
-                    {(t?.tasks?.medias?.length as number) > 0 &&
-                        t?.tasks?.medias.map((item: { url: string | undefined; id: any; }, index: Key | null | undefined) => (
+                    {(t?.medias?.length as number) > 0 &&
+                        t?.medias.map((item: { url: string | undefined; id: any; }, index: Key | null | undefined) => (
                             <li key={index} className="relative h-auto rounded-md">
                                 {isImageDeleting ? (
                                     <svg
@@ -152,7 +151,7 @@ const UploadImage = ({ t, taskId, files, setFiles }: { t: any, taskId: string, f
                                             }}
                                             className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
                                         >
-                                            <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                                            <XCircle color="white" />
                                         </button>
                                     </>
                                 )}
@@ -196,7 +195,7 @@ const UploadImage = ({ t, taskId, files, setFiles }: { t: any, taskId: string, f
                                         className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
                                         onClick={() => removeFile(file.path as string)}
                                     >
-                                        <XMarkIcon className="w-5 h-5 fill-white hover:fill-secondary-400 transition-colors" />
+                                        <XCircle color="white" />
                                     </button>
                                 </>
                             )}

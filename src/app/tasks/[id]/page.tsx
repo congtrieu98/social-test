@@ -52,7 +52,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     });
   };
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
-  const { mutate: updateTask } = trpc.tasks.updateTask.useMutation();
+  const { mutate: updateTaskByStatus } = trpc.tasks.updateTaskByStatus.useMutation();
 
   const mutationHistories = trpc.histories.createHistory.useMutation();
 
@@ -72,22 +72,12 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       },
     });
 
-
-
   useEffect(() => {
     if (params?.id && session?.user?.role !== "ADMIN") {
       if (t?.tasks) {
-        updateTask({
+        updateTaskByStatus({
           id: params?.id,
           status: "readed",
-          title: t.tasks.title,
-          description: t.tasks.description,
-          creator: t.tasks.creator,
-          createAt: t.tasks.createAt,
-          deadlines: t.tasks.deadlines,
-          priority: t.tasks.priority,
-          assignedId: t.tasks.assignedId,
-          checked: t.tasks.checked,
         });
 
         // mutationHistories.mutate({
@@ -247,7 +237,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
 
                 <UploadImage
                   // @ts-ignore
-                  t={t}
+                  t={t?.tasks}
                   taskId={params?.id}
                   files={files}
                   setFiles={setFiles}
