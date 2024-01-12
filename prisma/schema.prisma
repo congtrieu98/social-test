@@ -93,6 +93,7 @@ model Task {
 model Media {
   id     String @id @default(cuid())
   url    String
+  status String?
   taskId String
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }

@@ -2,8 +2,9 @@ import { db } from "@/lib/db/index";
 import { type MediaId, mediaIdSchema } from "@/lib/db/schema/medias";
 
 export const getMedias = async () => {
-  // @ts-ignore
-  const m = await db.media.findMany({ include: { task: true } });
+  const m = await db.media.findMany({
+    include: { task: true },
+  });
   return { medias: m };
 };
 

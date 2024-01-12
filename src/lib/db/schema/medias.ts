@@ -13,11 +13,23 @@ export const insertMediaParams = mediaSchema
     id: true,
   });
 
-export const updateMediaSchema = mediaSchema;
+export const updateMediaSchema = mediaSchema
+  .extend({
+    taskId: z.coerce.string(),
+  })
+  .omit({
+    taskId: true,
+    url: true,
+  });
 
-export const updateMediaParams = updateMediaSchema.extend({
-  taskId: z.coerce.string(),
-});
+export const updateMediaParams = updateMediaSchema
+  .extend({
+    taskId: z.coerce.string(),
+  })
+  .omit({
+    taskId: true,
+    url: true,
+  });
 
 export const mediaIdSchema = updateMediaSchema.pick({ id: true });
 

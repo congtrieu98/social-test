@@ -3,7 +3,7 @@
 
 import { trpc } from "@/lib/trpc/client";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -22,9 +22,11 @@ import {
 import { toast } from "@/components/ui/use-toast";
 import { useRouter } from "next/navigation";
 
-
 import CardJobDetail from "@/components/taskDetail/cardJobDetail";
 import UploadImage from "@/components/taskDetail/uploadImage";
+import moment from "moment";
+import { formatDateFull, formatTimeDate } from "@/utils/constant";
+import Link from "next/link";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -52,9 +54,15 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     });
   };
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
-  const { mutate: updateTaskByStatus } = trpc.tasks.updateTaskByStatus.useMutation();
+  const { data: h } = trpc.histories.getHistories.useQuery();
 
-  const mutationHistories = trpc.histories.createHistory.useMutation();
+  const { mutate: updateTaskByStatus } =
+    trpc.tasks.updateTaskByStatus.useMutation();
+
+  const { mutate: createHistories } =
+    trpc.histories.createHistory.useMutation();
+  const { mutate: updateHistories } =
+    trpc.histories.updateHistory.useMutation();
 
   const mutation = trpc.medias.createMedia.useMutation();
   const { mutate: updateTaskOnlyChecked, isLoading: isUpdateOnlyChecked } =
@@ -72,24 +80,29 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       },
     });
 
-  useEffect(() => {
-    if (params?.id && session?.user?.role !== "ADMIN") {
-      if (t?.tasks) {
+  // useEffect(() => {
+  if (params?.id && session?.user?.role !== "ADMIN") {
+    if (t?.tasks) {
+      const findHisByAction = h?.histories.find(
+        (his) => his.action === "readedTask"
+      );
+      if (!findHisByAction) {
+        createHistories({
+          taskId: params?.id as string,
+          createAt: new Date(),
+          action: "readedTask",
+          content: "đã xem task",
+          userId: session?.user?.name as string,
+        });
         updateTaskByStatus({
           id: params?.id,
           status: "readed",
         });
-
-        // mutationHistories.mutate({
-        //   taskId: params?.id as string,
-        //   createAt: new Date(),
-        //   content: "đã xem task",
-        //   userId: session?.user?.id as string,
-        // });
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params?.id, t]);
+  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [params?.id, t]);
 
   interface desCustom {
     id: string;
@@ -143,21 +156,27 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     }
 
     if (arrayTicked?.length > 0) {
-      mutationHistories.mutate({
+      createHistories({
         taskId: params?.id as string,
+        action: "ticked",
         createAt: new Date(),
         content: `đã tick chọn thực hiện công việc ${arrayTicked.toString()}`,
-        userId: session?.user?.id as string,
+        userId: session?.user?.name as string,
       });
     }
 
     if (arrayDeleteTicked?.length > 0) {
-      mutationHistories.mutate({
-        taskId: params?.id as string,
-        createAt: new Date(),
-        content: `đã bỏ chọn thực hiện công việc ${arrayDeleteTicked.toString()}`,
-        userId: session?.user?.id as string,
-      });
+      const findChecked = h?.histories.find((his) => his?.action === "ticked");
+      if (findChecked) {
+        updateHistories({
+          id: findChecked?.id,
+          taskId: params?.id as string,
+          action: "deleteTicked",
+          createAt: new Date(),
+          content: `đã bỏ chọn thực hiện công việc ${arrayDeleteTicked.toString()}`,
+          userId: session?.user?.name as string,
+        });
+      }
     }
   };
 
@@ -168,12 +187,12 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
           className="w-full first-letter:max-w-xl mx-auto
            items-center"
         >
-          <div className="">
+          <div className="mb-5">
             <div className="text-2xl font-semibold mb-4">
               Chi tiết công việc
             </div>
             {/* @ts-ignore */}
-            <CardJobDetail t={t} taskId={params?.id} />
+            <CardJobDetail t={t?.tasks} taskId={params?.id} />
             <div className="text-xl font-semibold mb-4">
               Công việc thực hiện
             </div>
@@ -207,18 +226,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange(
-                                          field.value?.length > 0
-                                            ? [...field.value, item.id]
-                                            : [...arrayJob, item.id]
-                                        )
-                                        : field.onChange(
-                                          (field.value?.length > 0
-                                            ? field.value
-                                            : arrayJob
-                                          )?.filter(
-                                            (value) => value !== item.id
+                                            field.value?.length > 0
+                                              ? [...field.value, item.id]
+                                              : [...arrayJob, item.id]
                                           )
-                                        );
+                                        : field.onChange(
+                                            (field.value?.length > 0
+                                              ? field.value
+                                              : arrayJob
+                                            )?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          );
                                     }}
                                   />
                                 </FormControl>
@@ -248,9 +267,34 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               </form>
             </Form>
           </div>
-        </div >
-      ) : null
-      }
+
+          {session?.user?.role === "ADMIN" && (
+            <div className="">
+              <div className="text-xl font-semibold">Active</div>
+              <ul>
+                {h?.histories.map((his) => {
+                  return (
+                    <li>
+                      <span className="font-semibold underline">
+                        {his?.userId}
+                      </span>{" "}
+                      {his?.action === "deleteImage" ? (
+                        <Link href="/medias">{his?.content}</Link>
+                      ) : (
+                        his?.content
+                      )}{" "}
+                      {`lúc ${moment(his?.createAt, formatDateFull).format(
+                        formatTimeDate
+                      )}`}
+                      .
+                    </li>
+                  );
+                })}
+              </ul>
+            </div>
+          )}
+        </div>
+      ) : null}
     </>
   );
 }

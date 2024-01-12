@@ -4,6 +4,7 @@ import { CompleteTask, relatedTaskSchema } from "./index"
 export const mediaSchema = z.object({
   id: z.string(),
   url: z.string(),
+  status: z.string().nullish(),
   taskId: z.string(),
 })
 

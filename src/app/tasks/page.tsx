@@ -11,9 +11,14 @@ export default async function Tasks() {
   return (
     <main className="max-w-full mx-auto p-5 md:p-0 sm:pt-4">
       <div className="flex justify-between">
-        <h1 className="font-semibold text-[18px] my-2">Danh sách công việc</h1>
-        {session?.user?.email === "trieunguyen2806@gmail.com" &&
-          tasks.length > 0 && <NewTaskModal />}
+        {tasks.length > 0 && (
+          <h1 className="font-semibold text-[18px] my-2">
+            Danh sách công việc
+          </h1>
+        )}
+        {session?.user?.role === "ADMIN" && tasks.length > 0 && (
+          <NewTaskModal />
+        )}
       </div>
       <TaskList tasks={tasks} />
     </main>

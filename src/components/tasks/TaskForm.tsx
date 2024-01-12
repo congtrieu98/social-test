@@ -99,10 +99,10 @@ const TaskForm = ({
           mutationHistories.mutate({
             taskId: task?.id as string,
             createAt: new Date(),
-            content: 'đã tạo task ',
-            action: 'create',
-            userId: session?.user?.id as string
-          })
+            content: "đã tạo task ",
+            action: "create",
+            userId: session?.user?.name as string,
+          });
         }
         onSuccess("create");
       },
@@ -148,10 +148,8 @@ const TaskForm = ({
     }
   };
 
-  const handleEnterKeyPress = (event: {
-    preventDefault: any; key: string;
-  }) => {
-    if (event.key === 'Enter') {
+  const handleEnterKeyPress = (event: { preventDefault: any; key: string }) => {
+    if (event.key === "Enter") {
       event.preventDefault();
       if (job) {
         // @ts-ignore
@@ -160,7 +158,6 @@ const TaskForm = ({
         inputRef.current?.focus();
         setJob("");
       }
-
     }
   };
 
@@ -225,33 +222,38 @@ const TaskForm = ({
       <form onSubmit={form.handleSubmit(handleSubmit)} className={"space-y-8"}>
         <InputForm
           //@ts-ignore
-          form={form} title={'Tên công việc'} name='title' />
+          form={form}
+          title={"Tên công việc"}
+          name="title"
+        />
         <SelectedForm
           //@ts-ignore
-          form={form} title={'Mức độ ưu tiên'}
+          form={form}
+          title={"Mức độ ưu tiên"}
           dataOption={DATAPRIORITY}
-          name='priority'
-          placeholder='Chọn mức độ ưu tiên'
+          name="priority"
+          placeholder="Chọn mức độ ưu tiên"
         />
 
         <SelectedForm
           //@ts-ignore
-          form={form} title={'Status'}
+          form={form}
+          title={"Status"}
           dataOption={DATASTATUS}
           editing={editing}
-          name='status'
-          placeholder='Chọn status'
+          name="status"
+          placeholder="Chọn status"
         />
         {session?.user?.role === "ADMIN" && (
           <SelectedForm
             //@ts-ignore
-            form={form} title={'Người thực hiện'}
+            form={form}
+            title={"Người thực hiện"}
             //@ts-ignore
             dataUser={dataUser}
-            name='assignedId'
-            placeholder='Chọn người thực hiện'
+            name="assignedId"
+            placeholder="Chọn người thực hiện"
           />
-
         )}
         <DateForm
           //@ts-ignore
@@ -265,7 +267,7 @@ const TaskForm = ({
           title="Due"
           name="deadlines"
         />
-        {session?.user?.role === 'ADMIN' &&
+        {session?.user?.role === "ADMIN" && (
           <UploadImage
             // @ts-ignore
             t={task}
@@ -273,9 +275,9 @@ const TaskForm = ({
             files={files}
             setFiles={setFiles}
           />
-        }
+        )}
 
-        {session?.user?.role === 'ADMIN' &&
+        {session?.user?.role === "ADMIN" && (
           <>
             <h1>Description</h1>
             <ul>
@@ -308,7 +310,7 @@ const TaskForm = ({
               </div>
             </div>
           </>
-        }
+        )}
 
         <Button
           type="submit"
