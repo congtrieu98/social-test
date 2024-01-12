@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { trpc } from "@/lib/trpc/client";
@@ -10,8 +11,10 @@ const Medias = () => {
       <div className="text-xl font-semibold mb-5">Danh sách ảnh đã xóa</div>
       {m?.medias
         .filter((item) => item?.status === "disable")
-        .map((med) => {
-          return <img src={med?.url} />;
+        .map((med, index) => {
+          return <div key={index}>
+            <img src={med?.url} alt="" />;
+          </div>
         })}
     </>
   );
