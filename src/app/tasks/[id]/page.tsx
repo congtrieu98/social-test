@@ -226,18 +226,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange(
-                                            field.value?.length > 0
-                                              ? [...field.value, item.id]
-                                              : [...arrayJob, item.id]
-                                          )
+                                          field.value?.length > 0
+                                            ? [...field.value, item.id]
+                                            : [...arrayJob, item.id]
+                                        )
                                         : field.onChange(
-                                            (field.value?.length > 0
-                                              ? field.value
-                                              : arrayJob
-                                            )?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                          (field.value?.length > 0
+                                            ? field.value
+                                            : arrayJob
+                                          )?.filter(
+                                            (value) => value !== item.id
+                                          )
+                                        );
                                     }}
                                   />
                                 </FormControl>
@@ -272,9 +272,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             <div className="">
               <div className="text-xl font-semibold">Active</div>
               <ul>
-                {h?.histories.map((his) => {
+                {h?.histories.map((his, index) => {
                   return (
-                    <li>
+                    <li key={index}>
                       <span className="font-semibold underline">
                         {his?.userId}
                       </span>{" "}
