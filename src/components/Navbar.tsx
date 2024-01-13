@@ -10,8 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import SignOutButton from "./auth/SignOutButton";
-
-// import { ModeToggle } from "@/components/ui/ThemeToggle";
+import { ROLE } from "@/utils/constant";
 
 export default async function Navbar() {
   const { session } = await getUserAuth();
@@ -41,12 +40,12 @@ export default async function Navbar() {
                 <Avatar>
                   <AvatarFallback>
                     {nameExists
-                      ? session.user.role === "ADMIN"
+                      ? session.user.role === ROLE.ADMIN
                         ? "AD"
                         : session.user.name
-                            ?.split(" ")
-                            .map((word) => word[0].toUpperCase())
-                            .join("")
+                          ?.split(" ")
+                          .map((word) => word[0].toUpperCase())
+                          .join("")
                       : "~"}
                   </AvatarFallback>
                 </Avatar>

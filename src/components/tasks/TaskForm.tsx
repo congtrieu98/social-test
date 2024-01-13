@@ -22,7 +22,7 @@ import { useDropzone } from "react-dropzone";
 import { TiDelete } from "react-icons/ti";
 import InputForm from "../general/form/inputForm";
 import SelectedForm from "../general/form/selectedForm";
-import { DATAPRIORITY, DATASTATUS } from "@/utils/constant";
+import { DATAPRIORITY, DATASTATUS, ROLE, STATUS_IMAGE } from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
 import UploadImage from "../taskDetail/uploadImage";
 
@@ -82,8 +82,8 @@ const TaskForm = ({
     });
   };
 
-  const mutation = trpc.medias.createMedia.useMutation();
-  const mutationHistories = trpc.histories.createHistory.useMutation();
+  const { mutate: createMedia } = trpc.medias.createMedia.useMutation();
+  const { mutate: createHistory } = trpc.histories.createHistory.useMutation();
   const { mutate: createTask, isLoading: isCreating } =
     trpc.tasks.createTask.useMutation({
       onSuccess: async ({ task }) => {
@@ -91,12 +91,12 @@ const TaskForm = ({
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              mutation.mutate({ taskId: taskId, url: file.preview });
+              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE });
             }
           });
         }
         if (task) {
-          mutationHistories.mutate({
+          createHistory({
             taskId: task?.id as string,
             createAt: new Date(),
             content: "đã tạo task ",
@@ -115,7 +115,7 @@ const TaskForm = ({
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              mutation.mutate({ taskId: taskId, url: file.preview });
+              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE });
             }
           });
         }
@@ -196,26 +196,12 @@ const TaskForm = ({
     }
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    accept: {
-      "image/*": [],
-    },
-    maxSize: 1024 * 1000,
-    onDrop,
-  });
-
   useEffect(() => {
     return () =>
       files.forEach((file: FileWithPreview) =>
         URL.revokeObjectURL(file.preview as string)
       );
   }, [files]);
-
-  const removeFile = (path: string) => {
-    setFiles((files) =>
-      files.filter((file: FileWithPreview) => file.path !== path)
-    );
-  };
 
   return (
     <Form {...form}>
@@ -244,7 +230,7 @@ const TaskForm = ({
           name="status"
           placeholder="Chọn status"
         />
-        {session?.user?.role === "ADMIN" && (
+        {session?.user?.role === ROLE.ADMIN && (
           <SelectedForm
             //@ts-ignore
             form={form}
@@ -267,7 +253,7 @@ const TaskForm = ({
           title="Due"
           name="deadlines"
         />
-        {session?.user?.role === "ADMIN" && (
+        {session?.user?.role === ROLE.ADMIN && (
           <UploadImage
             // @ts-ignore
             t={task}
@@ -277,7 +263,7 @@ const TaskForm = ({
           />
         )}
 
-        {session?.user?.role === "ADMIN" && (
+        {session?.user?.role === ROLE.ADMIN && (
           <>
             <h1>Description</h1>
             <ul>
@@ -321,7 +307,7 @@ const TaskForm = ({
             ? `Sav${isUpdating ? "ing..." : "e"}`
             : `Creat${isCreating ? "ing..." : "e"}`}
         </Button>
-        {session?.user.role === "ADMIN" && editing ? (
+        {session?.user.role === ROLE.ADMIN && editing ? (
           <Button
             type="button"
             variant={"destructive"}

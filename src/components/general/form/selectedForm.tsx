@@ -36,7 +36,7 @@ const SelectedForm = ({ form, title, dataOption, name, editting, placeholder, da
                     <FormItem>
                         <FormLabel>{title}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value} disabled={
-                            session?.user?.role !== "ADMIN"
+                            session?.user?.role !== ROLE.ADMIN
                         }>
                             <FormControl>
                                 <SelectTrigger>

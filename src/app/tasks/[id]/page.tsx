@@ -3,7 +3,7 @@
 
 import { trpc } from "@/lib/trpc/client";
 import { signIn, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
@@ -25,8 +25,9 @@ import { useRouter } from "next/navigation";
 import CardJobDetail from "@/components/taskDetail/cardJobDetail";
 import UploadImage from "@/components/taskDetail/uploadImage";
 import moment from "moment";
-import { formatDateFull, formatTimeDate } from "@/utils/constant";
+import { ROLE, STATUS_IMAGE, formatDateFull, formatTimeDate } from "@/utils/constant";
 import Link from "next/link";
+import Modal from "@/components/general/modal";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -64,7 +65,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   const { mutate: updateHistories } =
     trpc.histories.updateHistory.useMutation();
 
-  const mutation = trpc.medias.createMedia.useMutation();
+  const { mutate: createMedia } = trpc.medias.createMedia.useMutation();
   const { mutate: updateTaskOnlyChecked, isLoading: isUpdateOnlyChecked } =
     trpc.tasks.updateTaskOnlyChecked.useMutation({
       onSuccess: async ({ task }) => {
@@ -72,37 +73,44 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              mutation.mutate({ taskId: taskId, url: file.preview });
+              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE });
             }
+          });
+          createHistories({
+            taskId: params?.id as string,
+            createAt: new Date(),
+            action: "createImage",
+            content: `đã tạo ${files.length} ảnh`,
+            userId: session?.user?.name as string,
           });
         }
         onSuccess();
       },
     });
 
-  // useEffect(() => {
-  if (params?.id && session?.user?.role !== "ADMIN") {
-    if (t?.tasks) {
-      const findHisByAction = h?.histories.find(
-        (his) => his.action === "readedTask"
-      );
-      if (!findHisByAction) {
-        createHistories({
-          taskId: params?.id as string,
-          createAt: new Date(),
-          action: "readedTask",
-          content: "đã xem task",
-          userId: session?.user?.name as string,
-        });
-        updateTaskByStatus({
-          id: params?.id,
-          status: "readed",
-        });
+  useEffect(() => {
+    if (params?.id && session?.user?.role !== ROLE.ADMIN) {
+      if (t?.tasks) {
+        const findHisByAction = h?.histories.find(
+          (his) => his.action === "readedTask"
+        );
+        if (!findHisByAction) {
+          createHistories({
+            taskId: params?.id as string,
+            createAt: new Date(),
+            action: "readedTask",
+            content: "đã xem task",
+            userId: session?.user?.name as string,
+          });
+          updateTaskByStatus({
+            id: params?.id,
+            status: "readed",
+          });
+        }
       }
     }
-  }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [params?.id, t]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params?.id, t]);
 
   interface desCustom {
     id: string;
@@ -268,7 +276,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             </Form>
           </div>
 
-          {session?.user?.role === "ADMIN" && (
+          {session?.user?.role === ROLE.ADMIN && (
             <div className="">
               <div className="text-xl font-semibold">Active</div>
               <ul>
@@ -279,7 +287,10 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                         {his?.userId}
                       </span>{" "}
                       {his?.action === "deleteImage" ? (
-                        <Link href="/medias">{his?.content}</Link>
+                        <Modal
+                          content={his.content}
+                          //@ts-ignore
+                          task={t?.tasks} />
                       ) : (
                         his?.content
                       )}{" "}

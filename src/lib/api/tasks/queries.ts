@@ -1,10 +1,11 @@
 import { db } from "@/lib/db/index";
 import { getUserAuth } from "@/lib/auth/utils";
 import { type TaskId, taskIdSchema } from "@/lib/db/schema/tasks";
+import { ROLE } from "@/utils/constant";
 
 export const getTasks = async () => {
   const { session } = await getUserAuth();
-  if (session?.user.role === "ADMIN") {
+  if (session?.user.role === ROLE.ADMIN) {
     const t = await db.task.findMany({
       orderBy: [
         {

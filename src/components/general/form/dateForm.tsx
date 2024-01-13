@@ -35,7 +35,7 @@ const DateForm = ({ form, title, name }:
                                             !field.value && "text-muted-foreground"
                                         )}
                                         disabled={
-                                            session?.user?.role !== "ADMIN"
+                                            session?.user?.role !== ROLE.ADMIN
                                         }
                                     >
                                         {field.value ? (

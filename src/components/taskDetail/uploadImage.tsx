@@ -2,7 +2,7 @@
 "use client";
 
 import { uploadVercel } from "@/lib/utils";
-import { Dispatch, Key, SetStateAction, useCallback, useEffect } from "react";
+import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc/client";
 import { useSession } from "next-auth/react";
 import { Upload, XCircle } from "lucide-react";
 import { CompleteTask } from "@/lib/db/schema/tasks";
+import { STATUS_IMAGE } from "@/utils/constant";
 interface FileWithPreview extends File {
   preview?: string;
   loading?: boolean;
@@ -30,11 +31,11 @@ const UploadImage = ({
   const router = useRouter();
   const { data: session } = useSession();
 
-  const mutationHistories = trpc.histories.createHistory.useMutation();
+  const { mutate: createHistory } = trpc.histories.createHistory.useMutation();
   const { mutate: updateImage, isLoading: isImageUpdating } =
     trpc.medias.updateMedia.useMutation({
       onSuccess: () => {
-        mutationHistories.mutate({
+        createHistory({
           taskId: taskId as string,
           createAt: new Date(),
           content: "đã xóa ảnh",
@@ -122,10 +123,11 @@ const UploadImage = ({
         <h3 className="title text-lg font-semibold text-neutral-600 mt-4 border-b pb-3">
           Accepted Files
         </h3>
-        <ul className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-10">
+        {/* sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 */}
+        <ul className="mt-6 grid grid-cols-1 gap-10">
           {(t?.medias?.length as number) > 0 &&
             t?.medias.map((item, index) => {
-              if (item?.status === null)
+              if (item?.status === STATUS_IMAGE.ACTIVE)
                 return (
                   <li key={index} className="relative h-auto rounded-md">
                     {isImageUpdating ? (
@@ -159,7 +161,7 @@ const UploadImage = ({
                         <button
                           type="button"
                           onClick={() => {
-                            updateImage({ id: item.id, status: "disable" });
+                            updateImage({ id: item.id, status: STATUS_IMAGE.DISABLE });
                           }}
                           className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
                         >

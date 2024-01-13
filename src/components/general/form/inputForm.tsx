@@ -19,7 +19,7 @@ const InputForm = ({ form, title }: { form: UseFormReturn, title: string }) => {
                             <Input
                                 {...field}
                                 disabled={
-                                    session?.user?.role !== "ADMIN"
+                                    session?.user?.role !== ROLE.ADMIN
                                 }
                             />
                         </FormControl>

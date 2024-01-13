@@ -24,7 +24,7 @@ import {
 } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
-import { formatDateFull, formatDatetime } from "@/utils/constant";
+import { ROLE, formatDateFull, formatDatetime } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import Link from "next/link";
@@ -193,10 +193,10 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
             rowKey="id"
             loading={isDeleting}
             // @ts-ignore
-            rowSelection={session?.user.role === "ADMIN" && rowSelection}
+            rowSelection={session?.user.role === ROLE.ADMIN && rowSelection}
             columns={columns}
             // @ts-ignore
-            // expandable={session?.user.role === "ADMIN" && { expandedRowRender }}
+            // expandable={session?.user.role === ROLE.ADMIN && { expandedRowRender }}
             dataSource={t.tasks}
             rowClassName="editable-row"
             scroll={{ x: 1200 }}
