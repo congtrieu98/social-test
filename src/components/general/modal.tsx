@@ -2,24 +2,13 @@
 "use client";
 
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
-  DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from "@/components/ui/carousel";
 
-import { CompleteTask } from "@/lib/db/schema/tasks";
-import { STATUS_IMAGE } from "@/utils/constant";
 import { CompleteMedia } from "@/lib/db/schema/medias";
 
 export default function Modal({ media }: { media: CompleteMedia }) {
