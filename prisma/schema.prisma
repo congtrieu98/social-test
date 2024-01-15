@@ -95,6 +95,9 @@ model Media {
   url    String
   status String?
   taskId String
+  userId String
+  createAt DateTime
+  updateAt DateTime
   task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 

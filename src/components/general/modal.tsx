@@ -4,55 +4,37 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-    DialogTrigger,
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
 } from "../ui/dialog";
 import {
-    Carousel,
-    CarouselContent,
-    CarouselItem,
-    CarouselNext,
-    CarouselPrevious,
-} from "@/components/ui/carousel"
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 import { CompleteTask } from "@/lib/db/schema/tasks";
 import { STATUS_IMAGE } from "@/utils/constant";
+import { CompleteMedia } from "@/lib/db/schema/medias";
 
-export default function Modal({ content, task }: { content: string, task: CompleteTask }) {
-    const [open, setOpen] = useState(false);
-    const closeModal = () => setOpen(false);
+export default function Modal({ media }: { media: CompleteMedia }) {
+  const [open, setOpen] = useState(false);
+  const closeModal = () => setOpen(false);
 
-    return (
-        <Dialog onOpenChange={setOpen} open={open}>
-            <DialogTrigger asChild>
-                <div className="inline cursor-pointer sm:hover:underline underline sm:hover:text-red-400 text-red-400">{content}</div>
-            </DialogTrigger>
-            <DialogContent>
-                <DialogHeader className="px-5 pt-5">
-                    <DialogTitle>Ảnh đã xóa</DialogTitle>
-                </DialogHeader>
-                <Carousel>
-                    <CarouselContent>
-                        <div className="p-1">
-                            {task?.medias
-                                .filter((item) => item?.status === STATUS_IMAGE.DISABLE)
-                                .map((med, index) => {
-                                    return <div key={index}>
-                                        <CarouselItem key={index}>
-
-                                            <img src={med?.url} alt="" />;
-                                        </CarouselItem>
-                                    </div>
-                                })}
-                        </div>
-                    </CarouselContent>
-                    <CarouselPrevious />
-                    <CarouselNext />
-                </Carousel>
-            </DialogContent>
-        </Dialog>
-    );
+  return (
+    <Dialog onOpenChange={setOpen} open={open}>
+      <DialogTrigger asChild>
+        <img src={media.url} className="w-24 h-24 cursor-pointer" />
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader className="px-5 pt-5"></DialogHeader>
+        <img src={media.url} className="w-full h-full" />
+      </DialogContent>
+    </Dialog>
+  );
 }

@@ -6,6 +6,9 @@ export const mediaSchema = z.object({
   url: z.string(),
   status: z.string().nullish(),
   taskId: z.string(),
+  userId: z.string(),
+  createAt: z.date(),
+  updateAt: z.date(),
 })
 
 export interface CompleteMedia extends z.infer<typeof mediaSchema> {

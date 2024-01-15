@@ -91,7 +91,7 @@ const TaskForm = ({
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE });
+              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE, createAt: new Date(), updateAt: new Date(), userId: session?.user?.name as string });
             }
           });
         }
@@ -115,7 +115,7 @@ const TaskForm = ({
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE });
+              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE, createAt: new Date(), updateAt: new Date(), userId: session?.user?.name as string });
             }
           });
         }

@@ -25,7 +25,12 @@ import { useRouter } from "next/navigation";
 import CardJobDetail from "@/components/taskDetail/cardJobDetail";
 import UploadImage from "@/components/taskDetail/uploadImage";
 import moment from "moment";
-import { ROLE, STATUS_IMAGE, formatDateFull, formatTimeDate } from "@/utils/constant";
+import {
+  ROLE,
+  STATUS_IMAGE,
+  formatDateFull,
+  formatTimeDate,
+} from "@/utils/constant";
 import Link from "next/link";
 import Modal from "@/components/general/modal";
 
@@ -50,12 +55,14 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     await utils.tasks.getTasks.invalidate();
     router.refresh();
     toast({
-      title: "Gửi xác nhận thành công!",
+      title: "Success!",
+      description: "Gửi xác nhận thành công!",
       variant: "default",
     });
   };
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
   const { data: h } = trpc.histories.getHistories.useQuery();
+  const { data: u } = trpc.users.getUsers.useQuery();
 
   const { mutate: updateTaskByStatus } =
     trpc.tasks.updateTaskByStatus.useMutation();
@@ -70,20 +77,48 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     trpc.tasks.updateTaskOnlyChecked.useMutation({
       onSuccess: async ({ task }) => {
         if (files.length > 0 && task) {
+          const findUser = u?.users.find(
+            (user) => user?.id === t?.tasks?.assignedId
+          );
+          const countMedias = t?.tasks?.medias.filter(
+            (item) => item?.userId === findUser?.name
+          )?.length;
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE });
+              createMedia({
+                taskId: taskId,
+                url: file.preview,
+                status: STATUS_IMAGE.ACTIVE,
+                createAt: new Date(),
+                updateAt: new Date(),
+                userId: session?.user?.name as string,
+              });
             }
           });
-          createHistories({
-            taskId: params?.id as string,
-            createAt: new Date(),
-            action: "createImage",
-            content: `đã tạo ${files.length} ảnh`,
-            userId: session?.user?.name as string,
-          });
+          const findHistory = t?.tasks?.history?.find(
+            (his) => his.action === "createImage"
+          );
+          if (!findHistory) {
+            createHistories({
+              taskId: params?.id as string,
+              createAt: new Date(),
+              action: "createImage",
+              content: "đã thêm ảnh mới",
+              userId: session?.user?.name as string,
+            });
+          } else {
+            updateHistories({
+              id: findHistory?.id,
+              taskId: params?.id as string,
+              createAt: new Date(),
+              action: "createImage",
+              content: "đã thêm ảnh mới",
+              userId: session?.user?.name as string,
+            });
+          }
         }
+        setFiles([]);
         onSuccess();
       },
     });
@@ -139,12 +174,13 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       id: params?.id,
       checked: values?.checked,
     });
-    const arrayTicked = [] as string[];
-    const arrayDeleteTicked = [] as string[];
+    let arrayTicked = [] as string[];
+    let arrayDeleteTicked = [] as string[];
     const lengthDatabase = t?.tasks?.checked?.length as number;
     const lengthCurent = values?.checked?.length;
     if (lengthDatabase < lengthCurent) {
       // user tick chọn
+      arrayTicked = [];
       values?.checked.map((item) => {
         if (t?.tasks?.checked.includes(item)) {
           return null;
@@ -154,6 +190,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       });
     } else {
       // user bỏ chọn
+      arrayDeleteTicked = [];
       t?.tasks?.checked.map((item) => {
         if (values?.checked.includes(item)) {
           return null;
@@ -234,18 +271,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange(
-                                          field.value?.length > 0
-                                            ? [...field.value, item.id]
-                                            : [...arrayJob, item.id]
-                                        )
-                                        : field.onChange(
-                                          (field.value?.length > 0
-                                            ? field.value
-                                            : arrayJob
-                                          )?.filter(
-                                            (value) => value !== item.id
+                                            field.value?.length > 0
+                                              ? [...field.value, item.id]
+                                              : [...arrayJob, item.id]
                                           )
-                                        );
+                                        : field.onChange(
+                                            (field.value?.length > 0
+                                              ? field.value
+                                              : arrayJob
+                                            )?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          );
                                     }}
                                   />
                                 </FormControl>
@@ -287,10 +324,12 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                         {his?.userId}
                       </span>{" "}
                       {his?.action === "deleteImage" ? (
-                        <Modal
-                          content={his.content}
-                          //@ts-ignore
-                          task={t?.tasks} />
+                        <Link
+                          href={`/medias/${params?.id}`}
+                          className="text-red-400 underline"
+                        >
+                          {his?.content}
+                        </Link>
                       ) : (
                         his?.content
                       )}{" "}

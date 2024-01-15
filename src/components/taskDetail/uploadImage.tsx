@@ -32,16 +32,31 @@ const UploadImage = ({
   const { data: session } = useSession();
 
   const { mutate: createHistory } = trpc.histories.createHistory.useMutation();
+  const { mutate: updateHistory } = trpc.histories.updateHistory.useMutation();
   const { mutate: updateImage, isLoading: isImageUpdating } =
     trpc.medias.updateMedia.useMutation({
       onSuccess: () => {
-        createHistory({
-          taskId: taskId as string,
-          createAt: new Date(),
-          content: "đã xóa ảnh",
-          action: "deleteImage",
-          userId: session?.user?.name as string,
-        });
+        const findHistory = t?.history?.find(
+          (item) => item.action === "deleteImage"
+        );
+        if (!findHistory) {
+          createHistory({
+            taskId: taskId as string,
+            createAt: new Date(),
+            content: "đã xóa ảnh",
+            action: "deleteImage",
+            userId: session?.user?.name as string,
+          });
+        } else {
+          updateHistory({
+            id: findHistory.id,
+            taskId: taskId as string,
+            createAt: new Date(findHistory.createAt),
+            content: "đã xóa ảnh",
+            action: "deleteImage",
+            userId: session?.user?.name as string,
+          });
+        }
         router.refresh();
         toast({
           title: "Success",
@@ -161,7 +176,12 @@ const UploadImage = ({
                         <button
                           type="button"
                           onClick={() => {
-                            updateImage({ id: item.id, status: STATUS_IMAGE.DISABLE });
+                            updateImage({
+                              id: item.id,
+                              status: STATUS_IMAGE.DISABLE,
+                              updateAt: new Date(),
+                              userId: session?.user?.name as string,
+                            });
                           }}
                           className="w-5 h-5 border border-secondary-400 bg-secondary-400 rounded-full flex justify-center items-center absolute -top-3 -right-3 transition-colors bg-black"
                         >

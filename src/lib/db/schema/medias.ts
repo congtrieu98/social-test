@@ -20,6 +20,7 @@ export const updateMediaSchema = mediaSchema
   .omit({
     taskId: true,
     url: true,
+    createAt: true,
   });
 
 export const updateMediaParams = updateMediaSchema
@@ -29,6 +30,7 @@ export const updateMediaParams = updateMediaSchema
   .omit({
     taskId: true,
     url: true,
+    createAt: true,
   });
 
 export const mediaIdSchema = updateMediaSchema.pick({ id: true });
