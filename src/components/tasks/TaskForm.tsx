@@ -13,18 +13,17 @@ import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
 
-import { uploadVercel } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 import { useSession } from "next-auth/react";
-import { useCallback, useEffect, useRef, useState } from "react";
-import { useDropzone } from "react-dropzone";
+import { useEffect, useRef, useState } from "react";
 import { TiDelete } from "react-icons/ti";
 import InputForm from "../general/form/inputForm";
 import SelectedForm from "../general/form/selectedForm";
 import { DATAPRIORITY, DATASTATUS, ROLE, STATUS_IMAGE } from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
 import UploadImage from "../taskDetail/uploadImage";
+import { DateTimePicker } from "../ui/date-time-picker";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -59,10 +58,10 @@ const TaskForm = ({
     // errors locally but not in production
     resolver: zodResolver(insertTaskParams),
     defaultValues: task ?? {
-      title: "",
+      title: undefined,
       status: "",
-      assignedId: "",
-      priority: "",
+      assignedId: undefined,
+      priority: undefined,
       checked: [""] as string[],
       description: jobs,
       creator: session?.user?.id,
@@ -70,7 +69,7 @@ const TaskForm = ({
       deadlines: new Date(),
     },
   });
-
+  console.log("edditing:", editing);
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tasks.getTasks.invalidate();
     router.refresh();
@@ -91,7 +90,14 @@ const TaskForm = ({
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE, createAt: new Date(), updateAt: new Date(), userId: session?.user?.name as string });
+              createMedia({
+                taskId: taskId,
+                url: file.preview,
+                status: STATUS_IMAGE.ACTIVE,
+                createAt: new Date(),
+                updateAt: new Date(),
+                userId: session?.user?.name as string,
+              });
             }
           });
         }
@@ -115,7 +121,14 @@ const TaskForm = ({
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
               const taskId = task.id;
-              createMedia({ taskId: taskId, url: file.preview, status: STATUS_IMAGE.ACTIVE, createAt: new Date(), updateAt: new Date(), userId: session?.user?.name as string });
+              createMedia({
+                taskId: taskId,
+                url: file.preview,
+                status: STATUS_IMAGE.ACTIVE,
+                createAt: new Date(),
+                updateAt: new Date(),
+                userId: session?.user?.name as string,
+              });
             }
           });
         }
@@ -166,35 +179,6 @@ const TaskForm = ({
       setJobs((prev) => prev.filter((item) => item !== job));
     }
   };
-  const onDrop = useCallback((acceptedFiles: Array<FileWithPreview>) => {
-    if (acceptedFiles?.length) {
-      setFiles((previousFiles) => [
-        ...previousFiles,
-        ...acceptedFiles.map((file) => ({
-          ...file,
-          loading: true,
-          erorrs: [],
-        })),
-      ]);
-
-      acceptedFiles.forEach((file, index) => {
-        uploadVercel(file).then((url) => {
-          setFiles((previousFiles) =>
-            previousFiles.map((prevFile, prevIndex) => {
-              if (
-                prevIndex ===
-                index + previousFiles.length - acceptedFiles.length
-              ) {
-                return { ...prevFile, preview: url, loading: false };
-              } else {
-                return prevFile;
-              }
-            })
-          );
-        });
-      });
-    }
-  }, []);
 
   useEffect(() => {
     return () =>
@@ -226,7 +210,7 @@ const TaskForm = ({
           form={form}
           title={"Status"}
           dataOption={DATASTATUS}
-          editing={editing}
+          editing={editing as boolean}
           name="status"
           placeholder="Chọn status"
         />
@@ -247,6 +231,7 @@ const TaskForm = ({
           title="start"
           name="createAt"
         />
+
         <DateForm
           //@ts-ignore
           form={form}

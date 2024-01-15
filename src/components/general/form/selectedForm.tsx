@@ -39,19 +39,20 @@ const SelectedForm = ({
   title,
   dataOption,
   name,
-  editting,
   placeholder,
+  editing,
   dataUser,
 }: {
   form: UseFormReturn;
   title: string;
   dataOption: dataSelected[];
-  editting: boolean;
   name: string;
   placeholder: string;
+  editing: boolean;
   dataUser: dataUser;
 }) => {
   const { data: session } = useSession();
+  console.log(editing);
   return (
     <>
       <FormField
@@ -79,13 +80,23 @@ const SelectedForm = ({
                         </SelectItem>
                       );
                     })
-                  : dataOption?.map((item, index) => {
+                  : editing
+                  ? dataOption?.map((item, index) => {
                       return (
                         <SelectItem key={index} value={item.key} spellCheck>
                           {item.value}
                         </SelectItem>
                       );
-                    })}
+                    })
+                  : dataOption
+                      .filter((option) => option.key !== "readed")
+                      ?.map((item, index) => {
+                        return (
+                          <SelectItem key={index} value={item.key} spellCheck>
+                            {item.value}
+                          </SelectItem>
+                        );
+                      })}
               </SelectContent>
             </Select>
             <FormMessage />

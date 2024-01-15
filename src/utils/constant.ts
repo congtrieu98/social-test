@@ -22,6 +22,10 @@ export const DATASTATUS = [
     value: "Mới tạo",
   },
   {
+    key: "readed",
+    value: "Đã xem",
+  },
+  {
     key: "inprogress",
     value: "Đang thực hiện",
   },
