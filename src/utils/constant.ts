@@ -7,14 +7,14 @@ export const formatDateSlash = "DD/MM/YYYY";
 export const formatNo = "DDMMYYYY";
 
 export const STATUS_IMAGE = {
-  ACTIVE: 'active',
-  DISABLE: 'disable'
-}
+  ACTIVE: "active",
+  DISABLE: "disable",
+};
 
 export const ROLE = {
-  ADMIN: 'ADMIN',
-  USER: 'USER'
-}
+  ADMIN: "ADMIN",
+  USER: "USER",
+};
 
 export const DATASTATUS = [
   {
