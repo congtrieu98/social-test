@@ -4,6 +4,9 @@ import { type MediaId, mediaIdSchema } from "@/lib/db/schema/medias";
 export const getMedias = async () => {
   const m = await db.media.findMany({
     include: { task: true },
+    orderBy: {
+      updateAt: 'desc'
+    }
   });
   return { medias: m };
 };

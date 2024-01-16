@@ -52,7 +52,7 @@ const SelectedForm = ({
   dataUser: dataUser;
 }) => {
   const { data: session } = useSession();
-  console.log(editing);
+
   return (
     <>
       <FormField
@@ -63,7 +63,7 @@ const SelectedForm = ({
             <FormLabel>{title}</FormLabel>
             <Select
               onValueChange={field.onChange}
-              defaultValue={field.value ? field.value : "new"}
+              defaultValue={field.value}
               disabled={session?.user?.role !== ROLE.ADMIN}
             >
               <FormControl>
@@ -74,22 +74,22 @@ const SelectedForm = ({
               <SelectContent>
                 {dataUser
                   ? dataUser?.users.map((item) => {
-                      return (
-                        <SelectItem key={item.id} value={item.id} spellCheck>
-                          {item.name}
-                        </SelectItem>
-                      );
-                    })
+                    return (
+                      <SelectItem key={item.id} value={item.id} spellCheck>
+                        {item.name}
+                      </SelectItem>
+                    );
+                  })
                   : editing
-                  ? dataOption?.map((item, index) => {
+                    ? dataOption?.map((item, index) => {
                       return (
                         <SelectItem key={index} value={item.key} spellCheck>
                           {item.value}
                         </SelectItem>
                       );
                     })
-                  : dataOption
-                      .filter((option) => option.key !== "readed")
+                    : dataOption
+                      ?.filter((option) => option.key !== "readed")
                       ?.map((item, index) => {
                         return (
                           <SelectItem key={index} value={item.key} spellCheck>

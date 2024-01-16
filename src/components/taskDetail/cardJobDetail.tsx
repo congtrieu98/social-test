@@ -139,7 +139,7 @@ const CardJobDetail = ({
       });
     }
   };
-  console.log("updatePriority:", updatePriority);
+
   return (
     <>
       <div className="pb-3 border-b mb-8">
@@ -172,12 +172,12 @@ const CardJobDetail = ({
                           t?.status === "new"
                             ? "bg-gray-300"
                             : t?.status === "readed"
-                            ? "bg-blue-300"
-                            : t?.status === "inprogress"
-                            ? "bg-yellow-300"
-                            : t?.status === "reject"
-                            ? "bg-red-400"
-                            : "bg-green-500"
+                              ? "bg-blue-300"
+                              : t?.status === "inprogress"
+                                ? "bg-yellow-300"
+                                : t?.status === "reject"
+                                  ? "bg-red-400"
+                                  : "bg-green-500"
                         }
                       >
                         {t?.status}
@@ -219,9 +219,9 @@ const CardJobDetail = ({
                                 "Đang thực hiện"
                               ) : t?.status === "reject" ? (
                                 "Chưa hoàn thành"
-                              ) : (
+                              ) : t?.status === "completed" ? (
                                 "Đã hoàn thành"
-                              )
+                              ) : ''
                             }
                           />
                         </SelectTrigger>
@@ -255,8 +255,8 @@ const CardJobDetail = ({
                           t?.priority === "hight"
                             ? "destructive"
                             : t?.priority === "medium"
-                            ? "secondary"
-                            : "outline"
+                              ? "secondary"
+                              : "outline"
                         }
                         className="ml-2"
                       >
@@ -275,8 +275,8 @@ const CardJobDetail = ({
                               t?.priority === "hight"
                                 ? "Cao"
                                 : t?.priority === "medium"
-                                ? "Bình thường"
-                                : "Thấp"
+                                  ? "Bình thường"
+                                  : t?.priority === "low" ? "Thấp" : ''
                             }
                           />
                         </SelectTrigger>
@@ -297,7 +297,7 @@ const CardJobDetail = ({
                 <div className="space-y-2 mb-4">
                   <p className="text-base font-medium ">Thời gian bắt đầu</p>
                   <p className="text-sm font-medium ">
-                    {moment(t?.createAt, formatDateFull).format(formatDatetime)}
+                    {t?.createAt ? moment(t?.createAt, formatDateFull).format(formatDatetime) : ''}
                   </p>
                 </div>
                 <span className="flex mr-2">
@@ -306,9 +306,9 @@ const CardJobDetail = ({
                 <div className="space-y-2">
                   <p className="text-base font-medium ">Thời gian kết thúc</p>
                   <p className="text-sm font-medium ">
-                    {moment(t?.deadlines, formatDateFull).format(
+                    {t?.deadlines ? moment(t?.deadlines, formatDateFull).format(
                       formatDatetime
-                    )}
+                    ) : ''}
                   </p>
                 </div>
               </div>

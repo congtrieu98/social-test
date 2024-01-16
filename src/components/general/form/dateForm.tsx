@@ -2,6 +2,8 @@
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { DateTimePicker } from "@/components/ui/dateTimePicker";
+// import { DateTimePicker } from "@/components/ui/date-time-picker";
 import {
   FormControl,
   FormField,
@@ -25,11 +27,15 @@ const DateForm = ({
   form,
   title,
   name,
+  date,
+  setDate
 }: {
   form: UseFormReturn;
   title: string;
   name: string;
   placeholder: string;
+  date: Date;
+  setDate: (date: Date) => void;
 }) => {
   const { data: session } = useSession();
   return (
@@ -41,7 +47,7 @@ const DateForm = ({
           <FormItem>
             <FormLabel>{title}</FormLabel>
             <br />
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger asChild>
                 <FormControl>
                   <Button
@@ -64,7 +70,7 @@ const DateForm = ({
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
-                  selected={new Date(field.value)}
+                  selected={field.value}
                   onSelect={field.onChange}
                   disabled={(date) =>
                     name === "deadlines"
@@ -74,8 +80,8 @@ const DateForm = ({
                   initialFocus
                 />
               </PopoverContent>
-            </Popover>
-
+            </Popover> */}
+            <DateTimePicker date={date} setDate={setDate} />
             <FormMessage />
           </FormItem>
         )}

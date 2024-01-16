@@ -32,7 +32,6 @@ import {
   formatTimeDate,
 } from "@/utils/constant";
 import Link from "next/link";
-import Modal from "@/components/general/modal";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -75,19 +74,12 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   const { mutate: createMedia } = trpc.medias.createMedia.useMutation();
   const { mutate: updateTaskOnlyChecked, isLoading: isUpdateOnlyChecked } =
     trpc.tasks.updateTaskOnlyChecked.useMutation({
-      onSuccess: async ({ task }) => {
+      onSuccess: ({ task }) => {
         if (files.length > 0 && task) {
-          const findUser = u?.users.find(
-            (user) => user?.id === t?.tasks?.assignedId
-          );
-          const countMedias = t?.tasks?.medias.filter(
-            (item) => item?.userId === findUser?.name
-          )?.length;
           files.forEach((file: FileWithPreview) => {
             if (file.preview) {
-              const taskId = task.id;
               createMedia({
-                taskId: taskId,
+                taskId: params?.id,
                 url: file.preview,
                 status: STATUS_IMAGE.ACTIVE,
                 createAt: new Date(),
@@ -113,14 +105,14 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               taskId: params?.id as string,
               createAt: new Date(),
               action: "createImage",
-              content: "đã thêm ảnh mới",
+              content: `đã thêm ảnh mới`,
               userId: session?.user?.name as string,
             });
           }
+          setFiles([]);
+          onSuccess()
         }
-        setFiles([]);
-        onSuccess();
-      },
+      }
     });
 
   useEffect(() => {
@@ -170,59 +162,134 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    updateTaskOnlyChecked({
-      id: params?.id,
-      checked: values?.checked,
-    });
-    let arrayTicked = [] as string[];
-    let arrayDeleteTicked = [] as string[];
-    const lengthDatabase = t?.tasks?.checked?.length as number;
-    const lengthCurent = values?.checked?.length;
-    if (lengthDatabase < lengthCurent) {
-      // user tick chọn
-      arrayTicked = [];
-      values?.checked.map((item) => {
-        if (t?.tasks?.checked.includes(item)) {
-          return null;
-        } else {
-          arrayTicked.push(item);
+    console.log(values)
+    console.log(files)
+    if (files?.length > 0 && values?.checked?.length === 0) {
+      const findUser = u?.users.find(
+        (user) => user?.id === t?.tasks?.assignedId
+      );
+      const countMedias = t?.tasks?.medias.filter(
+        (item) => item?.userId === findUser?.name
+      )?.length;
+      files.forEach((file: FileWithPreview) => {
+        if (file.preview) {
+          createMedia({
+            taskId: params?.id,
+            url: file.preview,
+            status: STATUS_IMAGE.ACTIVE,
+            createAt: new Date(),
+            updateAt: new Date(),
+            userId: session?.user?.name as string,
+          });
         }
       });
-    } else {
-      // user bỏ chọn
-      arrayDeleteTicked = [];
-      t?.tasks?.checked.map((item) => {
-        if (values?.checked.includes(item)) {
-          return null;
-        } else {
-          arrayDeleteTicked.push(item);
-        }
-      });
-    }
-
-    if (arrayTicked?.length > 0) {
-      createHistories({
-        taskId: params?.id as string,
-        action: "ticked",
-        createAt: new Date(),
-        content: `đã tick chọn thực hiện công việc ${arrayTicked.toString()}`,
-        userId: session?.user?.name as string,
-      });
-    }
-
-    if (arrayDeleteTicked?.length > 0) {
-      const findChecked = h?.histories.find((his) => his?.action === "ticked");
-      if (findChecked) {
-        updateHistories({
-          id: findChecked?.id,
+      const findHistory = t?.tasks?.history?.find(
+        (his) => his.action === "createImage"
+      );
+      if (!findHistory) {
+        createHistories({
           taskId: params?.id as string,
-          action: "deleteTicked",
           createAt: new Date(),
-          content: `đã bỏ chọn thực hiện công việc ${arrayDeleteTicked.toString()}`,
+          action: "createImage",
+          content: "đã thêm ảnh mới",
+          userId: session?.user?.name as string,
+        });
+      } else {
+        updateHistories({
+          id: findHistory?.id,
+          taskId: params?.id as string,
+          createAt: new Date(),
+          action: "createImage",
+          content: `đã thêm ảnh mới`,
           userId: session?.user?.name as string,
         });
       }
+      setFiles([]);
+      onSuccess()
     }
+
+    if (values?.checked?.length > 0) {
+      let arrayTicked = [] as string[];
+      let arrayDeleteTicked = [] as string[];
+      const lengthDatabase = t?.tasks?.checked?.length as number;
+      const lengthCurent = values?.checked?.length;
+
+      // console.log("lengthDatabase", lengthDatabase)
+      // console.log("lengthCurent", lengthCurent)
+      if (lengthDatabase <= lengthCurent) {
+        // user tick chọn
+        values?.checked.map((item) => {
+          if (!(t?.tasks?.checked.includes(item))) {
+            arrayTicked.push(item);
+            // console.log("aaa")
+          }
+        });
+      } else {
+        // user bỏ chọn
+        t?.tasks?.checked.map((item) => {
+          if (!(values?.checked.includes(item))) {
+            arrayDeleteTicked.push(item);
+            // console.log("bbb")
+          }
+        });
+      }
+
+      // console.log("arrayTicked:", arrayTicked)
+      // console.log("arrayDeleteTicked:", arrayDeleteTicked)
+
+      if (arrayTicked?.length > 0) {
+        updateTaskOnlyChecked({
+          id: params?.id,
+          checked: values?.checked,
+        });
+        const findChecked = h?.histories.find((his) => his?.action === "ticked");
+        if (findChecked) {
+          updateHistories({
+            id: findChecked?.id,
+            taskId: params?.id as string,
+            action: "ticked",
+            createAt: new Date(),
+            content: `đã tick chọn thực hiện công việc ${arrayTicked.toString()}`,
+            userId: session?.user?.name as string,
+          });
+        } else {
+          createHistories({
+            taskId: params?.id as string,
+            action: "ticked",
+            createAt: new Date(),
+            content: `đã tick chọn thực hiện công việc ${arrayTicked.toString()}`,
+            userId: session?.user?.name as string,
+          });
+        }
+      }
+
+      if (arrayDeleteTicked?.length > 0) {
+        updateTaskOnlyChecked({
+          id: params?.id,
+          checked: values?.checked,
+        });
+        const findChecked = h?.histories.find((his) => his?.action === "deleteTicked");
+        if (findChecked) {
+          updateHistories({
+            id: findChecked?.id,
+            taskId: params?.id as string,
+            action: "deleteTicked",
+            createAt: new Date(),
+            content: `đã bỏ chọn thực hiện công việc ${arrayDeleteTicked.toString()}`,
+            userId: session?.user?.name as string,
+          })
+        } else {
+          createHistories({
+            taskId: params?.id as string,
+            action: "deleteTicked",
+            createAt: new Date(),
+            content: `đã bỏ chọn thực hiện công việc ${arrayDeleteTicked.toString()}`,
+            userId: session?.user?.name as string,
+          });
+        }
+      }
+    }
+
   };
 
   return (
@@ -271,18 +338,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange(
-                                            field.value?.length > 0
-                                              ? [...field.value, item.id]
-                                              : [...arrayJob, item.id]
-                                          )
+                                          field.value?.length > 0
+                                            ? [...field.value, item.id]
+                                            : [...arrayJob, item.id]
+                                        )
                                         : field.onChange(
-                                            (field.value?.length > 0
-                                              ? field.value
-                                              : arrayJob
-                                            )?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                          (field.value?.length > 0
+                                            ? field.value
+                                            : arrayJob
+                                          )?.filter(
+                                            (value) => value !== item.id
+                                          )
+                                        );
                                     }}
                                   />
                                 </FormControl>
@@ -317,7 +384,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             <div className="">
               <div className="text-xl font-semibold">Active</div>
               <ul>
-                {h?.histories.map((his, index) => {
+                {h?.histories?.filter((item) => item?.taskId === params?.id).map((his, index) => {
                   return (
                     <li key={index}>
                       <span className="font-semibold underline">

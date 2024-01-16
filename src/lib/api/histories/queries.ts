@@ -3,7 +3,13 @@ import { getUserAuth } from "@/lib/auth/utils";
 import { type HistoryId, historyIdSchema } from "@/lib/db/schema/histories";
 
 export const getHistories = async () => {
-  const h = await db.history.findMany();
+  const h = await db.history.findMany({
+    orderBy: [
+      {
+        createAt: "desc",
+      },
+    ],
+  });
   return { histories: h };
 };
 

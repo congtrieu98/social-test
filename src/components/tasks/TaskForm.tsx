@@ -23,7 +23,8 @@ import SelectedForm from "../general/form/selectedForm";
 import { DATAPRIORITY, DATASTATUS, ROLE, STATUS_IMAGE } from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
 import UploadImage from "../taskDetail/uploadImage";
-import { DateTimePicker } from "../ui/date-time-picker";
+import { DateTimePicker } from "../ui/dateTimePicker";
+// import { DateTimePicker } from "../ui/date-time-picker";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -46,6 +47,7 @@ const TaskForm = ({
   const [jobs, setJobs] = useState<string[]>(
     (task?.description as string[]) || []
   );
+  const [date, setDate] = useState<Date>(new Date())
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -69,7 +71,7 @@ const TaskForm = ({
       deadlines: new Date(),
     },
   });
-  console.log("edditing:", editing);
+
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tasks.getTasks.invalidate();
     router.refresh();
@@ -142,6 +144,7 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
+    console.log(values)
     if (editing) {
       values.description = jobs;
       updateTask({ ...values, id: task.id });
@@ -225,10 +228,13 @@ const TaskForm = ({
             placeholder="Chọn người thực hiện"
           />
         )}
+
         <DateForm
           //@ts-ignore
           form={form}
-          title="start"
+          title="Start"
+          date={date}
+          setDate={setDate}
           name="createAt"
         />
 
@@ -236,6 +242,8 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
+          date={date}
+          setDate={setDate}
           name="deadlines"
         />
         {session?.user?.role === ROLE.ADMIN && (
