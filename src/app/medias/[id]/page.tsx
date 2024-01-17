@@ -51,7 +51,7 @@ const Medias = ({ params }: { params: { id: string } }) => {
   );
 
   const onSuccess = async (action: "reseted" | "deleted") => {
-    await utils.medias.getMedias.invalidate();
+    await utils.medias.getMediaById.invalidate();
     router.refresh();
     toast({
       title: "Success",

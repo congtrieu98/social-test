@@ -5,15 +5,21 @@ import {
   insertMediaParams,
   updateMediaParams,
 } from "@/lib/db/schema/medias";
-import { createMedia, deleteMedia, updateMedia } from "@/lib/api/medias/mutations";
+import {
+  createMedia,
+  deleteMedia,
+  updateMedia,
+} from "@/lib/api/medias/mutations";
 
 export const mediasRouter = router({
   getMedias: publicProcedure.query(async () => {
     return getMedias();
   }),
-  getMediaById: publicProcedure.input(mediaIdSchema).query(async ({ input }) => {
-    return getMediaById(input.id);
-  }),
+  getMediaById: publicProcedure
+    .input(mediaIdSchema)
+    .query(async ({ input }) => {
+      return getMediaById(input.id);
+    }),
   createMedia: publicProcedure
     .input(insertMediaParams)
     .mutation(async ({ input }) => {

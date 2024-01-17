@@ -20,13 +20,3 @@ export const getMediaById = async (id: MediaId) => {
   });
   return { medias: m };
 };
-
-export const getMediaByTaskId = async (id: TaskId) => {
-  const { id: mediaId } = mediaIdSchema.parse({ id });
-  // @ts-ignore
-  const m = await db.media.findFirst({
-    where: { id: mediaId },
-    include: { task: true },
-  });
-  return { medias: m };
-};
