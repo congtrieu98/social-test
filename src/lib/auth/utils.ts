@@ -21,6 +21,7 @@ const emailPermission = [
   "networksocialtest@gmail.com",
   "khanh@suzu.vn",
   "tran@dinhkhanh.dk",
+  "duongduong@bambooads.net",
 ];
 
 export type AuthSession = {
