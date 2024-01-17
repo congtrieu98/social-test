@@ -17,7 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
-import { ROLE } from "@/utils/constant";
+import { ROLE, formatDateAPi } from "@/utils/constant";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -38,6 +38,8 @@ const DateForm = ({
   setDate: (date: Date) => void;
 }) => {
   const { data: session } = useSession();
+  // console.log("dateeee:", moment(date, formatDateAPi).format(formatDateAPi));
+  // console.log("dateeee:", date);
   return (
     <>
       <FormField
@@ -65,6 +67,14 @@ const DateForm = ({
                     )}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
+                  <input
+                    type="datetime-local"
+                    // id="meeting-time"
+                    name="meeting-time"
+                    value={date}
+                    // min={"2024-01-17T14:30"}
+                    // max={""}
+                  />
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
@@ -78,6 +88,14 @@ const DateForm = ({
                       : date > new Date() || date < new Date("1900-01-01")
                   }
                   initialFocus
+                />
+                <input
+                  type="datetime-local"
+                  // id="meeting-time"
+                  name="meeting-time"
+                  value={date}
+                  // min={"2024-01-17T14:30"}
+                  // max={new Date().toString()}
                 />
               </PopoverContent>
             </Popover> */}

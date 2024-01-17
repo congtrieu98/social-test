@@ -85,7 +85,7 @@ export function DateTimePicker({ date, setDate, name }: DateTimePickerProps) {
       <PopoverContent className="w-auto p-0">
         <Calendar
           mode="single"
-          selected={selectedDateTime.toJSDate()}
+          // selected={selectedDateTime.toJSDate()}
           onSelect={handleSelect}
           disabled={
             (date) => name === "deadlines" && date < new Date()
