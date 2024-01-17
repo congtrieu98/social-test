@@ -28,7 +28,7 @@ const DateForm = ({
   title,
   name,
   date,
-  setDate
+  setDate,
 }: {
   form: UseFormReturn;
   title: string;
@@ -81,7 +81,11 @@ const DateForm = ({
                 />
               </PopoverContent>
             </Popover> */}
-            <DateTimePicker date={date} setDate={setDate} />
+            <DateTimePicker
+              date={field.value ? field.value : date}
+              setDate={setDate}
+              name={name}
+            />
             <FormMessage />
           </FormItem>
         )}

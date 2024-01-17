@@ -1,5 +1,5 @@
 export const formatDate = "DD-MM-YYYY";
-export const formatDatetime = "DD-MM-YYYY HH:mm";
+export const formatDatetime = "MM-DD-YYYY HH:mm";
 export const formatTimeDate = "HH:mm DD/MM/YYYY";
 export const formatDateFull = "YYYY-MM-DD[T]HH:mm:ss[Z]";
 export const formatDateAPi = "YYYY-MM-DD";

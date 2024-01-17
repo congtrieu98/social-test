@@ -20,11 +20,17 @@ import { useEffect, useRef, useState } from "react";
 import { TiDelete } from "react-icons/ti";
 import InputForm from "../general/form/inputForm";
 import SelectedForm from "../general/form/selectedForm";
-import { DATAPRIORITY, DATASTATUS, ROLE, STATUS_IMAGE } from "@/utils/constant";
+import {
+  DATAPRIORITY,
+  DATASTATUS,
+  ROLE,
+  STATUS_IMAGE,
+  formatDatetime,
+  formatTimeDate,
+} from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
 import UploadImage from "../taskDetail/uploadImage";
-import { DateTimePicker } from "../ui/dateTimePicker";
-// import { DateTimePicker } from "../ui/date-time-picker";
+import moment from "moment";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -47,7 +53,8 @@ const TaskForm = ({
   const [jobs, setJobs] = useState<string[]>(
     (task?.description as string[]) || []
   );
-  const [date, setDate] = useState<Date>(new Date())
+  const [dateStart, setDateStart] = useState<Date>(new Date());
+  const [dateDue, setDateDue] = useState<Date>(new Date());
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -67,8 +74,12 @@ const TaskForm = ({
       checked: [""] as string[],
       description: jobs,
       creator: session?.user?.id,
-      createAt: new Date(),
-      deadlines: new Date(),
+      createAt: new Date(
+        moment(dateStart, formatDatetime).format(formatDatetime)
+      ),
+      deadlines: new Date(
+        moment(dateDue, formatDatetime).format(formatDatetime)
+      ),
     },
   });
 
@@ -144,12 +155,16 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    console.log(values)
+    console.log(values);
     if (editing) {
       values.description = jobs;
+      values.createAt = dateStart;
+      values.deadlines = dateDue;
       updateTask({ ...values, id: task.id });
     } else {
       values.description = jobs;
+      values.createAt = dateStart;
+      values.deadlines = dateDue;
       createTask(values);
     }
   };
@@ -233,8 +248,8 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={date}
-          setDate={setDate}
+          date={dateStart}
+          setDate={setDateStart}
           name="createAt"
         />
 
@@ -242,8 +257,8 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={date}
-          setDate={setDate}
+          date={dateDue}
+          setDate={setDateDue}
           name="deadlines"
         />
         {session?.user?.role === ROLE.ADMIN && (
