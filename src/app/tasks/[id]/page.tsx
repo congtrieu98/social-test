@@ -51,7 +51,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   const [files, setFiles] = useState<File[]>([]);
 
   const onSuccess = async () => {
-    await utils.tasks.getTasks.invalidate();
+    await utils.medias.getMedias.invalidate();
     router.refresh();
     toast({
       title: "Success!",
@@ -109,10 +109,10 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
               userId: session?.user?.name as string,
             });
           }
-          setFiles([]);
-          onSuccess()
         }
-      }
+        setFiles([]);
+        onSuccess();
+      },
     });
 
   useEffect(() => {
@@ -162,15 +162,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values)
-    console.log(files)
     if (files?.length > 0 && values?.checked?.length === 0) {
-      const findUser = u?.users.find(
-        (user) => user?.id === t?.tasks?.assignedId
-      );
-      const countMedias = t?.tasks?.medias.filter(
-        (item) => item?.userId === findUser?.name
-      )?.length;
       files.forEach((file: FileWithPreview) => {
         if (file.preview) {
           createMedia({
@@ -205,7 +197,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
         });
       }
       setFiles([]);
-      onSuccess()
+      onSuccess();
     }
 
     if (values?.checked?.length > 0) {
@@ -219,7 +211,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       if (lengthDatabase <= lengthCurent) {
         // user tick chọn
         values?.checked.map((item) => {
-          if (!(t?.tasks?.checked.includes(item))) {
+          if (!t?.tasks?.checked.includes(item)) {
             arrayTicked.push(item);
             // console.log("aaa")
           }
@@ -227,7 +219,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       } else {
         // user bỏ chọn
         t?.tasks?.checked.map((item) => {
-          if (!(values?.checked.includes(item))) {
+          if (!values?.checked.includes(item)) {
             arrayDeleteTicked.push(item);
             // console.log("bbb")
           }
@@ -242,7 +234,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
           id: params?.id,
           checked: values?.checked,
         });
-        const findChecked = h?.histories.find((his) => his?.action === "ticked");
+        const findChecked = h?.histories.find(
+          (his) => his?.action === "ticked"
+        );
         if (findChecked) {
           updateHistories({
             id: findChecked?.id,
@@ -268,7 +262,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
           id: params?.id,
           checked: values?.checked,
         });
-        const findChecked = h?.histories.find((his) => his?.action === "deleteTicked");
+        const findChecked = h?.histories.find(
+          (his) => his?.action === "deleteTicked"
+        );
         if (findChecked) {
           updateHistories({
             id: findChecked?.id,
@@ -277,7 +273,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             createAt: new Date(),
             content: `đã bỏ chọn thực hiện công việc ${arrayDeleteTicked.toString()}`,
             userId: session?.user?.name as string,
-          })
+          });
         } else {
           createHistories({
             taskId: params?.id as string,
@@ -289,7 +285,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
         }
       }
     }
-
   };
 
   return (
@@ -338,18 +333,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange(
-                                          field.value?.length > 0
-                                            ? [...field.value, item.id]
-                                            : [...arrayJob, item.id]
-                                        )
-                                        : field.onChange(
-                                          (field.value?.length > 0
-                                            ? field.value
-                                            : arrayJob
-                                          )?.filter(
-                                            (value) => value !== item.id
+                                            field.value?.length > 0
+                                              ? [...field.value, item.id]
+                                              : [...arrayJob, item.id]
                                           )
-                                        );
+                                        : field.onChange(
+                                            (field.value?.length > 0
+                                              ? field.value
+                                              : arrayJob
+                                            )?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          );
                                     }}
                                   />
                                 </FormControl>
@@ -384,29 +379,34 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             <div className="">
               <div className="text-xl font-semibold">Active</div>
               <ul>
-                {h?.histories?.filter((item) => item?.taskId === params?.id).map((his, index) => {
-                  return (
-                    <li key={index}>
-                      <span className="font-semibold underline">
-                        {his?.userId}
-                      </span>{" "}
-                      {his?.action === "deleteImage" ? (
-                        <Link
-                          href={`/medias/${params?.id}`}
-                          className="text-red-400 underline"
-                        >
-                          {his?.content}
-                        </Link>
-                      ) : (
-                        his?.content
-                      )}{" "}
-                      {`lúc ${moment(his?.createAt, formatDateFull).format(
-                        formatTimeDate
-                      )}`}
-                      .
-                    </li>
-                  );
-                })}
+                {h?.histories
+                  ?.filter((item) => item?.taskId === params?.id)
+                  .map((his, index) => {
+                    return (
+                      <li key={index}>
+                        <span className="font-semibold underline">
+                          {his?.userId}
+                        </span>{" "}
+                        {his?.action === "deleteImage" &&
+                        (t?.tasks?.medias.filter(
+                          (media) => media?.status === STATUS_IMAGE.DISABLE
+                        )?.length as number) > 0 ? (
+                          <Link
+                            href={`/medias/${params?.id}`}
+                            className="text-red-400 underline"
+                          >
+                            {his?.content}
+                          </Link>
+                        ) : (
+                          his?.content
+                        )}{" "}
+                        {` lúc ${moment(his?.createAt, formatDateFull).format(
+                          formatTimeDate
+                        )}`}
+                        .
+                      </li>
+                    );
+                  })}
               </ul>
             </div>
           )}

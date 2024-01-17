@@ -29,13 +29,14 @@ const UploadImage = ({
   setFiles: Dispatch<SetStateAction<File[]>>;
 }) => {
   const router = useRouter();
+  const utils = trpc.useContext();
   const { data: session } = useSession();
 
   const { mutate: createHistory } = trpc.histories.createHistory.useMutation();
   const { mutate: updateHistory } = trpc.histories.updateHistory.useMutation();
   const { mutate: updateImage, isLoading: isImageUpdating } =
     trpc.medias.updateMedia.useMutation({
-      onSuccess: () => {
+      onSuccess: async () => {
         const findHistory = t?.history?.find(
           (item) => item.action === "deleteImage"
         );
@@ -57,10 +58,11 @@ const UploadImage = ({
             userId: session?.user?.name as string,
           });
         }
+        await utils.tasks.getTaskById.invalidate();
         router.refresh();
         toast({
           title: "Success",
-          description: `Image deledated!`,
+          description: `Image deledated successfully!`,
           variant: "default",
         });
       },

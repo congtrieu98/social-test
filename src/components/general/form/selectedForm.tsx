@@ -64,7 +64,7 @@ const SelectedForm = ({
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value}
-              disabled={session?.user?.role !== ROLE.ADMIN}
+              disabled={session?.user?.role !== ROLE.ADMIN && !editing}
             >
               <FormControl>
                 <SelectTrigger>
@@ -74,21 +74,21 @@ const SelectedForm = ({
               <SelectContent>
                 {dataUser
                   ? dataUser?.users.map((item) => {
-                    return (
-                      <SelectItem key={item.id} value={item.id} spellCheck>
-                        {item.name}
-                      </SelectItem>
-                    );
-                  })
+                      return (
+                        <SelectItem key={item.id} value={item.id} spellCheck>
+                          {item.name}
+                        </SelectItem>
+                      );
+                    })
                   : editing
-                    ? dataOption?.map((item, index) => {
+                  ? dataOption?.map((item, index) => {
                       return (
                         <SelectItem key={index} value={item.key} spellCheck>
                           {item.value}
                         </SelectItem>
                       );
                     })
-                    : dataOption
+                  : dataOption
                       ?.filter((option) => option.key !== "readed")
                       ?.map((item, index) => {
                         return (

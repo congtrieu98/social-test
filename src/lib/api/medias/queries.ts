@@ -1,17 +1,27 @@
 import { db } from "@/lib/db/index";
-import { type MediaId, mediaIdSchema } from "@/lib/db/schema/medias";
+import { type MediaId, mediaIdSchema, TaskId } from "@/lib/db/schema/medias";
 
 export const getMedias = async () => {
   const m = await db.media.findMany({
     include: { task: true },
     orderBy: {
-      updateAt: 'desc'
-    }
+      updateAt: "desc",
+    },
   });
   return { medias: m };
 };
 
 export const getMediaById = async (id: MediaId) => {
+  const { id: mediaId } = mediaIdSchema.parse({ id });
+  // @ts-ignore
+  const m = await db.media.findFirst({
+    where: { id: mediaId },
+    include: { task: true },
+  });
+  return { medias: m };
+};
+
+export const getMediaByTaskId = async (id: TaskId) => {
   const { id: mediaId } = mediaIdSchema.parse({ id });
   // @ts-ignore
   const m = await db.media.findFirst({

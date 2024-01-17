@@ -28,6 +28,7 @@ import { useState } from "react";
 
 const Medias = ({ params }: { params: { id: string } }) => {
   const { data: session } = useSession();
+  const utils = trpc.useContext();
   const router = useRouter();
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params.id });
 
@@ -49,6 +50,16 @@ const Medias = ({ params }: { params: { id: string } }) => {
     (media) => media?.status === STATUS_IMAGE.DISABLE
   );
 
+  const onSuccess = async (action: "reseted" | "deleted") => {
+    await utils.medias.getMedias.invalidate();
+    router.refresh();
+    toast({
+      title: "Success",
+      description: `Image ${action} successfully!`,
+      defaultValue: "variant",
+    });
+  };
+
   const handleChangeAction = (val: string) => {
     if (val === "reset") {
       selectedRowKeys.map((item) => {
@@ -59,24 +70,14 @@ const Medias = ({ params }: { params: { id: string } }) => {
           status: STATUS_IMAGE.ACTIVE,
         });
       });
-      router.refresh();
-      toast({
-        title: "Success",
-        description: "Khôi phục thành công!",
-        defaultValue: "variant",
-      });
+      onSuccess("reseted");
     } else {
       selectedRowKeys.map((item) => {
         return deleteMedia({
           id: item as string,
         });
       });
-      router.refresh();
-      toast({
-        title: "Success",
-        description: "Xóa thành công!",
-        defaultValue: "variant",
-      });
+      onSuccess("deleted");
     }
   };
 
