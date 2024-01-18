@@ -155,6 +155,8 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
+    values.createAt = dateStart;
+    values.deadlines = dateDue;
     console.log(values);
     if (editing) {
       values.description = jobs;

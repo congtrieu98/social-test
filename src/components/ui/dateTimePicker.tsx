@@ -51,7 +51,7 @@ export function DateTimePicker({ date, setDate, name }: DateTimePickerProps) {
 
   const footer = (
     <>
-      <div className="px-4 pt-0 pb-4">
+      <div className="pt-0 pb-4">
         <Label>Time</Label>
         <Input
           type="time"
@@ -64,37 +64,40 @@ export function DateTimePicker({ date, setDate, name }: DateTimePickerProps) {
   );
 
   return (
-    <Popover>
-      <PopoverTrigger asChild className="z-10">
-        <Button
-          variant={"outline"}
-          className={cn(
-            "w-[280px] justify-start text-left font-normal",
-            !date && "text-muted-foreground"
-          )}
-          disabled={session?.user?.role !== ROLE.ADMIN}
-        >
-          <CalendarIcon className="mr-2 h-4 w-4" />
-          {date ? (
-            selectedDateTime.toFormat("DDD HH:mm")
-          ) : (
-            <span>Pick a date</span>
-          )}
-        </Button>
-      </PopoverTrigger>
-      <PopoverContent className="w-auto p-0">
-        <Calendar
-          mode="single"
-          // selected={selectedDateTime.toJSDate()}
-          onSelect={handleSelect}
-          disabled={
-            (date) => name === "deadlines" && date < new Date()
-            //   : date > new Date() || date < new Date("1900-01-01")
-          }
-          initialFocus
-        />
-        {footer}
-      </PopoverContent>
-    </Popover>
+    <>
+      <Popover>
+        <PopoverTrigger asChild className="z-10">
+          <Button
+            variant={"outline"}
+            className={cn(
+              "w-[280px] justify-start text-left font-normal",
+              !date && "text-muted-foreground"
+            )}
+            disabled={session?.user?.role !== ROLE.ADMIN}
+          >
+            <CalendarIcon className="mr-2 h-4 w-4" />
+            {date ? (
+              selectedDateTime.toFormat("DDD HH:mm")
+            ) : (
+              <span>Pick a date</span>
+            )}
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-auto p-0">
+          <Calendar
+            mode="single"
+            selected={selectedDateTime.toJSDate()}
+            onSelect={handleSelect}
+            disabled={
+              (date) => name === "deadlines" && date < new Date()
+              //   : date > new Date() || date < new Date("1900-01-01")
+            }
+            initialFocus
+          />
+
+        </PopoverContent>
+      </Popover>
+      {footer}
+    </>
   );
 }
