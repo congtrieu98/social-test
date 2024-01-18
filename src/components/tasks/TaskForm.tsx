@@ -207,6 +207,9 @@ const TaskForm = ({
       );
   }, [files]);
 
+  console.log("dateStart:", dateStart)
+  console.log("dateDue:", dateDue)
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(handleSubmit)} className={"space-y-8"}>

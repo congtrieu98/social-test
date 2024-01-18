@@ -50,7 +50,7 @@ const DateForm = ({
           <FormItem>
             <FormLabel>{title}</FormLabel>
             <br />
-            <Popover>
+            {/* <Popover>
               <PopoverTrigger asChild>
                 <Button
                   variant={"outline"}
@@ -74,8 +74,8 @@ const DateForm = ({
                   <TimePickerDemo setDate={setDate} date={date} />
                 </div>
               </PopoverContent>
-            </Popover>
-            {/* <Popover>
+            </Popover> */}
+            <Popover>
               <PopoverTrigger asChild>
                 <FormControl>
                   <Button
@@ -93,38 +93,23 @@ const DateForm = ({
                     )}
                     <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
                   </Button>
-                  <input
-                    type="datetime-local"
-                    // id="meeting-time"
-                    name="meeting-time"
-                    value={date}
-                    // min={"2024-01-17T14:30"}
-                    // max={""}
-                  />
                 </FormControl>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
                   selected={field.value}
-                  onSelect={field.onChange}
-                  disabled={(date) =>
-                    name === "deadlines"
-                      ? date < new Date()
-                      : date > new Date() || date < new Date("1900-01-01")
+                  onSelect={setDate}
+                  disabled={(date) => name === "deadlines" && date < new Date()
+                    // : date > new Date() || date < new Date("1900-01-01")
                   }
                   initialFocus
                 />
-                <input
-                  type="datetime-local"
-                  // id="meeting-time"
-                  name="meeting-time"
-                  value={date}
-                  // min={"2024-01-17T14:30"}
-                  // max={new Date().toString()}
-                />
+                <div className="p-3 border-t border-border">
+                  <TimePickerDemo setDate={setDate} date={date} />
+                </div>
               </PopoverContent>
-            </Popover> */}
+            </Popover>
             {/* <DateTimePicker
               date={field.value ? field.value : date}
               setDate={setDate}
