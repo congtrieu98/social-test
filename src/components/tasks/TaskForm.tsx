@@ -155,20 +155,20 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    values.createAt = dateStart;
-    values.deadlines = dateDue;
+    values.createAt = dateStart as Date;
+    values.deadlines = dateDue as Date;
     console.log(values);
-    if (editing) {
-      values.description = jobs;
-      values.createAt = dateStart;
-      values.deadlines = dateDue;
-      updateTask({ ...values, id: task.id });
-    } else {
-      values.description = jobs;
-      values.createAt = dateStart;
-      values.deadlines = dateDue;
-      createTask(values);
-    }
+    // if (editing) {
+    //   values.description = jobs;
+    //   // values.createAt = dateStart;
+    //   // values.deadlines = dateDue;
+    //   updateTask({ ...values, id: task.id });
+    // } else {
+    //   values.description = jobs;
+    //   // values.createAt = dateStart;
+    //   // values.deadlines = dateDue;
+    //   createTask(values);
+    // }
   };
 
   const handleAddJobDescription = () => {
@@ -250,7 +250,8 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={dateStart}
+          date={dateStart as Date}
+          //@ts-ignore
           setDate={setDateStart}
           name="createAt"
         />
@@ -259,7 +260,8 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={dateDue}
+          date={dateDue as Date}
+          //@ts-ignore
           setDate={setDateDue}
           name="deadlines"
         />
