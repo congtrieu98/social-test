@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { ROLE } from "@/utils/constant";
 import { useSession } from "next-auth/react";
+import { format } from "date-fns";
 
 interface DateTimePickerProps {
   date: Date;
@@ -24,19 +25,45 @@ interface DateTimePickerProps {
 
 export function DateTimePicker({ date, setDate, name }: DateTimePickerProps) {
   const { data: session } = useSession();
-  const [selectedDateTime, setSelectedDateTime] = React.useState<DateTime>(
-    DateTime.fromISO("2024-01-18")
-  );
 
-  console.log("check ddingj dạng:", DateTime.fromISO("2024-01-18"))
+  const luxonDateTime = DateTime.fromJSDate(date);
+  const formattedDateTime = luxonDateTime.toFormat('yyyy-MM-dd\'T\'HH:mm');
+  const [selectedDateTime, setSelectedDateTime] = React.useState<DateTime>(
+    DateTime.fromISO(formattedDateTime)
+  );
+  // console.log("dateProp:", date)
+
+  console.log("check format:", formattedDateTime)
+  // console.log("check ddingj dạng:", DateTime.fromISO("2024-01-18"))
   const handleSelect: SelectSingleEventHandler = (day, selected) => {
-    const selectedDay = DateTime.fromJSDate(selected);
-    const modifiedDay = selectedDay.set({
-      hour: selectedDateTime.hour,
-      minute: selectedDateTime.minute,
-    });
-    setSelectedDateTime(modifiedDay);
-    setDate(modifiedDay.toJSDate());
+    console.log("data selected:", selected)
+    const luxonDateTimeSelected = DateTime.fromJSDate(selected);
+    const selectedDay = luxonDateTimeSelected.toFormat('yyyy-MM-dd\'T\'HH:mm');
+    console.log("selectedDay:", selectedDay)
+    // const selectedDay = DateTime.fromJSDate(selected);
+    // const modifiedDay = 
+    // const matchResult = selectedDay.match(/(\d{2}):(\d{2})/);
+    // if (matchResult) {
+    //   const [, hour, minute] = matchResult;
+    // setSelectedDateTime({
+    //   hour: hour,
+    //   minute: minute
+    // });
+    // console.log(`Giờ: ${hour}, Phút: ${minute}`);
+    // } else {
+    //   console.error('Không có sự khớp cho giờ và phút.');
+    // }
+
+    // const selectedDay = DateTime.fromJSDate(selected);
+    // const modifiedDay = selectedDay.set({
+    //   hour: selectedDateTime.hour,
+    //   minute: selectedDateTime.minute,
+    // });
+    // setSelectedDateTime(modifiedDay);
+    // setDate(modifiedDay.toJSDate());
+
+
+    setDate(new Date(selectedDay.toString()));
   };
 
   const handleTimeChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
