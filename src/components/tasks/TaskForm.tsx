@@ -53,8 +53,8 @@ const TaskForm = ({
   const [jobs, setJobs] = useState<string[]>(
     (task?.description as string[]) || []
   );
-  const [dateStart, setDateStart] = useState<Date>();
-  const [dateDue, setDateDue] = useState<Date>();
+  const [dateStart, setDateStart] = useState(moment().format());
+  const [dateDue, setDateDue] = useState(moment().format());
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -155,8 +155,8 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    values.createAt = dateStart as Date;
-    values.deadlines = dateDue as Date;
+    // values.createAt = dateStart;
+    // values.deadlines = dateDue;
     console.log(values);
     // if (editing) {
     //   values.description = jobs;
@@ -253,7 +253,7 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={dateStart as Date}
+          date={dateStart}
           //@ts-ignore
           setDate={setDateStart}
           name="createAt"
@@ -263,7 +263,7 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={dateDue as Date}
+          date={dateDue}
           //@ts-ignore
           setDate={setDateDue}
           name="deadlines"

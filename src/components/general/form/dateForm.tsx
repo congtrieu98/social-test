@@ -22,6 +22,7 @@ import { ROLE, formatDateAPi } from "@/utils/constant";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useSession } from "next-auth/react";
+import { Dispatch, SetStateAction } from "react";
 import { SelectSingleEventHandler } from "react-day-picker";
 import { UseFormReturn } from "react-hook-form";
 
@@ -36,8 +37,8 @@ const DateForm = ({
   title: string;
   name: string;
   placeholder: string;
-  date: Date | undefined;
-  setDate: (date: Date | undefined) => void;
+  date: string;
+  setDate: Dispatch<SetStateAction<Date>>;
 }) => {
   const { data: session } = useSession();
 
@@ -86,9 +87,8 @@ const DateForm = ({
                     )}
                     disabled={session?.user?.role !== ROLE.ADMIN}
                   >
-                    {date ? (
-                      format(date, "PPP")
-                    ) :
+                    {date ? date
+                      :
                       (
                         <span>Pick a date</span>
                       )}
@@ -99,7 +99,9 @@ const DateForm = ({
               <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
                   mode="single"
+                  // @ts-ignore
                   selected={date}
+                  // @ts-ignore
                   onSelect={setDate}
                   // onSelect={field.onChange}
                   disabled={(date) => name === "deadlines" && date < new Date()
