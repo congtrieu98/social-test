@@ -8,6 +8,11 @@ import Navbar from "@/components/Navbar";
 import TrpcProvider from "@/lib/trpc/Provider";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
 
+<meta
+  name="format-detection"
+  content="telephone=no, date=no, email=no, address=no"
+/>
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {

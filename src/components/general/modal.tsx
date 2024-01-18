@@ -18,11 +18,11 @@ export default function Modal({ media }: { media: CompleteMedia }) {
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-        <img src={media.url} className="w-24 h-24 cursor-pointer" />
+        <img src={media.url} alt={media.url} className="w-24 h-24 cursor-pointer" />
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5"></DialogHeader>
-        <img src={media.url} className="w-full h-full" />
+        <img src={media.url} alt={media.url} className="w-full h-full" />
       </DialogContent>
     </Dialog>
   );
