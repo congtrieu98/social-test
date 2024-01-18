@@ -25,16 +25,16 @@ interface DateTimePickerProps {
 export function DateTimePicker({ date, setDate, name }: DateTimePickerProps) {
   const { data: session } = useSession();
   const [selectedDateTime, setSelectedDateTime] = React.useState<DateTime>(
-    DateTime.fromJSDate(date)
+    DateTime.fromISO("2024-01-18")
   );
 
+  console.log("check ddingj dạng:", DateTime.fromISO("2024-01-18"))
   const handleSelect: SelectSingleEventHandler = (day, selected) => {
     const selectedDay = DateTime.fromJSDate(selected);
     const modifiedDay = selectedDay.set({
       hour: selectedDateTime.hour,
       minute: selectedDateTime.minute,
     });
-
     setSelectedDateTime(modifiedDay);
     setDate(modifiedDay.toJSDate());
   };
