@@ -53,8 +53,8 @@ const TaskForm = ({
   const [jobs, setJobs] = useState<string[]>(
     (task?.description as string[]) || []
   );
-  const [dateStart, setDateStart] = useState<Date>(new Date());
-  const [dateDue, setDateDue] = useState<Date>(new Date());
+  const [dateStart, setDateStart] = useState<Date>();
+  const [dateDue, setDateDue] = useState<Date>();
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
