@@ -53,8 +53,8 @@ const TaskForm = ({
   const [jobs, setJobs] = useState<string[]>(
     (task?.description as string[]) || []
   );
-  const [dateStart, setDateStart] = useState(moment().format());
-  const [dateDue, setDateDue] = useState(moment().format());
+  const [dateStart, setDateStart] = useState(new Date());
+  const [dateDue, setDateDue] = useState(new Date());
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -253,7 +253,7 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={dateStart}
+          date={dateStart as Date}
           //@ts-ignore
           setDate={setDateStart}
           name="createAt"
@@ -263,7 +263,7 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={dateDue}
+          date={dateDue as Date}
           //@ts-ignore
           setDate={setDateDue}
           name="deadlines"
