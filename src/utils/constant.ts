@@ -4,7 +4,7 @@ export const formatTimeDate = "HH:mm DD/MM/YYYY";
 export const formatDateFull = "YYYY-MM-DD[T]HH:mm:ss[Z]";
 export const formatDateAPi = "YYYY-MM-DD";
 export const formatDateSlash = "DD/MM/YYYY";
-export const formatNo = "YYYY-MM-DD[T]HH:mm";
+export const formatNo = "YYYY-MM-DDThh:mm";
 
 export const STATUS_IMAGE = {
   ACTIVE: "active",

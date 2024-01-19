@@ -154,7 +154,13 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    // console.log(values);
+    // console.log("createAtDB", task?.createAt);
+    // console.log("deadlinesDB", task?.deadlines);
+    // console.log("createAtCurren", moment(dateStart).toDate());
+    // console.log("deadlinesCurren", moment(dateDue).toDate());
+    // values.createAt = moment(dateStart).toDate();
+    // values.deadlines = moment(dateDue).toDate();
+    console.log(values);
     if (editing) {
       values.description = jobs;
       values.createAt = moment(dateStart).toDate();
@@ -204,8 +210,8 @@ const TaskForm = ({
       );
   }, [files]);
 
-  console.log("dateStart:", dateStart);
-  console.log("dateDue:", dateDue);
+  // console.log("dateStart:", dateStart);
+  // console.log("dateDue:", dateDue);
 
   return (
     <Form {...form}>
@@ -250,8 +256,14 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={dateStart}
+          date={
+            // task?.createAt
+            //   ? moment(task?.createAt).format(formatNo).toString()
+            //   :
+            dateStart
+          }
           setDate={setDateStart}
+          editing={editing}
           name="createAt"
         />
 
@@ -259,8 +271,14 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={dateDue}
+          date={
+            // task?.deadlines
+            //   ? moment(task?.deadlines).format(formatNo).toString()
+            //   :
+            dateDue
+          }
           setDate={setDateDue}
+          editing={editing}
           name="deadlines"
         />
         {session?.user?.role === ROLE.ADMIN && (

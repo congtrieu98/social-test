@@ -11,7 +11,7 @@ import StyledComponentsRegistry from "@/lib/AntdRegistry";
 <meta
   name="format-detection"
   content="telephone=no, date=no, email=no, address=no"
-/>
+/>;
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,7 +31,7 @@ export default function RootLayout({
         <StyledComponentsRegistry>
           <NextAuthProvider>
             <TrpcProvider>
-              <main className="max-w-sm mx-auto p-6">
+              <main className="max-w-sm mx-auto">
                 <Navbar />
                 {children}
               </main>
