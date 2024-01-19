@@ -25,8 +25,7 @@ import {
   DATASTATUS,
   ROLE,
   STATUS_IMAGE,
-  formatDatetime,
-  formatTimeDate,
+  formatNo,
 } from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
 import UploadImage from "../taskDetail/uploadImage";
@@ -53,8 +52,12 @@ const TaskForm = ({
   const [jobs, setJobs] = useState<string[]>(
     (task?.description as string[]) || []
   );
-  const [dateStart, setDateStart] = useState<Date>(new Date());
-  const [dateDue, setDateDue] = useState<Date>(new Date());
+  const [dateStart, setDateStart] = useState<string>(
+    moment().format(formatNo).toString()
+  );
+  const [dateDue, setDateDue] = useState<string>(
+    moment().format(formatNo).toString()
+  );
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -74,12 +77,8 @@ const TaskForm = ({
       checked: [""] as string[],
       description: jobs,
       creator: session?.user?.id,
-      createAt: new Date(
-        moment(dateStart, formatDatetime).format(formatDatetime)
-      ),
-      deadlines: new Date(
-        moment(dateDue, formatDatetime).format(formatDatetime)
-      ),
+      createAt: moment(dateStart).toDate(),
+      deadlines: moment(dateDue).toDate(),
     },
   });
 
@@ -155,20 +154,18 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    // values.createAt = dateStart;
-    // values.deadlines = dateDue;
-    console.log(values);
-    // if (editing) {
-    //   values.description = jobs;
-    //   // values.createAt = dateStart;
-    //   // values.deadlines = dateDue;
-    //   updateTask({ ...values, id: task.id });
-    // } else {
-    //   values.description = jobs;
-    //   // values.createAt = dateStart;
-    //   // values.deadlines = dateDue;
-    //   createTask(values);
-    // }
+    // console.log(values);
+    if (editing) {
+      values.description = jobs;
+      values.createAt = moment(dateStart).toDate();
+      values.deadlines = moment(dateDue).toDate();
+      updateTask({ ...values, id: task.id });
+    } else {
+      values.description = jobs;
+      values.createAt = moment(dateStart).toDate();
+      values.deadlines = moment(dateDue).toDate();
+      createTask(values);
+    }
   };
 
   const handleAddJobDescription = () => {
@@ -207,8 +204,8 @@ const TaskForm = ({
       );
   }, [files]);
 
-  console.log("dateStart:", dateStart)
-  console.log("dateDue:", dateDue)
+  console.log("dateStart:", dateStart);
+  console.log("dateDue:", dateDue);
 
   return (
     <Form {...form}>
@@ -253,8 +250,7 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={dateStart as Date}
-          //@ts-ignore
+          date={dateStart}
           setDate={setDateStart}
           name="createAt"
         />
@@ -263,8 +259,7 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={dateDue as Date}
-          //@ts-ignore
+          date={dateDue}
           setDate={setDateDue}
           name="deadlines"
         />
