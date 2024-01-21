@@ -16,9 +16,11 @@ import { TaskEmail } from "@/components/emails/TaskEmail";
 import { UpdateTask } from "@/components/emails/UpdateTask";
 import { getBaseUrl } from "@/lib/trpc/utils";
 import { ROLE } from "@/utils/constant";
+import { Knock } from "@knocklabs/node";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
+  const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
   const newTask = insertTaskSchema.parse({
     ...task,
     creator: session?.user.id!,
@@ -27,25 +29,35 @@ export const createTask = async (task: NewTaskParams) => {
     const t = await db.task.create({ data: newTask });
     if (t) {
       const user = await db.user.findFirst({ where: { id: t?.assignedId } });
-      const baseUrl = getBaseUrl();
-      if (user) {
+      await knockClient.notify('new-task', {
+        actor: session?.user.id,
         // @ts-ignore
-        const { name, email } = user;
-        await resend.emails.send({
-          from: `SZG <${process.env.RESEND_EMAIL}>`,
-          to: [email as string],
-          subject: `Hello ${name}!`,
-          // @ts-ignore
-          react: TaskEmail({ baseUrl: baseUrl, name: user.name, task: t }),
-          text: "Email powered by Resend.",
-        });
-      }
+        recipients: [user?.id],
+        data: {
+          taskText: {
+            value: 'Bạn vừa nhận được một task mới'
+          }
+        }
+      })
+      // const baseUrl = getBaseUrl();
+      // if (user) {
+      //  send email
+      // const { name, email } = user;
+      // await resend.emails.send({
+      //   from: `SZG <${process.env.RESEND_EMAIL}>`,
+      //   to: [email as string],
+      //   subject: `Hello ${name}!`,
+      //   // @ts-ignore
+      //   react: TaskEmail({ baseUrl: baseUrl, name: user.name, task: t }),
+      //   text: "Email powered by Resend.",
+      // });
+
+      //  send notification
+
+
+      // }
     }
-    // const NewTodoList = {
-    //   taskId: t.id,
-    //   isChecked: [] as string[],
-    // };
-    // await db.todoList.create({ data: NewTodoList });
+
     return { task: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
