@@ -3,7 +3,13 @@
 "use client";
 
 import { uploadVercel } from "@/lib/utils";
-import { Dispatch, SetStateAction, useCallback, useEffect } from "react";
+import {
+  Dispatch,
+  SetStateAction,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "../ui/use-toast";
 import { useRouter } from "next/navigation";
@@ -32,6 +38,8 @@ const UploadImage = ({
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
+
+  const [deleteImageById, setDeleteImageById] = useState<string>("");
 
   const { mutate: createHistory } = trpc.histories.createHistory.useMutation();
   const { mutate: updateHistory } = trpc.histories.updateHistory.useMutation();
@@ -148,7 +156,7 @@ const UploadImage = ({
               if (item?.status === STATUS_IMAGE.ACTIVE)
                 return (
                   <li key={index} className="relative h-auto rounded-md">
-                    {isImageUpdating ? (
+                    {isImageUpdating && deleteImageById === item?.id ? (
                       <svg
                         className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
                         xmlns="http://www.w3.org/2000/svg"
@@ -179,6 +187,7 @@ const UploadImage = ({
                         <button
                           type="button"
                           onClick={() => {
+                            setDeleteImageById(item.id);
                             updateImage({
                               id: item.id,
                               status: STATUS_IMAGE.DISABLE,

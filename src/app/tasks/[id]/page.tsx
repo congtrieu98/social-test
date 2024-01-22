@@ -32,6 +32,7 @@ import {
   formatTimeDate,
 } from "@/utils/constant";
 import Link from "next/link";
+import AddTaskPractices from "@/components/tasks/AddTaskPractices";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -61,7 +62,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   };
   const { data: t } = trpc.tasks.getTaskById.useQuery({ id: params?.id });
   const { data: h } = trpc.histories.getHistories.useQuery();
-  const { data: u } = trpc.users.getUsers.useQuery();
 
   const { mutate: updateTaskByStatus } =
     trpc.tasks.updateTaskByStatus.useMutation();
@@ -303,6 +303,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             <div className="text-xl font-semibold mb-4">
               Công việc thực hiện
             </div>
+            {listDescript?.length === 0 && <AddTaskPractices />}
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -368,7 +369,10 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                   files={files}
                   setFiles={setFiles}
                 />
-                <Button type="submit">
+                <Button
+                  type="submit"
+                  // disabled={files?.length === 0 || arrayJob}
+                >
                   Submit{isUpdateOnlyChecked ? "ing..." : ""}
                 </Button>
               </form>

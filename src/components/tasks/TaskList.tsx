@@ -17,11 +17,7 @@ import { CompleteTask } from "@/lib/db/schema/tasks";
 import { trpc } from "@/lib/trpc/client";
 import TaskModal from "./TaskModal";
 import moment from "moment";
-import {
-  Layout,
-  Table,
-  Tag,
-} from "antd";
+import { Layout, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useState } from "react";
 import { ROLE, formatDateFull, formatDatetime } from "@/utils/constant";
@@ -30,7 +26,6 @@ import { toast } from "../ui/use-toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
-
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const router = useRouter();
@@ -65,7 +60,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     onChange: onSelectChange,
   };
 
-
   if (t.tasks.length === 0) {
     return <EmptyState />;
   }
@@ -86,14 +80,14 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       title: "Mức độ ưu tiên",
       dataIndex: "priority",
       render: (val) => {
-        if (val === 'hight') {
-          return <Badge variant="destructive">{val}</Badge>
-        } else if (val === 'medium') {
-          return <Badge variant="secondary">{val}</Badge>
+        if (val === "hight") {
+          return <Badge variant="destructive">{val}</Badge>;
+        } else if (val === "medium") {
+          return <Badge variant="secondary">{val}</Badge>;
         } else {
-          return <Badge variant="outline">{val}</Badge>
+          return <Badge variant="outline">{val}</Badge>;
         }
-      }
+      },
     },
     {
       title: "Trạng thái",
@@ -156,7 +150,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     },
   ];
 
-
   return (
     <div className="relative">
       {selectedRowKeys?.length > 0 && (
@@ -177,7 +170,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
                   selectedRowKeys.map((item) =>
                     deleteTask({ id: item as string })
                   );
-                  // await getTasks()
                   setSelectedRowKeys([]);
                 }}
               >
