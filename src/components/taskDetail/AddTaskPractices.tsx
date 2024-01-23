@@ -11,14 +11,43 @@ import {
 import { TiDelete } from "react-icons/ti";
 import { PlusCircle } from "lucide-react";
 import { Button } from "../ui/button";
+import { CompleteTask } from "@/lib/db/schema/tasks";
+import { trpc } from "@/lib/trpc/client";
+import { toast } from "../ui/use-toast";
+import { useSession } from "next-auth/react";
 
-const AddTaskPractices = () => {
+const AddTaskPractices = ({ task, hidden }: { task: CompleteTask, hidden: boolean }) => {
+  const utils = trpc.useContext()
+  const { data: session } = useSession()
   const [open, setOpen] = useState(false);
 
   const inputRef = useRef(null);
 
   const [job, setJob] = useState("");
   const [jobs, setJobs] = useState<string[]>([]);
+
+  const { mutate: createHistory } = trpc.histories.createHistory.useMutation();
+
+
+  const onSuccess = async () => {
+    await utils.tasks.getTaskById.invalidate()
+    handleChangeModal()
+    toast({
+      title: 'Success',
+      description: 'Add description successfully!'
+    })
+    createHistory({
+      taskId: task?.id as string,
+      createAt: new Date(),
+      content: "đã thêm Description",
+      action: "createDescription",
+      userId: session?.user?.name as string,
+    })
+  }
+  const { mutate: updateTask, isLoading: isUpdating } =
+    trpc.tasks.updateTask.useMutation({
+      onSuccess: () => onSuccess()
+    })
 
   const handleAddJobDescription = () => {
     if (job) {
@@ -55,7 +84,12 @@ const AddTaskPractices = () => {
   };
 
   const handleSubmit = () => {
-    console.log("submit form");
+    if (jobs?.length > 0) {
+      const dataDes = task.description.concat(jobs)
+      task.description = dataDes
+      // console.log("dataUp:", { ...task })
+      updateTask({ ...task })
+    }
   };
   return (
     <>
@@ -63,7 +97,7 @@ const AddTaskPractices = () => {
         <DialogTrigger asChild>
           <div className="text-center">
             <h3 className="inline-flex space-x-2 mt-2 text-sm font-semibold text-gray-900">
-              <div>No Description</div>
+              {hidden && <div>No Description</div>}
               <PlusCircle className="cursor-pointer" />
             </h3>
           </div>
@@ -103,8 +137,8 @@ const AddTaskPractices = () => {
                 Add
               </div>
             </div>
-            <Button type="submit" onClick={handleSubmit}>
-              Submit
+            <Button onClick={handleSubmit}>
+              {isUpdating ? 'Submiting...' : 'Submit'}
             </Button>
           </div>
         </DialogContent>

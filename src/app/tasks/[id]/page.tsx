@@ -32,7 +32,7 @@ import {
   formatTimeDate,
 } from "@/utils/constant";
 import Link from "next/link";
-import AddTaskPractices from "@/components/tasks/AddTaskPractices";
+import AddTaskPractices from "@/components/taskDetail/AddTaskPractices";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -65,6 +65,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
 
   const { mutate: updateTaskByStatus } =
     trpc.tasks.updateTaskByStatus.useMutation();
+  // {
+  //   onSuccess: async () => await utils.tasks.getTaskById.invalidate()
+  // }
 
   const { mutate: createHistories } =
     trpc.histories.createHistory.useMutation();
@@ -119,7 +122,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     if (params?.id && session?.user?.role !== ROLE.ADMIN) {
       if (t?.tasks) {
         const findHisByAction = h?.histories.find(
-          (his) => his.action === "readedTask"
+          (his) => his.action === "readedTask" && his.taskId === params?.id
         );
         if (!findHisByAction) {
           createHistories({
@@ -128,7 +131,8 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             action: "readedTask",
             content: "đã xem task",
             userId: session?.user?.name as string,
-          });
+          })
+        } else {
           updateTaskByStatus({
             id: params?.id,
             status: "readed",
@@ -300,10 +304,22 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             </div>
             {/* @ts-ignore */}
             <CardJobDetail t={t?.tasks} taskId={params?.id} />
-            <div className="text-xl font-semibold mb-4">
-              Công việc thực hiện
+            <div className="flex justify-between text-xl font-semibold mb-4">
+              <div>Công việc thực hiện</div>
+              <div>
+                {listDescript?.length as number > 0 && <AddTaskPractices
+                  // @ts-ignore 
+                  task={t?.tasks}
+                  hidden={false}
+                />}
+              </div>
             </div>
-            {listDescript?.length === 0 && <AddTaskPractices />}
+            {listDescript?.length === 0 &&
+              <AddTaskPractices
+                // @ts-ignore 
+                task={t?.tasks}
+                hidden={true}
+              />}
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -334,18 +350,18 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange(
-                                            field.value?.length > 0
-                                              ? [...field.value, item.id]
-                                              : [...arrayJob, item.id]
-                                          )
+                                          field.value?.length > 0
+                                            ? [...field.value, item.id]
+                                            : [...arrayJob, item.id]
+                                        )
                                         : field.onChange(
-                                            (field.value?.length > 0
-                                              ? field.value
-                                              : arrayJob
-                                            )?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                          (field.value?.length > 0
+                                            ? field.value
+                                            : arrayJob
+                                          )?.filter(
+                                            (value) => value !== item.id
+                                          )
+                                        );
                                     }}
                                   />
                                 </FormControl>
@@ -371,7 +387,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                 />
                 <Button
                   type="submit"
-                  // disabled={files?.length === 0 || arrayJob}
+                // disabled={files?.length === 0 || arrayJob}
                 >
                   Submit{isUpdateOnlyChecked ? "ing..." : ""}
                 </Button>
@@ -392,9 +408,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                           {his?.userId}
                         </span>{" "}
                         {his?.action === "deleteImage" &&
-                        (t?.tasks?.medias.filter(
-                          (media) => media?.status === STATUS_IMAGE.DISABLE
-                        )?.length as number) > 0 ? (
+                          (t?.tasks?.medias.filter(
+                            (media) => media?.status === STATUS_IMAGE.DISABLE
+                          )?.length as number) > 0 ? (
                           <Link
                             href={`/medias/${params?.id}`}
                             className="text-red-400 underline"

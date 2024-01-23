@@ -39,7 +39,7 @@ export default async function Navbar() {
           {session ? (
             <>
               {/* knockToken={knockToken} */}
-              <NotificationMenu />
+              {/* <NotificationMenu /> */}
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar>
@@ -48,9 +48,9 @@ export default async function Navbar() {
                         ? session.user.role === ROLE.ADMIN
                           ? "AD"
                           : session.user.name
-                              ?.split(" ")
-                              .map((word) => word[0].toUpperCase())
-                              .join("")
+                            ?.split(" ")
+                            .map((word) => word[0].toUpperCase())
+                            .join("")
                         : "~"}
                     </AvatarFallback>
                   </Avatar>
