@@ -33,6 +33,7 @@ import {
 } from "@/utils/constant";
 import Link from "next/link";
 import AddTaskPractices from "@/components/taskDetail/AddTaskPractices";
+import { AlertModal } from "@/components/general/alert-modal";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -65,9 +66,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
 
   const { mutate: updateTaskByStatus } =
     trpc.tasks.updateTaskByStatus.useMutation();
-  // {
-  //   onSuccess: async () => await utils.tasks.getTaskById.invalidate()
-  // }
 
   const { mutate: createHistories } =
     trpc.histories.createHistory.useMutation();
@@ -131,7 +129,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             action: "readedTask",
             content: "đã xem task",
             userId: session?.user?.name as string,
-          })
+          });
         } else {
           updateTaskByStatus({
             id: params?.id,
@@ -148,8 +146,8 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     content: string;
   }
 
-  const listDescript = t?.tasks?.description.map<desCustom>((item) => ({
-    id: item,
+  const listDescript = t?.tasks?.description.map<desCustom>((item, index) => ({
+    id: index.toString(),
     content: item,
   }));
   const FormSchema = z.object({
@@ -210,28 +208,19 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       const lengthDatabase = t?.tasks?.checked?.length as number;
       const lengthCurent = values?.checked?.length;
 
-      // console.log("lengthDatabase", lengthDatabase)
-      // console.log("lengthCurent", lengthCurent)
       if (lengthDatabase <= lengthCurent) {
-        // user tick chọn
         values?.checked.map((item) => {
           if (!t?.tasks?.checked.includes(item)) {
             arrayTicked.push(item);
-            // console.log("aaa")
           }
         });
       } else {
-        // user bỏ chọn
         t?.tasks?.checked.map((item) => {
           if (!values?.checked.includes(item)) {
             arrayDeleteTicked.push(item);
-            // console.log("bbb")
           }
         });
       }
-
-      // console.log("arrayTicked:", arrayTicked)
-      // console.log("arrayDeleteTicked:", arrayDeleteTicked)
 
       if (arrayTicked?.length > 0) {
         updateTaskOnlyChecked({
@@ -307,19 +296,22 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             <div className="flex justify-between text-xl font-semibold mb-4">
               <div>Công việc thực hiện</div>
               <div>
-                {listDescript?.length as number > 0 && <AddTaskPractices
-                  // @ts-ignore 
-                  task={t?.tasks}
-                  hidden={false}
-                />}
+                {(listDescript?.length as number) > 0 && (
+                  <AddTaskPractices
+                    // @ts-ignore
+                    task={t?.tasks}
+                    hidden={false}
+                  />
+                )}
               </div>
             </div>
-            {listDescript?.length === 0 &&
+            {listDescript?.length === 0 && (
               <AddTaskPractices
-                // @ts-ignore 
+                // @ts-ignore
                 task={t?.tasks}
                 hidden={true}
-              />}
+              />
+            )}
             <Form {...form}>
               <form
                 onSubmit={form.handleSubmit(onSubmit)}
@@ -331,47 +323,54 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                   render={() => (
                     <FormItem>
                       {listDescript?.map((item) => (
-                        <FormField
-                          key={item.id}
-                          control={form.control}
-                          name="checked"
-                          render={({ field }) => {
-                            return (
-                              <FormItem
-                                key={item.id}
-                                className="flex flex-row items-start space-x-3 space-y-0"
-                              >
-                                <FormControl>
-                                  <Checkbox
-                                    checked={(field.value?.length > 0
-                                      ? field.value
-                                      : arrayJob
-                                    )?.includes(item.id)}
-                                    onCheckedChange={(checked) => {
-                                      return checked
-                                        ? field.onChange(
-                                          field.value?.length > 0
-                                            ? [...field.value, item.id]
-                                            : [...arrayJob, item.id]
-                                        )
-                                        : field.onChange(
-                                          (field.value?.length > 0
-                                            ? field.value
-                                            : arrayJob
-                                          )?.filter(
-                                            (value) => value !== item.id
-                                          )
-                                        );
-                                    }}
-                                  />
-                                </FormControl>
-                                <FormLabel className="text-sm font-normal">
-                                  {item.content}
-                                </FormLabel>
-                              </FormItem>
-                            );
-                          }}
-                        />
+                        <div className="flex" key={item.id}>
+                          <FormField
+                            control={form.control}
+                            name="checked"
+                            render={({ field }) => {
+                              return (
+                                <FormItem
+                                  key={item.id}
+                                  className="flex flex-row w-full items-start space-x-3 space-y-0"
+                                >
+                                  <FormControl>
+                                    <Checkbox
+                                      checked={(field.value?.length > 0
+                                        ? field.value
+                                        : arrayJob
+                                      )?.includes(item.id)}
+                                      onCheckedChange={(checked) => {
+                                        return checked
+                                          ? field.onChange(
+                                              field.value?.length > 0
+                                                ? [...field.value, item.id]
+                                                : [...arrayJob, item.id]
+                                            )
+                                          : field.onChange(
+                                              (field.value?.length > 0
+                                                ? field.value
+                                                : arrayJob
+                                              )?.filter(
+                                                (value) => value !== item.id
+                                              )
+                                            );
+                                      }}
+                                    />
+                                  </FormControl>
+
+                                  <FormLabel className="flex justify-between text-sm font-normal">
+                                    {item.content}
+                                  </FormLabel>
+                                </FormItem>
+                              );
+                            }}
+                          />
+                          <AlertModal
+                            // @ts-ignore
+                            task={t?.tasks}
+                            item={item}
+                          />
+                        </div>
                       ))}
                       <FormMessage />
                     </FormItem>
@@ -387,7 +386,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                 />
                 <Button
                   type="submit"
-                // disabled={files?.length === 0 || arrayJob}
+                  // disabled={files?.length === 0 || arrayJob}
                 >
                   Submit{isUpdateOnlyChecked ? "ing..." : ""}
                 </Button>
@@ -408,9 +407,9 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                           {his?.userId}
                         </span>{" "}
                         {his?.action === "deleteImage" &&
-                          (t?.tasks?.medias.filter(
-                            (media) => media?.status === STATUS_IMAGE.DISABLE
-                          )?.length as number) > 0 ? (
+                        (t?.tasks?.medias.filter(
+                          (media) => media?.status === STATUS_IMAGE.DISABLE
+                        )?.length as number) > 0 ? (
                           <Link
                             href={`/medias/${params?.id}`}
                             className="text-red-400 underline"

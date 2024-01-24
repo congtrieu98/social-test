@@ -197,7 +197,7 @@ const TaskForm = ({
     }
   };
 
-  const handleDeleteJob = (job: any) => {
+  const handleDeleteJob = (job: string) => {
     if (jobs.length > 0) {
       setJobs((prev) => prev.filter((item) => item !== job));
     }
