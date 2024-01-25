@@ -80,14 +80,39 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       title: "Mức độ ưu tiên",
       dataIndex: "priority",
       render: (val) => {
-        if (val === "hight") {
-          return <Badge variant="destructive">{val}</Badge>;
+        if (val === "urgent") {
+          return <Badge variant="destructive">{'Cấp thiết'}</Badge>;
+        } else if (val === "hight") {
+          return <Badge className="bg-green-700">{'Cao'}</Badge>;
         } else if (val === "medium") {
-          return <Badge variant="secondary">{val}</Badge>;
+          return <Badge variant="secondary">{'Bình thường'}</Badge>;
         } else {
-          return <Badge variant="outline">{val}</Badge>;
+          return <Badge variant="outline">{'Thấp'}</Badge>;
         }
       },
+      filters: [
+        {
+          text: "Cấp thiết",
+          value: "urgent",
+        },
+        {
+          text: "Cao",
+          value: "hight",
+        },
+        {
+          text: "Bình thường",
+          value: "medium",
+        },
+        {
+          text: "Thấp",
+          value: "low",
+        }
+      ],
+      filterMode: "tree",
+      filterSearch: true,
+      // @ts-ignore
+      onFilter: (value: string, record) => record.priority === value,
+      width: "15%",
     },
     {
       title: "Trạng thái",

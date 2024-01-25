@@ -35,14 +35,14 @@ export default async function RootLayout({
       name: session?.user?.name as string,
       email: session?.user?.email as string,
     });
-    console.log(session);
-    console.log(knockUser);
-    console.log("knockClientEnv:", process.env.KNOCK_SECRET_API_KEY);
+    // console.log(session);
+    // console.log(knockUser);
+    // console.log("knockClientEnv:", process.env.KNOCK_SECRET_API_KEY);
   }
-  // const knockToken = Knock.signUserToken(session?.user?.id, {
-  //   signingKey: process.env.KNOCK_SIGNING_KEY,
-  //   expiresInSeconds: 60 * 60,
-  // });
+  const knockToken = Knock.signUserToken(session?.user?.id, {
+    signingKey: process.env.KNOCK_SIGNING_KEY,
+    expiresInSeconds: 60 * 60,
+  });
 
   return (
     <html lang="en">
@@ -51,10 +51,9 @@ export default async function RootLayout({
           <NextAuthProvider>
             <TrpcProvider>
               <main className="max-w-sm mx-auto py-4">
-                {/* @ts-ignore
-                knockToken={knockToken}
-                */}
-                <Navbar></Navbar>
+                <Navbar
+                  //@ts-ignore
+                  knockToken={knockToken}></Navbar>
                 {children}
               </main>
             </TrpcProvider>

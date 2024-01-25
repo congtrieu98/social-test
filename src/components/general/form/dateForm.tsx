@@ -57,7 +57,7 @@ const DateForm = ({
     //   }
     // }
   };
-  console.log("date:", date);
+  // console.log("date:", date);
 
   return (
     <>

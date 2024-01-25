@@ -13,8 +13,7 @@ import SignOutButton from "./auth/SignOutButton";
 import { ROLE } from "@/utils/constant";
 import NotificationMenu from "./NotificationMenu";
 
-export default async function Navbar() {
-  // { knockToken }: { knockToken: string }
+export default async function Navbar({ knockToken }: { knockToken: string }) {
   const { session } = await getUserAuth();
   const nameExists = !!session?.user.name && session?.user.name.length > 5;
 
@@ -38,8 +37,8 @@ export default async function Navbar() {
         <div className="space-x-2 flex items-center">
           {session ? (
             <>
-              {/* knockToken={knockToken} */}
-              {/* <NotificationMenu /> */}
+
+              <NotificationMenu knockToken={knockToken} />
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar>

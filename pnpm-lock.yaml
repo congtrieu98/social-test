@@ -23,6 +23,9 @@ dependencies:
   '@knocklabs/node':
     specifier: ^0.6.0
     version: 0.6.0
+  '@knocklabs/react':
+    specifier: ^0.1.2
+    version: 0.1.2(@popperjs/core@2.11.8)(react-dom@18.2.0)(react@18.2.0)
   '@knocklabs/react-notification-feed':
     specifier: ^0.8.15
     version: 0.8.15(react-dom@18.2.0)(react@18.2.0)
@@ -471,6 +474,19 @@ packages:
       jose: 5.2.0
     dev: false
 
+  /@knocklabs/react-core@0.1.2(react@18.2.0):
+    resolution: {integrity: sha512-+Ls8eup4GCG9WuLUPu/LfJpnnIPLCAJnBmHBrOackuW9+fWkDEfRf6DLy0EevR9yPiuPduymSx2VIYc6QkFZEQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+    dependencies:
+      '@knocklabs/client': 0.8.15(react@18.2.0)
+      date-fns: 2.30.0
+      react: 18.2.0
+      zustand: 3.7.2(react@18.2.0)
+    transitivePeerDependencies:
+      - debug
+    dev: false
+
   /@knocklabs/react-notification-feed@0.8.15(react-dom@18.2.0)(react@18.2.0):
     resolution: {integrity: sha512-elOReO52Sf2xR61PdkvjkVg4dPpZmIkXs8PcrqjO2bKRE5LpfNGx8BNdu3ovS6AhTVT8dvxFitJ3E3QDFx9zLQ==}
     peerDependencies:
@@ -487,6 +503,24 @@ packages:
       react-popper-tooltip: 4.4.2(react-dom@18.2.0)(react@18.2.0)
       zustand: 3.7.2(react@18.2.0)
     transitivePeerDependencies:
+      - debug
+    dev: false
+
+  /@knocklabs/react@0.1.2(@popperjs/core@2.11.8)(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-XuR2R4e4p5+K/of4vTaUfdkSglE3cqKN8lJdHI74Ix12oIpxNBlot839B7nihJIBSnuAXPygN+r8ASpgP+TdPg==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
+    dependencies:
+      '@knocklabs/client': 0.8.15(react@18.2.0)
+      '@knocklabs/react-core': 0.1.2(react@18.2.0)
+      lodash.debounce: 4.0.8
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+      react-popper: 2.3.0(@popperjs/core@2.11.8)(react-dom@18.2.0)(react@18.2.0)
+      react-popper-tooltip: 4.4.2(react-dom@18.2.0)(react@18.2.0)
+    transitivePeerDependencies:
+      - '@popperjs/core'
       - debug
     dev: false
 

@@ -10,7 +10,7 @@ export const getTasks = async () => {
       orderBy: [
         {
           createAt: "desc",
-        },
+        }
       ],
       include: { user: true, medias: true, history: true },
     });

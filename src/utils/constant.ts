@@ -41,6 +41,10 @@ export const DATASTATUS = [
 
 export const DATAPRIORITY = [
   {
+    key: "urgent",
+    value: "Khẩn cấp",
+  },
+  {
     key: "hight",
     value: "Cao",
   },

@@ -12,8 +12,7 @@ import "@knocklabs/react-notification-feed/dist/index.css";
 import { useSession } from "next-auth/react";
 import { Bell } from "lucide-react";
 
-const YourAppLayout = () => {
-  // { knockToken }: { knockToken: string }
+const YourAppLayout = ({ knockToken }: { knockToken: string }) => {
   const [isVisible, setIsVisible] = useState(false);
   const notifButtonRef = useRef(null);
 
@@ -29,10 +28,10 @@ const YourAppLayout = () => {
       apiKey={"pk_test_UvzY6ZVrNaV0trRFBmMy3_Fk0MiwE4c41shpGv03RBs"}
       feedId={"f542e358-c99c-4224-a5ff-958fb2731dd5"}
       userId={session?.user?.id as string}
-      // userToken={knockToken}
-      // In production, you must pass a signed userToken
-      // and enable enhanced security mode in your Knock dashboard
-      // userToken={currentUser.knockUserToken}
+      userToken={knockToken}
+    // In production, you must pass a signed userToken
+    // and enable enhanced security mode in your Knock dashboard
+    // userToken={currentUser.knockUserToken}
     >
       <>
         <NotificationIconButton

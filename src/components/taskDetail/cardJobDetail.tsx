@@ -172,12 +172,12 @@ const CardJobDetail = ({
                           t?.status === "new"
                             ? "bg-gray-300"
                             : t?.status === "readed"
-                            ? "bg-blue-300"
-                            : t?.status === "inprogress"
-                            ? "bg-yellow-300"
-                            : t?.status === "reject"
-                            ? "bg-red-400"
-                            : "bg-green-500"
+                              ? "bg-blue-300"
+                              : t?.status === "inprogress"
+                                ? "bg-yellow-300"
+                                : t?.status === "reject"
+                                  ? "bg-red-400"
+                                  : "bg-green-500"
                         }
                       >
                         {t?.status}
@@ -254,13 +254,13 @@ const CardJobDetail = ({
                       Mức độ ưu tiên:
                       <Badge
                         variant={
-                          t?.priority === "hight"
-                            ? "destructive"
-                            : t?.priority === "medium"
-                            ? "secondary"
-                            : "outline"
+                          t?.priority === "urgent"
+                            ? "destructive" :
+                            t?.priority === "medium"
+                              ? "secondary"
+                              : "outline"
                         }
-                        className="ml-2"
+                        className={`ml-2 ${t?.priority === 'hight' ? 'bg-green-700 text-white' : ''}`}
                       >
                         {t?.priority}
                       </Badge>
@@ -274,18 +274,21 @@ const CardJobDetail = ({
                         <SelectTrigger className="w-[180px]">
                           <SelectValue
                             placeholder={
-                              t?.priority === "hight"
-                                ? "Cao"
-                                : t?.priority === "medium"
-                                ? "Bình thường"
-                                : t?.priority === "low"
-                                ? "Thấp"
-                                : ""
+                              t?.priority === "urgent"
+                                ? "Cấp thiết" :
+                                t?.priority === "hight"
+                                  ? "Cao"
+                                  : t?.priority === "medium"
+                                    ? "Bình thường"
+                                    : t?.priority === "low"
+                                      ? "Thấp"
+                                      : ""
                             }
                           />
                         </SelectTrigger>
                         <SelectContent>
                           <SelectGroup>
+                            <SelectItem value="urgent">Cấp thiết</SelectItem>
                             <SelectItem value="hight">Cao</SelectItem>
                             <SelectItem value="medium">Bình thường</SelectItem>
                             <SelectItem value="low">Thấp</SelectItem>
@@ -303,8 +306,8 @@ const CardJobDetail = ({
                   <p className="text-sm font-medium ">
                     {t?.createAt
                       ? moment(t?.createAt, formatDateFull).format(
-                          formatDatetime
-                        )
+                        formatDatetime
+                      )
                       : ""}
                   </p>
                 </div>
@@ -316,8 +319,8 @@ const CardJobDetail = ({
                   <p className="text-sm font-medium ">
                     {t?.deadlines
                       ? moment(t?.deadlines, formatDateFull).format(
-                          formatDatetime
-                        )
+                        formatDatetime
+                      )
                       : ""}
                   </p>
                 </div>
