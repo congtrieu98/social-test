@@ -17,6 +17,8 @@
     "@knocklabs/node": "^0.6.0",
     "@knocklabs/react": "^0.1.2",
     "@knocklabs/react-notification-feed": "^0.8.15",
+    "@novu/node": "^0.22.0",
+    "@novu/notification-center": "^0.22.0",
     "@prisma/client": "5.7.0",
     "@radix-ui/react-accordion": "^1.1.2",
     "@radix-ui/react-alert-dialog": "^1.0.5",
