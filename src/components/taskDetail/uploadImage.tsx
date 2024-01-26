@@ -91,6 +91,23 @@ const UploadImage = ({
       ]);
 
       acceptedFiles.forEach((file, index) => {
+        // const maxSize = 100 * 1024 // 3MB
+        // console.log("file:", file)
+        // if (file.size > maxSize) {
+        //   toast({
+        //     variant: "destructive",
+        //     title: 'Warning!',
+        //     description: 'Ảnh vượt quá 3MB'
+        //   })
+        //   setFiles((previousFiles) => [
+        //     ...previousFiles,
+        //     ...acceptedFiles.map((file) => ({
+        //       ...file,
+        //       loading: false,
+        //       erorrs: [],
+        //     })),
+        //   ]);
+        // } else {
         uploadVercel(file).then((url) => {
           setFiles((previousFiles) =>
             previousFiles.map((prevFile, prevIndex) => {
@@ -105,6 +122,8 @@ const UploadImage = ({
             })
           );
         });
+        // }
+
       });
     }
   }, []);
@@ -113,7 +132,7 @@ const UploadImage = ({
     accept: {
       "image/*": [],
     },
-    maxSize: 1024 * 1000,
+    maxSize: 1024 * 1024 * 3, // 3MB
     onDrop,
   });
 
@@ -143,19 +162,17 @@ const UploadImage = ({
             {isDragActive ? (
               <p>Drop the files here ...</p>
             ) : (
-              <p>Drag & drop files here, or click to select files</p>
+              <div className="text-sm">Drag & drop files here, or click to select files</div>
             )}
           </div>
         </div>
         {/* Accepted files */}
-        <h3 className="title text-lg font-semibold text-neutral-600 mt-4 border-b pb-3">
-          Accepted Files
-        </h3>
+        <div className="text-xs text-gray-300 mt-4 pb-3">Ảnh tải lên có dung lượng tôi đa 3MB</div>
         {/* sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 */}
-        <ul className="mt-6 grid grid-cols-1 gap-10">
+        <ul className="relative mt-6 grid grid-cols-1 gap-10">
           {mediaCreating && (
             <svg
-              className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+              className="absolute top-[-10px] right-40 animate-spin h-5 w-5 text-black"
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
               viewBox="0 0 24 24"
@@ -182,7 +199,7 @@ const UploadImage = ({
                   <li key={index} className="relative h-auto rounded-md">
                     {isImageUpdating && deleteImageById === item?.id ? (
                       <svg
-                        className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                        className="absolute top-[-10px] right-40 animate-spin -ml-1 mr-3 h-5 w-5 text-black"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
                         viewBox="0 0 24 24"
@@ -232,7 +249,7 @@ const UploadImage = ({
             <li key={index} className="relative h-auto rounded-md">
               {file.loading ? (
                 <svg
-                  className="absolute top-[-10px] sm:right-0 right-[156px] animate-spin -ml-1 mr-3 h-5 w-5 text-black"
+                  className="absolute top-[-10px] right-40 animate-spin -ml-1 mr-3 h-5 w-5 text-black"
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
                   viewBox="0 0 24 24"
