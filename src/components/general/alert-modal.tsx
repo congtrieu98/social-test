@@ -51,7 +51,6 @@ export function AlertModal({
       updateTask({ ...task });
     }
   };
-  console.log("component mounted");
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>

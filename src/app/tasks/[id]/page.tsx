@@ -72,7 +72,8 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   const { mutate: updateHistories } =
     trpc.histories.updateHistory.useMutation();
 
-  const { mutate: createMedia } = trpc.medias.createMedia.useMutation();
+  const { mutate: createMedia, isLoading: mediaCreating } =
+    trpc.medias.createMedia.useMutation();
   const { mutate: updateTaskOnlyChecked, isLoading: isUpdateOnlyChecked } =
     trpc.tasks.updateTaskOnlyChecked.useMutation({
       onSuccess: ({ task }) => {
@@ -163,6 +164,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
+    console.log(values);
     if (files?.length > 0 && values?.checked?.length === 0) {
       files.forEach((file: FileWithPreview) => {
         if (file.preview) {
@@ -382,6 +384,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
                   taskId={params?.id}
                   files={files}
                   setFiles={setFiles}
+                  mediaCreating={mediaCreating}
                 />
                 <Button
                   type="submit"
