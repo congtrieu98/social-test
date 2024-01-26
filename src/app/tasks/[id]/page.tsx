@@ -212,13 +212,15 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       if (lengthDatabase <= lengthCurent) {
         values?.checked.map((item) => {
           if (!t?.tasks?.checked.includes(item)) {
-            arrayTicked.push(item);
+            // @ts-ignore
+            arrayTicked.push(listDescript[item].content);
           }
         });
       } else {
         t?.tasks?.checked.map((item) => {
           if (!values?.checked.includes(item)) {
-            arrayDeleteTicked.push(item);
+            // @ts-ignore
+            arrayDeleteTicked.push(listDescript[item].content);
           }
         });
       }
