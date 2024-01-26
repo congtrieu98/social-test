@@ -7,7 +7,6 @@ import NextAuthProvider from "@/lib/auth/Provider";
 import Navbar from "@/components/Navbar";
 import TrpcProvider from "@/lib/trpc/Provider";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
-import { Knock } from "@knocklabs/node";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/utils";
 import { Novu } from "@novu/node";
@@ -31,37 +30,13 @@ export default async function RootLayout({
 }) {
   const session = (await getServerSession(authOptions)) as Session;
   if (session) {
-    // const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
-    // const knockUser = await knockClient.users.identify(session?.user?.id, {
-    //   name: session?.user?.name as string,
-    //   email: session?.user?.email as string,
-    // });
-
     const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
 
     await novu.subscribers.identify(session?.user?.id, {
       firstName: session?.user?.name as string,
       email: session?.user?.email as string,
     });
-
-    novu.trigger(session?.user?.id as string, {
-      to: {
-        subscriberId: "clrecdvb000008m1bqcln31ks",
-      },
-      payload: {
-        description: "Test notification",
-      },
-    });
-
-
-    // console.log(session);
-    // console.log(knockUser);
-    // console.log("knockClientEnv:", process.env.KNOCK_SECRET_API_KEY);
   }
-  // const knockToken = Knock.signUserToken(session?.user?.id, {
-  //   signingKey: process.env.KNOCK_SIGNING_KEY,
-  //   expiresInSeconds: 60 * 60,
-  // });
 
   return (
     <html lang="en">
@@ -70,9 +45,7 @@ export default async function RootLayout({
           <NextAuthProvider>
             <TrpcProvider>
               <main className="max-w-sm mx-auto py-4">
-                <Navbar
-                // knockToken={knockToken}
-                ></Navbar>
+                <Navbar></Navbar>
                 {children}
               </main>
             </TrpcProvider>

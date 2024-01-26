@@ -14,7 +14,6 @@ import { ROLE } from "@/utils/constant";
 import NotificationMenu from "./NotificationMenu";
 
 export default async function Navbar() {
-  // { knockToken }: { knockToken: string }
   const { session } = await getUserAuth();
   const nameExists = !!session?.user.name && session?.user.name.length > 5;
 
@@ -38,7 +37,6 @@ export default async function Navbar() {
         <div className="space-x-2 flex items-center">
           {session ? (
             <>
-              {/*  knockToken={knockToken} */}
               <NotificationMenu />
               <DropdownMenu>
                 <DropdownMenuTrigger>
@@ -48,9 +46,9 @@ export default async function Navbar() {
                         ? session.user.role === ROLE.ADMIN
                           ? "AD"
                           : session.user.name
-                            ?.split(" ")
-                            .map((word) => word[0].toUpperCase())
-                            .join("")
+                              ?.split(" ")
+                              .map((word) => word[0].toUpperCase())
+                              .join("")
                         : "~"}
                     </AvatarFallback>
                   </Avatar>

@@ -12,15 +12,14 @@ import {
 } from "@/lib/db/schema/tasks";
 import { getUserAuth } from "@/lib/auth/utils";
 import { resend } from "@/lib/email";
-import { TaskEmail } from "@/components/emails/TaskEmail";
 import { UpdateTask } from "@/components/emails/UpdateTask";
 import { getBaseUrl } from "@/lib/trpc/utils";
 import { ROLE } from "@/utils/constant";
-import { Knock } from "@knocklabs/node";
+import { Novu } from "@novu/node";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
-  const knockClient = new Knock(process.env.KNOCK_SECRET_API_KEY);
+  const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
   const newTask = insertTaskSchema.parse({
     ...task,
     creator: session?.user.id!,
@@ -29,33 +28,15 @@ export const createTask = async (task: NewTaskParams) => {
     const t = await db.task.create({ data: newTask });
     if (t) {
       const user = await db.user.findFirst({ where: { id: t?.assignedId } });
-      await knockClient.notify('new-task', {
-        actor: session?.user.id,
-        // @ts-ignore
-        recipients: [user?.id],
-        data: {
-          taskText: {
-            value: 'Bạn vừa nhận được một task mới'
-          }
-        }
-      })
-      // const baseUrl = getBaseUrl();
-      // if (user) {
-      //  send email
-      // const { name, email } = user;
-      // await resend.emails.send({
-      //   from: `SZG <${process.env.RESEND_EMAIL}>`,
-      //   to: [email as string],
-      //   subject: `Hello ${name}!`,
-      //   // @ts-ignore
-      //   react: TaskEmail({ baseUrl: baseUrl, name: user.name, task: t }),
-      //   text: "Email powered by Resend.",
-      // });
-
-      //  send notification
-
-
-      // }
+      await novu.trigger("tasks", {
+        to: {
+          subscriberId: user?.id as string,
+        },
+        payload: {
+          text: "You have a new task",
+          url: `${t?.id}`,
+        },
+      });
     }
 
     return { task: t };
@@ -108,7 +89,6 @@ export const updateTaskOnlyChecked = async (
   task: UpdateTaskParamsOnlyChecked
 ) => {
   const { id: taskId } = taskIdSchema.parse({ id });
-  // const newTask = updateTaskSchema.parse({ ...task });
   const t = await db.task.update({
     where: { id: taskId },
     data: task,
@@ -121,11 +101,31 @@ export const updateTaskByStatus = async (
   task: UpdateTaskByStatus
 ) => {
   const { id: taskId } = taskIdSchema.parse({ id });
-  // const newTask = updateTaskSchema.parse({ ...task });
+  const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
   const t = await db.task.update({
     where: { id: taskId },
     data: task,
   });
+
+  if (t) {
+    const user = await db.user.findFirst({ where: { id: t?.creator } });
+    const userAsigned = await db.user.findFirst({
+      where: { id: t?.assignedId },
+    });
+    await novu.trigger("tasks", {
+      to: {
+        subscriberId: user?.id as string,
+      },
+      payload: {
+        text: `${userAsigned?.name} ${
+          t.status === "readed"
+            ? `đã xem task: ${t?.title}`
+            : `đã cập nhật trạng thái thành: ${t.status}`
+        }`,
+        url: `${t?.id}`,
+      },
+    });
+  }
   return { task: t };
 };
 
@@ -134,11 +134,28 @@ export const updateTaskByPriority = async (
   task: UpdateTaskByPriority
 ) => {
   const { id: taskId } = taskIdSchema.parse({ id });
-  // const newTask = updateTaskSchema.parse({ ...task });
+  const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
+
   const t = await db.task.update({
     where: { id: taskId },
     data: task,
   });
+
+  if (t) {
+    const user = await db.user.findFirst({ where: { id: t?.creator } });
+    const userAsigned = await db.user.findFirst({
+      where: { id: t?.assignedId },
+    });
+    await novu.trigger("tasks", {
+      to: {
+        subscriberId: user?.id as string,
+      },
+      payload: {
+        text: `${userAsigned?.name} đã cập nhật Priority thành: ${t.priority}`,
+        url: `${t?.id}`,
+      },
+    });
+  }
   return { task: t };
 };
 

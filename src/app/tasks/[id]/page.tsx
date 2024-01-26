@@ -130,7 +130,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
             content: "đã xem task",
             userId: session?.user?.name as string,
           });
-        } else {
           updateTaskByStatus({
             id: params?.id,
             status: "readed",

@@ -172,58 +172,54 @@ const CardJobDetail = ({
                           t?.status === "new"
                             ? "bg-gray-300"
                             : t?.status === "readed"
-                              ? "bg-blue-300"
-                              : t?.status === "inprogress"
-                                ? "bg-yellow-300"
-                                : t?.status === "reject"
-                                  ? "bg-red-400"
-                                  : "bg-green-500"
+                            ? "bg-blue-300"
+                            : t?.status === "inprogress"
+                            ? "bg-yellow-300"
+                            : t?.status === "reject"
+                            ? "bg-red-400"
+                            : "bg-green-500"
                         }
                       >
                         {t?.status}
                       </Badge>
                     </div>
                     {updateStatus ? (
-                      <div>Loading...</div>
+                      <svg
+                        className="animate-spin ml-7 h-5 w-5 text-black"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="black"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="black"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
                     ) : (
                       <Select onValueChange={(val) => handlerChangeStatus(val)}>
                         <SelectTrigger className="w-[180px]">
                           <SelectValue
                             placeholder={
-                              updateStatus ? (
-                                <svg
-                                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-black"
-                                  xmlns="http://www.w3.org/2000/svg"
-                                  fill="none"
-                                  viewBox="0 0 24 24"
-                                >
-                                  <circle
-                                    className="opacity-25"
-                                    cx="12"
-                                    cy="12"
-                                    r="10"
-                                    stroke="black"
-                                    strokeWidth="4"
-                                  ></circle>
-                                  <path
-                                    className="opacity-75"
-                                    fill="black"
-                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                  ></path>
-                                </svg>
-                              ) : t?.status === "new" ? (
-                                "Mới tạo"
-                              ) : t?.status === "readed" ? (
-                                "Đã xem"
-                              ) : t?.status === "inprogress" ? (
-                                "Đang thực hiện"
-                              ) : t?.status === "reject" ? (
-                                "Chưa hoàn thành"
-                              ) : t?.status === "completed" ? (
-                                "Đã hoàn thành"
-                              ) : (
-                                ""
-                              )
+                              t?.status === "new"
+                                ? "Mới tạo"
+                                : t?.status === "readed"
+                                ? "Đã xem"
+                                : t?.status === "inprogress"
+                                ? "Đang thực hiện"
+                                : t?.status === "reject"
+                                ? "Chưa hoàn thành"
+                                : t?.status === "completed"
+                                ? "Đã hoàn thành"
+                                : ""
                             }
                           />
                         </SelectTrigger>
@@ -255,18 +251,41 @@ const CardJobDetail = ({
                       <Badge
                         variant={
                           t?.priority === "urgent"
-                            ? "destructive" :
-                            t?.priority === "medium"
-                              ? "secondary"
-                              : "outline"
+                            ? "destructive"
+                            : t?.priority === "medium"
+                            ? "secondary"
+                            : "outline"
                         }
-                        className={`ml-2 ${t?.priority === 'hight' ? 'bg-green-700 text-white' : ''}`}
+                        className={`ml-2 ${
+                          t?.priority === "hight"
+                            ? "bg-green-700 text-white"
+                            : ""
+                        }`}
                       >
                         {t?.priority}
                       </Badge>
                     </div>
                     {updatePriority ? (
-                      <div>Loading...</div>
+                      <svg
+                        className="animate-spin ml-7 h-5 w-5 text-black"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="black"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="black"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                        ></path>
+                      </svg>
                     ) : (
                       <Select
                         onValueChange={(val) => handlerChangePriority(val)}
@@ -275,14 +294,14 @@ const CardJobDetail = ({
                           <SelectValue
                             placeholder={
                               t?.priority === "urgent"
-                                ? "Cấp thiết" :
-                                t?.priority === "hight"
-                                  ? "Cao"
-                                  : t?.priority === "medium"
-                                    ? "Bình thường"
-                                    : t?.priority === "low"
-                                      ? "Thấp"
-                                      : ""
+                                ? "Cấp thiết"
+                                : t?.priority === "hight"
+                                ? "Cao"
+                                : t?.priority === "medium"
+                                ? "Bình thường"
+                                : t?.priority === "low"
+                                ? "Thấp"
+                                : ""
                             }
                           />
                         </SelectTrigger>
@@ -306,8 +325,8 @@ const CardJobDetail = ({
                   <p className="text-sm font-medium ">
                     {t?.createAt
                       ? moment(t?.createAt, formatDateFull).format(
-                        formatDatetime
-                      )
+                          formatDatetime
+                        )
                       : ""}
                   </p>
                 </div>
@@ -319,8 +338,8 @@ const CardJobDetail = ({
                   <p className="text-sm font-medium ">
                     {t?.deadlines
                       ? moment(t?.deadlines, formatDateFull).format(
-                        formatDatetime
-                      )
+                          formatDatetime
+                        )
                       : ""}
                   </p>
                 </div>
