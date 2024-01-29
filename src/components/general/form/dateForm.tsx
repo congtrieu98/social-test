@@ -6,7 +6,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { formatNo } from "@/utils/constant";
+import { formatDateFull, formatDatetime, formatNo } from "@/utils/constant";
 
 import moment from "moment";
 import { useState } from "react";
@@ -33,31 +33,7 @@ const DateForm = ({
   const handleChangeTime = (e: any) => {
     setDate(e.target.value);
     setChangeTime(true);
-
-    // if (editing) {
-    //   const newCreateAt = moment(form.getValues("createAt"))
-    //     .format(formatNo)
-    //     .toString();
-    //   const newDeadlines = moment(form.getValues("deadlines"))
-    //     .format(formatNo)
-    //     .toString();
-
-    //   console.log("newCreateAt:", newCreateAt);
-    //   console.log("newDeadlines:", newDeadlines);
-    //   console.log("value:", e.target.value);
-
-    //   if (newCreateAt !== e.target.value) {
-    //     const a = form.setValue("createAt", e.target.value);
-    //     // console.log("a:", a);
-    //   }
-
-    //   if (newDeadlines !== e.target.value) {
-    //     const b = form.setValue("deadlines", e.target.value);
-    //     // console.log("b:", b);
-    //   }
-    // }
   };
-  // console.log("date:", date);
 
   return (
     <>
@@ -76,7 +52,9 @@ const DateForm = ({
                 value={
                   editing
                     ? changeTime === false
-                      ? moment(field.value).format(formatNo).toString()
+                      ? moment(field.value, formatDateFull)
+                          .format(formatDatetime)
+                          .toString()
                       : date
                     : date
                 }

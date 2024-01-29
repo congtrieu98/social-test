@@ -25,6 +25,8 @@ import {
   DATASTATUS,
   ROLE,
   STATUS_IMAGE,
+  formatDateFull,
+  formatDatetime,
   formatNo,
 } from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
@@ -53,10 +55,10 @@ const TaskForm = ({
     (task?.description as string[]) || []
   );
   const [dateStart, setDateStart] = useState<string>(
-    moment().format(formatNo).toString()
+    moment().format(formatDatetime).toString()
   );
   const [dateDue, setDateDue] = useState<string>(
-    moment().format(formatNo).toString()
+    moment().format(formatDatetime).toString()
   );
   const router = useRouter();
   const utils = trpc.useContext();
