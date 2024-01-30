@@ -9,7 +9,7 @@ import TrpcProvider from "@/lib/trpc/Provider";
 import StyledComponentsRegistry from "@/lib/AntdRegistry";
 import { Session, getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth/utils";
-import { Novu, PushProviderIdEnum } from "@novu/node";
+import { Novu } from "@novu/node";
 
 <meta
   name="format-detection"
@@ -36,19 +36,6 @@ export default async function RootLayout({
       firstName: session?.user?.name as string,
       email: session?.user?.email as string,
     });
-
-    const randomString =
-      Math.floor(Math.random() * 10000000000).toString() +
-      new Date().getTime().toString();
-
-    console.log("chuỗi ngẫu nhiên:", randomString);
-    // await novu.subscribers.setCredentials(
-    //   session?.user?.id,
-    //   PushProviderIdEnum.PushWebhook,
-    //   {
-    //     deviceTokens: [randomString],
-    //   }
-    // );
   }
 
   return (

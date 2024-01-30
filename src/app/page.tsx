@@ -1,41 +1,32 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { trpc } from "@/lib/trpc/client";
 
+import { getToken } from 'firebase/messaging'
+import { messaging } from './firebase'
+import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import React, { useEffect, useState } from "react";
-import crypto from "crypto";
+import React, { useEffect } from "react";
+import { Novu } from '@novu/node';
 
 export default function Home() {
-  const router = useRouter();
   const { data: session } = useSession();
 
-  // useEffect(() => {
-  //   //@ts-ignore
-  //   acceptNovuPushWebHookRequest(Request, Response);
-  // }, []);
+  const requestPermission = async () => {
+    const permission = await Notification.requestPermission()
+    if (permission === 'granted') {
+      // get token
+      //@ts-ignore
+      const token = await getToken(messaging, { vapidkey: 'BP8fYRkW78MpvSRhCkvLI_W3PCBNPndk2TInIV9N9VpDUi0S0jhDMdlC2K8svzRP6fmMPBhD4by2KOkN0eLu2z4' })
+      console.log("token-clinet", token)
+    } else if (permission === 'denied') {
+      alert('Persmission denied!')
+    }
+  }
 
-  // const acceptNovuPushWebHookRequest = (
-  //   request: { body: any; headers: { [x: string]: any } },
-  //   response: any
-  // ) => {
-  //   const payloadSentByNovu = request.body;
-  //   const hmacHashSentByNovu = request.headers["x-novu-signature"];
-  //   const secretKey =
-  //     ';^j/"/U#2-u4v@5&3/OT7RqwL]5r{#vY?,ZjTAv0xfwuV,-:_/WYj*vuCAbI';
-  //   const actualHashValue = crypto
-  //     .createHmac("sha256", secretKey)
-  //     .update(payloadSentByNovu, "utf-8")
-  //     .digest("hex");
+  useEffect(() => {
+    requestPermission();
+  }, [])
 
-  //   if (hmacHashSentByNovu === actualHashValue) {
-  //     // handle the notification
-  //     console.log("Request sent by Novu");
-  //   } else {
-  //     throw new Error("Not a valod request");
-  //   }
-  // };
+
   return (
     <>
       {session ? (

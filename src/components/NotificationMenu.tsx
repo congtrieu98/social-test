@@ -9,11 +9,11 @@ import {
 import { useSession } from "next-auth/react";
 import { usePathname, useRouter } from "next/navigation";
 
-function YourAppLayout() {
+function NotificationMenu() {
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
-  function handleOnNotificationClick(message: IMessage) {
+  const handleOnNotificationClick = (message: IMessage) => {
     if (message?.payload?.url) {
       if (pathname === `/tasks/${message?.payload?.url}`) {
         return null;
@@ -48,4 +48,4 @@ function YourAppLayout() {
   );
 }
 
-export default YourAppLayout;
+export default NotificationMenu;
