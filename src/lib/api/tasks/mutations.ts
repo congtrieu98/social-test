@@ -16,8 +16,8 @@ import { UpdateTask } from "@/components/emails/UpdateTask";
 import { getBaseUrl } from "@/lib/trpc/utils";
 import { ROLE } from "@/utils/constant";
 import { Novu, PushProviderIdEnum } from "@novu/node";
-import { getToken } from 'firebase/messaging'
-// import { messaging } from '@/app/firebase'
+import { getToken } from "firebase/messaging";
+import { messaging } from "@/app/firebase";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
@@ -30,21 +30,24 @@ export const createTask = async (task: NewTaskParams) => {
     const t = await db.task.create({ data: newTask });
     if (t) {
       const user = await db.user.findFirst({ where: { id: t?.assignedId } });
-      // @ts-ignore
-      const token = await getToken(messaging, { vapidkey: 'BP8fYRkW78MpvSRhCkvLI_W3PCBNPndk2TInIV9N9VpDUi0S0jhDMdlC2K8svzRP6fmMPBhD4by2KOkN0eLu2z4' })
-      await novu.subscribers.setCredentials(session?.user?.id as string, PushProviderIdEnum.FCM, {
-        deviceTokens: [token],
-      });
 
-      novu.trigger('push-tasks', {
-        to: {
-          subscriberId: user?.id as string,
-        },
-        payload: {
-          title: 'You have a new task',
-          body: 'body'
-        },
-      });
+      // await novu.subscribers.setCredentials(
+      //   session?.user?.id as string,
+      //   PushProviderIdEnum.FCM,
+      //   {
+      //     deviceTokens: [token],
+      //   }
+      // );
+
+      // novu.trigger("push-tasks", {
+      //   to: {
+      //     subscriberId: user?.id as string,
+      //   },
+      //   payload: {
+      //     title: "You have a new task",
+      //     body: "body",
+      //   },
+      // });
 
       await novu.trigger("tasks", {
         to: {
@@ -135,10 +138,11 @@ export const updateTaskByStatus = async (
         subscriberId: user?.id as string,
       },
       payload: {
-        text: `${userAsigned?.name} ${t.status === "readed"
-          ? `đã xem task: ${t?.title}`
-          : `đã cập nhật trạng thái thành: ${t.status}`
-          }`,
+        text: `${userAsigned?.name} ${
+          t.status === "readed"
+            ? `đã xem task: ${t?.title}`
+            : `đã cập nhật trạng thái thành: ${t.status}`
+        }`,
         url: `${t?.id}`,
       },
     });

@@ -1,31 +1,38 @@
 "use client";
 
-import { getToken } from 'firebase/messaging'
-import { messaging } from './firebase'
+import { getToken } from "firebase/messaging";
+import { messaging } from "./firebase";
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import React, { useEffect } from "react";
-import { Novu } from '@novu/node';
 
 export default function Home() {
   const { data: session } = useSession();
 
   const requestPermission = async () => {
-    const permission = await Notification.requestPermission()
-    if (permission === 'granted') {
-      // get token
-      //@ts-ignore
-      const token = await getToken(messaging, { vapidkey: 'BP8fYRkW78MpvSRhCkvLI_W3PCBNPndk2TInIV9N9VpDUi0S0jhDMdlC2K8svzRP6fmMPBhD4by2KOkN0eLu2z4' })
-      console.log("token-clinet", token)
-    } else if (permission === 'denied') {
-      alert('Persmission denied!')
+    console.log("vào requestPermission");
+    const permission = await Notification.requestPermission();
+    console.log("permission:", permission);
+    if (permission === "granted") {
+      console.log("vào đây");
+      const token = await getToken(messaging, {
+        //@ts-ignore
+        vapidkey:
+          "BL2-WcjFdCOth65xJuEKlx97guNeOGcRzQwlPFFE4_FDcTC9cOGODM5a_l1A9SGx7uix62CPCZz7LTpElp8AElk",
+      }).then((curenToken) => {
+        console.log(curenToken);
+      });
+      console.log("token-clinet", token);
+    } else if (permission === "denied") {
+      console.log("Persmission denied!");
+      alert("Persmission denied!");
     }
-  }
+  };
 
   useEffect(() => {
+    console.log("vào useEffect");
     requestPermission();
-  }, [])
-
+  }, []);
 
   return (
     <>
