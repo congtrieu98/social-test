@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -11,6 +11,7 @@ import {
 } from "../ui/dialog";
 import TaskForm from "./TaskForm";
 import { CompleteTask } from "@/lib/db/schema/tasks";
+import RequestPermission from "@/utils/hook/notifications";
 
 export default function TaskModal({
   task,
@@ -21,7 +22,22 @@ export default function TaskModal({
 }) {
   const [open, setOpen] = useState(false);
   const closeModal = () => setOpen(false);
+  const [curenToken, setCurenToken] = useState("");
+
   const editing = !!task?.id;
+
+  useEffect(() => {
+    const handlePermission = async () => {
+      try {
+        const token = await RequestPermission();
+        setCurenToken(token as string);
+      } catch (error) {
+        console.error("Error getting curenToken:", error);
+      }
+    };
+    handlePermission();
+  }, []);
+  console.log("curenToken taskModal:", curenToken);
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
@@ -59,7 +75,11 @@ export default function TaskModal({
           <DialogTitle>{editing ? "Edit" : "Create"} Task</DialogTitle>
         </DialogHeader>
         <div className="px-5 pb-5">
-          <TaskForm closeModal={closeModal} task={task} />
+          <TaskForm
+            closeModal={closeModal}
+            task={task}
+            curenToken={curenToken}
+          />
         </div>
       </DialogContent>
     </Dialog>

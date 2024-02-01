@@ -19,13 +19,14 @@ import TaskModal from "./TaskModal";
 import moment from "moment";
 import { Layout, Table } from "antd";
 import type { ColumnsType } from "antd/es/table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ROLE, formatDateFull, formatDatetime } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
+import RequestPermission from "@/utils/hook/notifications";
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const router = useRouter();
@@ -50,6 +51,17 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       onSuccess: () => onSuccess("delete"),
     });
   trpc.users.getUsers.useQuery();
+
+  useEffect(() => {
+    const handlePermission = async () => {
+      try {
+        const token = await RequestPermission();
+      } catch (error) {
+        console.error("Error getting curenToken:", error);
+      }
+    };
+    handlePermission();
+  }, []);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
@@ -81,13 +93,13 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       dataIndex: "priority",
       render: (val) => {
         if (val === "urgent") {
-          return <Badge variant="destructive">{'Cấp thiết'}</Badge>;
+          return <Badge variant="destructive">{"Cấp thiết"}</Badge>;
         } else if (val === "hight") {
-          return <Badge className="bg-green-700">{'Cao'}</Badge>;
+          return <Badge className="bg-green-700">{"Cao"}</Badge>;
         } else if (val === "medium") {
-          return <Badge variant="secondary">{'Bình thường'}</Badge>;
+          return <Badge variant="secondary">{"Bình thường"}</Badge>;
         } else {
-          return <Badge variant="outline">{'Thấp'}</Badge>;
+          return <Badge variant="outline">{"Thấp"}</Badge>;
         }
       },
       filters: [
@@ -106,7 +118,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
         {
           text: "Thấp",
           value: "low",
-        }
+        },
       ],
       filterMode: "tree",
       filterSearch: true,

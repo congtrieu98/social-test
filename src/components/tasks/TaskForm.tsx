@@ -42,9 +42,11 @@ interface FileWithPreview extends File {
 const TaskForm = ({
   task,
   closeModal,
+  curenToken,
 }: {
   task?: CompleteTask;
   closeModal: () => void;
+  curenToken: string;
 }) => {
   const { toast } = useToast();
 
@@ -156,12 +158,6 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    // console.log("createAtDB", task?.createAt);
-    // console.log("deadlinesDB", task?.deadlines);
-    // console.log("createAtCurren", moment(dateStart).toDate());
-    // console.log("deadlinesCurren", moment(dateDue).toDate());
-    // values.createAt = moment(dateStart).toDate();
-    // values.deadlines = moment(dateDue).toDate();
     console.log(values);
     if (editing) {
       values.description = jobs;

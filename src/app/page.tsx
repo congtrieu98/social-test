@@ -1,37 +1,22 @@
 "use client";
 
-import { getToken } from "firebase/messaging";
-import { messaging } from "./firebase";
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import RequestPermission from "@/utils/hook/notifications";
 
 export default function Home() {
   const { data: session } = useSession();
 
-  const requestPermission = async () => {
-    console.log("vào requestPermission");
-    const permission = await Notification.requestPermission();
-    console.log("permission:", permission);
-    if (permission === "granted") {
-      console.log("vào đây");
-      const token = await getToken(messaging, {
-        //@ts-ignore
-        vapidkey:
-          "BL2-WcjFdCOth65xJuEKlx97guNeOGcRzQwlPFFE4_FDcTC9cOGODM5a_l1A9SGx7uix62CPCZz7LTpElp8AElk",
-      }).then((curenToken) => {
-        console.log(curenToken);
-      });
-      console.log("token-clinet", token);
-    } else if (permission === "denied") {
-      console.log("Persmission denied!");
-      alert("Persmission denied!");
-    }
-  };
-
   useEffect(() => {
-    console.log("vào useEffect");
-    requestPermission();
+    const handlePermission = async () => {
+      try {
+        await RequestPermission();
+      } catch (error) {
+        console.error("Error getting curenToken:", error);
+      }
+    };
+    handlePermission();
   }, []);
 
   return (

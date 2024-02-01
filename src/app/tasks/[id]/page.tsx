@@ -34,6 +34,7 @@ import {
 import Link from "next/link";
 import AddTaskPractices from "@/components/taskDetail/AddTaskPractices";
 import { AlertModal } from "@/components/general/alert-modal";
+import RequestPermission from "@/utils/hook/notifications";
 
 interface FileWithPreview extends File {
   preview?: string;
@@ -140,6 +141,10 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.id, t]);
+
+  useEffect(() => {
+    RequestPermission();
+  }, []);
 
   interface desCustom {
     id: string;

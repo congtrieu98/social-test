@@ -1,5 +1,5 @@
 import TaskList from "@/components/tasks/TaskList";
-import NewTaskModal from "@/components/tasks/TaskModal";
+import TaskModal from "@/components/tasks/TaskModal";
 import { getTasks } from "@/lib/api/tasks/queries";
 import { checkAuth, getUserAuth } from "@/lib/auth/utils";
 import { ROLE } from "@/utils/constant";
@@ -18,7 +18,7 @@ export default async function Tasks() {
           </h1>
         )}
         {session?.user?.role === ROLE.ADMIN && tasks.length > 0 && (
-          <NewTaskModal />
+          <TaskModal />
         )}
       </div>
       <TaskList tasks={tasks} />
