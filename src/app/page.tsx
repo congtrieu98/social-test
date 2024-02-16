@@ -3,21 +3,21 @@
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import React, { useEffect, useState } from "react";
-import RequestPermission from "@/utils/hook/notifications";
+// import RequestPermission from "@/utils/hook/notifications";
 
 export default function Home() {
   const { data: session } = useSession();
 
-  useEffect(() => {
-    const handlePermission = async () => {
-      try {
-        await RequestPermission();
-      } catch (error) {
-        console.error("Error getting curenToken:", error);
-      }
-    };
-    handlePermission();
-  }, []);
+  // useEffect(() => {
+  //   const handlePermission = async () => {
+  //     try {
+  //       await RequestPermission();
+  //     } catch (error) {
+  //       console.error("Error getting curenToken:", error);
+  //     }
+  //   };
+  //   handlePermission();
+  // }, []);
 
   return (
     <>

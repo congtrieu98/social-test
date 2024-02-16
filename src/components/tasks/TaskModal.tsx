@@ -11,7 +11,7 @@ import {
 } from "../ui/dialog";
 import TaskForm from "./TaskForm";
 import { CompleteTask } from "@/lib/db/schema/tasks";
-import RequestPermission from "@/utils/hook/notifications";
+// import RequestPermission from "@/utils/hook/notifications";
 
 export default function TaskModal({
   task,
@@ -26,18 +26,18 @@ export default function TaskModal({
 
   const editing = !!task?.id;
 
-  useEffect(() => {
-    const handlePermission = async () => {
-      try {
-        const token = await RequestPermission();
-        setCurenToken(token as string);
-      } catch (error) {
-        console.error("Error getting curenToken:", error);
-      }
-    };
-    handlePermission();
-  }, []);
-  console.log("curenToken taskModal:", curenToken);
+  // useEffect(() => {
+  //   const handlePermission = async () => {
+  //     try {
+  //       const token = await RequestPermission();
+  //       setCurenToken(token as string);
+  //     } catch (error) {
+  //       console.error("Error getting curenToken:", error);
+  //     }
+  //   };
+  //   handlePermission();
+  // }, []);
+  // console.log("curenToken taskModal:", curenToken);
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>

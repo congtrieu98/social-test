@@ -16,8 +16,6 @@ import { UpdateTask } from "@/components/emails/UpdateTask";
 import { getBaseUrl } from "@/lib/trpc/utils";
 import { ROLE } from "@/utils/constant";
 import { Novu, PushProviderIdEnum } from "@novu/node";
-import { getToken } from "firebase/messaging";
-import { messaging } from "@/app/firebase";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
@@ -31,22 +29,24 @@ export const createTask = async (task: NewTaskParams) => {
     if (t) {
       const user = await db.user.findFirst({ where: { id: t?.assignedId } });
 
-      await novu.subscribers.setCredentials(
-        user?.id as string,
-        PushProviderIdEnum.FCM,
-        {
-          deviceTokens: [newTask.tokenNoticafition as string],
-        }
-      );
-      novu.trigger("push-tasks", {
-        to: {
-          subscriberId: user?.id as string,
-        },
-        payload: {
-          title: "You have a new task from push",
-          body: "body",
-        },
-      });
+      // todo create noti on web chrom
+
+      // await novu.subscribers.setCredentials(
+      //   user?.id as string,
+      //   PushProviderIdEnum.FCM,
+      //   {
+      //     deviceTokens: [newTask.tokenNoticafition as string],
+      //   }
+      // );
+      // novu.trigger("push-tasks", {
+      //   to: {
+      //     subscriberId: user?.id as string,
+      //   },
+      //   payload: {
+      //     title: "You have a new task from push",
+      //     body: "body",
+      //   },
+      // });
 
       await novu.trigger("tasks", {
         to: {

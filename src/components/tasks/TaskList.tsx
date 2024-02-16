@@ -26,7 +26,7 @@ import { toast } from "../ui/use-toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
-import RequestPermission from "@/utils/hook/notifications";
+// import RequestPermission from "@/utils/hook/notifications";
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const router = useRouter();
@@ -52,16 +52,16 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     });
   trpc.users.getUsers.useQuery();
 
-  useEffect(() => {
-    const handlePermission = async () => {
-      try {
-        const token = await RequestPermission();
-      } catch (error) {
-        console.error("Error getting curenToken:", error);
-      }
-    };
-    handlePermission();
-  }, []);
+  // useEffect(() => {
+  //   const handlePermission = async () => {
+  //     try {
+  //       const token = await RequestPermission();
+  //     } catch (error) {
+  //       console.error("Error getting curenToken:", error);
+  //     }
+  //   };
+  //   handlePermission();
+  // }, []);
 
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
