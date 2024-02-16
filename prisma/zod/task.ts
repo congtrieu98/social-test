@@ -12,6 +12,7 @@ export const taskSchema = z.object({
   assignedId: z.string(),
   description: z.string().array(),
   checked: z.string().array(),
+  tokenNoticafition: z.string().nullish(),
 })
 
 export interface CompleteTask extends z.infer<typeof taskSchema> {

@@ -21,7 +21,7 @@ export default function Home() {
 
   return (
     <>
-      {session ? (
+      {session?.user ? (
         <div className="text-base">
           Welcome to{" "}
           <span className="font-semibold">{session?.user?.name}</span> come

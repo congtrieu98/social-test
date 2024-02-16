@@ -168,6 +168,7 @@ const TaskForm = ({
       values.description = jobs;
       values.createAt = moment(dateStart).toDate();
       values.deadlines = moment(dateDue).toDate();
+      values.tokenNoticafition = curenToken;
       createTask(values);
     }
   };
@@ -207,9 +208,6 @@ const TaskForm = ({
         URL.revokeObjectURL(file.preview as string)
       );
   }, [files]);
-
-  // console.log("dateStart:", dateStart);
-  // console.log("dateDue:", dateDue);
 
   return (
     <Form {...form}>

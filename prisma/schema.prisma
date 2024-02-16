@@ -84,6 +84,7 @@ model Task {
   assignedId  String
   description String[]
   checked     String[]
+  tokenNoticafition     String?
   medias      Media[]
   todoList    TodoList[]
   history     History[]

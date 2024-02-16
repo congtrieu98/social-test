@@ -10,7 +10,7 @@ export default async function RequestPermission() {
     if (permission === "granted") {
       const curenToken = await getToken(messaging, {
         vapidKey:
-          "BL2-WcjFdCOth65xJuEKlx97guNeOGcRzQwlPFFE4_FDcTC9cOGODM5a_l1A9SGx7uix62CPCZz7LTpElp8AElk",
+          "BNhH2rlGssLDnhNMZMwR09WDgnSjlouPaaEJu2ZFKwtITOt9MElzgwNlRlmpugNx-f2KMfnimBr9tC_RV_qCc5E",
       });
       return curenToken;
     } else if (permission === "denied") {
