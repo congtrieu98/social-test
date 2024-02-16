@@ -1,5 +1,6 @@
-// "use client";
+"use client";
 
+import { useToast } from "@/components/ui/use-toast";
 // import { getToken } from "firebase/messaging";
 // import { messaging } from "@/app/firebase";
 
@@ -22,3 +23,39 @@
 //     throw error;
 //   }
 // }
+
+import { NovuProvider, useSocket } from "@novu/notification-center";
+import { useEffect } from "react";
+
+export default function CustomNotificationCenter() {
+  const { socket } = useSocket();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("notification_received", (data) => {
+        console.log(data);
+        // set received notification content as toast content
+        // setToastContent(data.content)
+        // open the toast
+        toast(
+          {
+            title: "New Task",
+            description: data.message.payload.text,
+          }
+          // onclick: () => {
+
+          // }
+        );
+      });
+    }
+
+    return () => {
+      if (socket) {
+        socket.off("notification_received");
+      }
+    };
+  }, [socket]);
+
+  return "";
+}

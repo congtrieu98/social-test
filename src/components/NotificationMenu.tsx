@@ -1,5 +1,6 @@
 "use client";
 
+import CustomNotificationCenter from "@/utils/hook/notifications";
 import {
   NovuProvider,
   PopoverNotificationCenter,
@@ -22,7 +23,7 @@ function NotificationMenu() {
         router.refresh();
       }
     }
-  }
+  };
 
   return (
     <>
@@ -40,6 +41,7 @@ function NotificationMenu() {
               <NotificationBell unseenCount={unseenCount} />
             )}
           </PopoverNotificationCenter>
+          <CustomNotificationCenter />
         </NovuProvider>
       ) : (
         ""
