@@ -26,6 +26,8 @@ import { useToast } from "@/components/ui/use-toast";
 
 import { NovuProvider, useSocket } from "@novu/notification-center";
 import { useEffect } from "react";
+import { ToastAction } from "@/components/ui/toast";
+import Link from "next/link";
 
 export default function CustomNotificationCenter() {
   const { socket } = useSocket();
@@ -38,15 +40,15 @@ export default function CustomNotificationCenter() {
         // set received notification content as toast content
         // setToastContent(data.content)
         // open the toast
-        toast(
-          {
-            title: "New Task",
-            description: data.message.payload.text,
-          }
-          // onclick: () => {
-
-          // }
-        );
+        toast({
+          title: "New Task",
+          description: data.message.payload.text,
+          action: (
+            <ToastAction altText="Detail">
+              <Link href={`tasks/${data.message.payload.url}`}>Detail</Link>
+            </ToastAction>
+          ),
+        });
       });
     }
 

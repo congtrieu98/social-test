@@ -27,6 +27,9 @@ export default async function Navbar() {
           <Link href="/tasks" className="hover:opacity-75">
             Tasks
           </Link>
+          <Link href="/kpi" className="hover:opacity-75">
+            KPI
+          </Link>
           <Link
             href="https://github.com/congtrieu98/task"
             className="hover:opacity-75"
