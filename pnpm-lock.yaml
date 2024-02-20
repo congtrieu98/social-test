@@ -104,6 +104,9 @@ dependencies:
   '@types/antd':
     specifier: ^1.0.0
     version: 1.0.0(date-fns@3.0.6)(luxon@3.4.4)(moment@2.29.4)(react-dom@18.2.0)(react@18.2.0)
+  '@types/prop-types':
+    specifier: ^15.7.11
+    version: 15.7.11
   '@vercel/blob':
     specifier: ^0.16.1
     version: 0.16.1

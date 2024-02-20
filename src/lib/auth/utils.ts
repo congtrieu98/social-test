@@ -4,7 +4,6 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env.mjs";
 import GoogleProvider from "next-auth/providers/google";
-import { ROLE } from "@/utils/constant";
 
 declare module "next-auth" {
   interface Session {
@@ -21,7 +20,6 @@ const emailPermission = [
   "networksocialtest@gmail.com",
   "khanh@suzu.vn",
   "tran@dinhkhanh.dk",
-  "duongltt@suzu.group",
 ];
 
 export type AuthSession = {

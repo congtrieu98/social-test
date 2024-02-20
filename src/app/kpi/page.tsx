@@ -23,7 +23,7 @@ import {
 } from "@/utils/constant";
 import { useSession } from "next-auth/react";
 
-const home = () => {
+const Home = () => {
   const { data: session } = useSession();
   const { data: r } = trpc.reports.getReports.useQuery();
   console.log("rrrr", r);
@@ -142,4 +142,4 @@ const home = () => {
   );
 };
 
-export default home;
+export default Home;

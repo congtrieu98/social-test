@@ -158,12 +158,12 @@ const TaskForm = ({
     });
 
   const handleSubmit = (values: NewTaskParams) => {
-    console.log(values);
     if (editing) {
       values.description = jobs;
       values.createAt = moment(dateStart).toDate();
       values.deadlines = moment(dateDue).toDate();
-      updateTask({ ...values, id: task.id });
+      console.log(values);
+      // updateTask({ ...values, id: task.id });
     } else {
       values.description = jobs;
       values.createAt = moment(dateStart).toDate();

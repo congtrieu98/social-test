@@ -17,7 +17,7 @@ import { CompleteTask } from "@/lib/db/schema/tasks";
 import { trpc } from "@/lib/trpc/client";
 import TaskModal from "./TaskModal";
 import moment from "moment";
-import { Layout, Table } from "antd";
+import { Layout } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
 import { ROLE, formatDateFull, formatDatetime } from "@/utils/constant";
@@ -26,6 +26,7 @@ import { toast } from "../ui/use-toast";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
+import TableCustom from "../general/tableCustom/table";
 // import RequestPermission from "@/utils/hook/notifications";
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
@@ -62,7 +63,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   //   };
   //   handlePermission();
   // }, []);
-
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -79,7 +79,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const columns: ColumnsType<CompleteTask> = [
     {
       title: "Tên công việc",
-      width: 150,
       render: (record) => {
         return <Link href={`/tasks/${record.id}`}>{record.title}</Link>;
       },
@@ -130,17 +129,32 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       title: "Trạng thái",
       dataIndex: "status",
       render: (val) => {
-        if (val === "new") {
-          return "Mới tạo";
-        } else if (val === "readed") {
-          return "Đã xem";
-        } else if (val === "inprogress") {
-          return "Đang thực hiện";
-        } else if (val === "reject") {
-          return "Chưa hoàn thành";
-        } else {
-          return "Đã hoàn thành";
-        }
+        return (
+          <Badge
+            variant="default"
+            className={
+              val === "new"
+                ? "bg-gray-300"
+                : val === "readed"
+                ? "bg-blue-300"
+                : val === "inprogress"
+                ? "bg-yellow-300"
+                : val === "reject"
+                ? "bg-red-400"
+                : "bg-green-500"
+            }
+          >
+            {val === "new"
+              ? "Mới tạo"
+              : val === "readed"
+              ? "Đã xem"
+              : val === "inprogress"
+              ? "Đang thực hiện"
+              : val === "reject"
+              ? "Chưa hoàn thành"
+              : "Đã hoàn thành"}
+          </Badge>
+        );
       },
       filters: [
         {
@@ -168,7 +182,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       filterSearch: true,
       // @ts-ignore
       onFilter: (value: string, record) => record.status === value,
-      width: "10%",
+      width: "15%",
     },
     {
       title: "Thời gian bắt đầu",
@@ -182,7 +196,8 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     },
     {
       title: "Action",
-      // dataIndex: 'user',
+      //@ts-ignore
+      hideInTable: session?.user.role === ROLE.USER,
       render: (record) => <TaskModal task={record} />,
     },
   ];
@@ -218,7 +233,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       )}
       <Layout className="layoutContent">
         <Layout.Content>
-          <Table
+          <TableCustom
             rowKey="id"
             loading={isDeleting}
             // @ts-ignore
