@@ -163,7 +163,7 @@ const CardJobDetail = ({
                   <Loader />
                 </span>
                 <div className="space-y-2 mb-4">
-                  <p className="text-base font-medium">
+                  <div className="text-base font-medium">
                     <div className="mb-2">
                       Trạng thái:{" "}
                       <Badge
@@ -239,13 +239,13 @@ const CardJobDetail = ({
                         </SelectContent>
                       </Select>
                     )}
-                  </p>
+                  </div>
                 </div>
                 <span className="flex mr-2">
                   <AudioLines />
                 </span>
                 <div className="space-y-2 mb-4">
-                  <p className="text-base font-medium">
+                  <div className="text-base font-medium">
                     <div className="mb-2">
                       Mức độ ưu tiên:
                       <Badge
@@ -315,7 +315,7 @@ const CardJobDetail = ({
                         </SelectContent>
                       </Select>
                     )}
-                  </p>
+                  </div>
                 </div>
                 <span className="flex mr-2">
                   <Timer />

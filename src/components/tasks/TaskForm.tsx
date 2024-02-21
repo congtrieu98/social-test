@@ -62,6 +62,7 @@ const TaskForm = ({
   const [dateDue, setDateDue] = useState<string>(
     moment().format(formatDatetime).toString()
   );
+  const [changeTime, setChangeTime] = useState<boolean>(false);
   const router = useRouter();
   const utils = trpc.useContext();
   const { data: session } = useSession();
@@ -160,10 +161,11 @@ const TaskForm = ({
   const handleSubmit = (values: NewTaskParams) => {
     if (editing) {
       values.description = jobs;
-      values.createAt = moment(dateStart).toDate();
-      values.deadlines = moment(dateDue).toDate();
-      console.log(values);
-      // updateTask({ ...values, id: task.id });
+      if (changeTime) {
+        values.deadlines = moment(dateDue).toDate();
+      }
+      // console.log(values);
+      updateTask({ ...values, id: task.id });
     } else {
       values.description = jobs;
       values.createAt = moment(dateStart).toDate();
@@ -252,12 +254,9 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Start"
-          date={
-            // task?.createAt
-            //   ? moment(task?.createAt).format(formatNo).toString()
-            //   :
-            dateStart
-          }
+          changeTime={changeTime}
+          setChangeTime={setChangeTime}
+          date={dateStart}
           setDate={setDateStart}
           editing={editing}
           name="createAt"
@@ -267,12 +266,9 @@ const TaskForm = ({
           //@ts-ignore
           form={form}
           title="Due"
-          date={
-            // task?.deadlines
-            //   ? moment(task?.deadlines).format(formatNo).toString()
-            //   :
-            dateDue
-          }
+          changeTime={changeTime}
+          setChangeTime={setChangeTime}
+          date={dateDue}
           setDate={setDateDue}
           editing={editing}
           name="deadlines"

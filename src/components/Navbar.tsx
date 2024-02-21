@@ -30,12 +30,12 @@ export default async function Navbar() {
           <Link href="/kpi" className="hover:opacity-75">
             KPI
           </Link>
-          <Link
+          {/* <Link
             href="https://github.com/congtrieu98/task"
             className="hover:opacity-75"
           >
             Github
-          </Link>
+          </Link> */}
         </h1>
         <div className="space-x-2 flex items-center">
           {session ? (

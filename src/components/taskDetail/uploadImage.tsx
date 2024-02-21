@@ -123,7 +123,6 @@ const UploadImage = ({
           );
         });
         // }
-
       });
     }
   }, []);
@@ -162,12 +161,16 @@ const UploadImage = ({
             {isDragActive ? (
               <p>Drop the files here ...</p>
             ) : (
-              <div className="text-sm">Drag & drop files here, or click to select files</div>
+              <div className="text-sm">
+                Drag & drop files here, or click to select files
+              </div>
             )}
           </div>
         </div>
         {/* Accepted files */}
-        <div className="text-xs text-gray-300 mt-4 pb-3">Ảnh tải lên có dung lượng tôi đa 3MB</div>
+        <div className="text-xs text-gray-300 mt-4 pb-3">
+          Ảnh tải lên có dung lượng tối đa 3MB
+        </div>
         {/* sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 */}
         <ul className="relative mt-6 grid grid-cols-1 gap-10">
           {mediaCreating && (

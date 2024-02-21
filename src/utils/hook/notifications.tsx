@@ -24,28 +24,46 @@ import { useToast } from "@/components/ui/use-toast";
 //   }
 // }
 
-import { NovuProvider, useSocket } from "@novu/notification-center";
+import { IMessage, NovuProvider, useSocket } from "@novu/notification-center";
 import { useEffect } from "react";
 import { ToastAction } from "@/components/ui/toast";
 import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 
 export default function CustomNotificationCenter() {
   const { socket } = useSocket();
   const { toast } = useToast();
 
+  const pathname = usePathname();
+  const router = useRouter();
+
+  const handleToaskClick = (data: any) => {
+    if (data.message?.payload?.url) {
+      if (pathname === `/tasks/${data?.message?.payload?.url}`) {
+        return null;
+      } else {
+        router.push(`/tasks/${data?.message?.payload?.url}` as string);
+        router.refresh();
+      }
+    }
+  };
+
   useEffect(() => {
     if (socket) {
       socket.on("notification_received", (data) => {
-        console.log(data);
-        // set received notification content as toast content
-        // setToastContent(data.content)
-        // open the toast
         toast({
           title: "New Task",
           description: data.message.payload.text,
           action: (
             <ToastAction altText="Detail">
-              <Link href={`tasks/${data.message.payload.url}`}>Detail</Link>
+              {/* <Link href={`tasks/${data.message.payload.url}`}>Detail</Link> */}
+              <div
+                // @ts-ignore
+                onClick={handleToaskClick(data)}
+              >
+                Detail
+              </div>
             </ToastAction>
           ),
         });

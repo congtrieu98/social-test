@@ -142,10 +142,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params?.id, t]);
 
-  // useEffect(() => {
-  //   RequestPermission();
-  // }, []);
-
   interface desCustom {
     id: string;
     content: string;
@@ -169,7 +165,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    console.log(values);
+    // console.log(values);
     if (files?.length > 0 && values?.checked?.length === 0) {
       files.forEach((file: FileWithPreview) => {
         if (file.preview) {

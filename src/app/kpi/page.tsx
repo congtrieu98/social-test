@@ -1,8 +1,6 @@
 "use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { trpc } from "@/lib/trpc/client";
-import { AlarmClockOff, AudioLines, Loader, Timer, Users } from "lucide-react";
 
 import {
   Table,
@@ -14,19 +12,12 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import moment from "moment";
-import {
-  ROLE,
-  formatDate,
-  formatDateFull,
-  formatDateSlash,
-  formatDatetime,
-} from "@/utils/constant";
+import { ROLE, formatDateSlash } from "@/utils/constant";
 import { useSession } from "next-auth/react";
 
 const Home = () => {
   const { data: session } = useSession();
   const { data: r } = trpc.reports.getReports.useQuery();
-  console.log("rrrr", r);
   const dataByUser = r?.reports.filter((rep) => {
     if (session) {
       return rep.assignedTo === session.user.name;

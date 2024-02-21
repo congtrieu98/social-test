@@ -70,30 +70,26 @@ export const createTask = async (task: NewTaskParams) => {
 export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
   const { id: taskId } = taskIdSchema.parse({ id });
   const newTask = updateTaskSchema.parse({ ...task });
-  const baseUrl = getBaseUrl();
+  const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
   try {
     const t = await db.task.update({
       where: { id: taskId },
       data: newTask,
     });
-    const user = await db.user.findFirst({ where: { id: t?.creator } });
-    const userAssignded = await db.user.findFirst({
-      where: { id: t?.assignedId },
-    });
-    if (user?.role !== ROLE.ADMIN) {
-      // @ts-ignore
-      const { name, email } = user;
-      await resend.emails.send({
-        from: `SZG <${process.env.RESEND_EMAIL}>`,
-        to: [email as string],
-        subject: `Hello ${name}!`,
-        react: UpdateTask({
-          baseUrl: baseUrl as string,
-          name: userAssignded?.name as string,
-          //@ts-ignore
-          task: t,
-        }),
-        text: "Email powered by Resend.",
+
+    if (t) {
+      const user = await db.user.findFirst({ where: { id: t?.creator } });
+      const userAssignded = await db.user.findFirst({
+        where: { id: t?.assignedId },
+      });
+      await novu.trigger("tasks", {
+        to: {
+          subscriberId: userAssignded?.id as string,
+        },
+        payload: {
+          text: `Task: ${t?.title}, đã được ${user?.name} thay đổi thông tin`,
+          url: `${t?.id}`,
+        },
       });
     }
     return { task: t };
@@ -120,6 +116,7 @@ export const updateTaskByStatus = async (
   id: TaskId,
   task: UpdateTaskByStatus
 ) => {
+  const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
   const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
   const t = await db.task.update({
@@ -134,13 +131,28 @@ export const updateTaskByStatus = async (
     });
     await novu.trigger("tasks", {
       to: {
-        subscriberId: user?.id as string,
+        subscriberId:
+          session?.user.role === ROLE.ADMIN
+            ? (userAsigned?.id as string)
+            : (user?.id as string),
       },
       payload: {
-        text: `${userAsigned?.name} ${
+        text: `${
+          session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
+        } ${
           t.status === "readed"
             ? `đã xem task: ${t?.title}`
-            : `đã cập nhật trạng thái thành: ${t.status}`
+            : `đã cập nhật trạng thái thành: 
+            ${
+              t.status === "readed"
+                ? "Đã xem"
+                : t.status === "inprogress"
+                ? "Đang thực hiện"
+                : t.status === "reject"
+                ? "Chưa hoàn thành"
+                : "Đã hoàn thành"
+            }
+            `
         }`,
         url: `${t?.id}`,
       },
@@ -153,6 +165,7 @@ export const updateTaskByPriority = async (
   id: TaskId,
   task: UpdateTaskByPriority
 ) => {
+  const { session } = await getUserAuth();
   const { id: taskId } = taskIdSchema.parse({ id });
   const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
 
@@ -168,10 +181,24 @@ export const updateTaskByPriority = async (
     });
     await novu.trigger("tasks", {
       to: {
-        subscriberId: user?.id as string,
+        subscriberId:
+          session?.user.role === ROLE.ADMIN
+            ? (userAsigned?.id as string)
+            : (user?.id as string),
       },
       payload: {
-        text: `${userAsigned?.name} đã cập nhật Priority thành: ${t.priority}`,
+        text: `${
+          session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
+        } đã cập nhật Priority thành: 
+        ${
+          t.priority === "urgent"
+            ? "Cấp thiết"
+            : t.priority === "hight"
+            ? "Cao"
+            : t.priority === "medium"
+            ? "Bình thường"
+            : "Thấp"
+        }`,
         url: `${t?.id}`,
       },
     });

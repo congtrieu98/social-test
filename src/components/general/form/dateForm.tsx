@@ -20,6 +20,8 @@ const DateForm = ({
   date,
   setDate,
   editing,
+  changeTime,
+  setChangeTime,
 }: {
   form: UseFormReturn;
   title: string;
@@ -28,8 +30,10 @@ const DateForm = ({
   date: string;
   setDate: (date: string) => void;
   editing: boolean;
+  changeTime: boolean;
+  setChangeTime: (date: boolean) => void;
 }) => {
-  const [changeTime, setChangeTime] = useState<boolean>(false);
+  // const [changeTime, setChangeTime] = useState<boolean>(false);
   const handleChangeTime = (e: any) => {
     setDate(e.target.value);
     setChangeTime(true);
@@ -58,6 +62,7 @@ const DateForm = ({
                       : date
                     : date
                 }
+                disabled={editing && name === "createAt"}
                 onChange={(e) => handleChangeTime(e)}
                 className="p-2 w-full inline-flex items-center justify-center whitespace-nowrap
               rounded-md text-sm font-medium ring-offset-background transition-colors
