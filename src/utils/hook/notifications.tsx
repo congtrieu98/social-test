@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import { useToast } from "@/components/ui/use-toast";
@@ -24,12 +25,10 @@ import { useToast } from "@/components/ui/use-toast";
 //   }
 // }
 
-import { IMessage, NovuProvider, useSocket } from "@novu/notification-center";
+import { useSocket } from "@novu/notification-center";
 import { useEffect } from "react";
 import { ToastAction } from "@/components/ui/toast";
-import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 
 export default function CustomNotificationCenter() {
   const { socket } = useSocket();
@@ -78,4 +77,31 @@ export default function CustomNotificationCenter() {
   }, [socket]);
 
   return "";
+}
+
+
+export async function RequestPermission() {
+  try {
+    Notification.requestPermission().then((per) => {
+      if (per === "granted") {
+        const noti = new Notification("Example notification!", {
+          body: "This is more text",
+          data: { hello: "word" }
+        })
+
+        noti.addEventListener('close', e => {
+          console.log(e)
+        })
+      } else if (per === "denied") {
+        // alert("Permission denied!");
+        throw new Error("Permission denied");
+      }
+
+    })
+
+
+  } catch (error) {
+    console.error("Error in RequestPermission:", error);
+    throw error;
+  }
 }

@@ -46,7 +46,7 @@ export async function GET() {
         jobUnfinished: taskUnfinished?.length,
         jobCompletedPrecent: percenTaskCompleted || 0,
         jobUnfinishedPercent: percenTaskUnfinished || 0,
-        kpi: percenTaskCompleted >= 50 ? "Đạt" : "Không đạt",
+        kpi: percenTaskCompleted >= 80 ? "Đạt" : "Không đạt",
       };
       const result = await db.report.create({ data: dataReport });
       resultArr.push(result);
