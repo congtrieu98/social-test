@@ -2,7 +2,7 @@ import { db } from "@/lib/db/index";
 import { CompleteTask } from "@/lib/db/schema/tasks";
 import { NextResponse } from "next/server";
 
-export async function POST() {
+export async function GET() {
   try {
     const t = await db.task.findMany({ include: { user: true, medias: true } });
     const u = await db.user.findMany();
@@ -31,12 +31,12 @@ export async function POST() {
       const percenTaskCompleted = Math.round(
         ((taskCompleted?.length ? taskCompleted?.length : 0) /
           listTaskByUser?.length) *
-          100
+        100
       );
       const percenTaskUnfinished = Math.round(
         ((taskUnfinished?.length ? taskUnfinished?.length : 0) /
           listTaskByUser?.length) *
-          100
+        100
       );
 
       const dataReport = {
