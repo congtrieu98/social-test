@@ -260,9 +260,7 @@ const EmptyState = () => {
         Get started by creating a new task.
       </p>
       <div className="mt-6">
-        {["trieunguyen2806@gmail.com", "khanh@suzu.vn", "dat@suzu.vn"].some(
-          (item) => item === (session?.user?.email as string)
-        ) && <TaskModal emptyState={true} />}
+        {session?.user.role === ROLE.ADMIN && <TaskModal emptyState={true} />}
       </div>
     </div>
   );
