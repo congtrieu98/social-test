@@ -149,7 +149,7 @@ const UploadImage = ({
   };
   return (
     <>
-      <div className="text-xl font-semibold">Image</div>
+      <div className="text-xl font-semibold">Ảnh</div>
       <section className="border border-gray-100 p-5 rounded-xl shadow-md max-w-xl">
         <div
           {...getRootProps()}

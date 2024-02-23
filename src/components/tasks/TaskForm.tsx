@@ -232,11 +232,11 @@ const TaskForm = ({
         <SelectedForm
           //@ts-ignore
           form={form}
-          title={"Status"}
+          title={"Trạng thái"}
           dataOption={DATASTATUS}
           editing={editing as boolean}
           name="status"
-          placeholder="Chọn status"
+          placeholder="Chọn trạng thái"
         />
         {session?.user?.role === ROLE.ADMIN && (
           <SelectedForm
@@ -253,7 +253,7 @@ const TaskForm = ({
         <DateForm
           //@ts-ignore
           form={form}
-          title="Start"
+          title="Bắt đầu"
           changeTime={changeTime}
           setChangeTime={setChangeTime}
           date={dateStart}
@@ -265,7 +265,7 @@ const TaskForm = ({
         <DateForm
           //@ts-ignore
           form={form}
-          title="Due"
+          title="Kết thúc"
           changeTime={changeTime}
           setChangeTime={setChangeTime}
           date={dateDue}
@@ -285,7 +285,7 @@ const TaskForm = ({
 
         {session?.user?.role === ROLE.ADMIN && (
           <>
-            <h1>Description</h1>
+            <h1>Mô tả</h1>
             <ul>
               {jobs.map((job, index) => (
                 <div key={index} className="flex space-x-4">
