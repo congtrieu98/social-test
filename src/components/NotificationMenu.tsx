@@ -41,7 +41,7 @@ function NotificationMenu() {
               <NotificationBell unseenCount={unseenCount} />
             )}
           </PopoverNotificationCenter>
-          <CustomNotificationCenter />
+          {/* <CustomNotificationCenter /> */}
         </NovuProvider>
       ) : (
         ""

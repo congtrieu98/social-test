@@ -3,16 +3,21 @@
 
 import { useToast } from "@/components/ui/use-toast";
 // import { getToken } from "firebase/messaging";
-// import { messaging } from "@/app/firebase";
+// import { messaging } from "@/firebase";
 
-// export default async function RequestPermission() {
+import { useSocket } from "@novu/notification-center";
+import { useEffect } from "react";
+import { ToastAction } from "@/components/ui/toast";
+import { usePathname, useRouter } from "next/navigation";
+
+// export async function RequestPermission() {
 //   try {
 //     const permission = await Notification.requestPermission();
 
 //     if (permission === "granted") {
 //       const curenToken = await getToken(messaging, {
 //         vapidKey:
-//           "BNhH2rlGssLDnhNMZMwR09WDgnSjlouPaaEJu2ZFKwtITOt9MElzgwNlRlmpugNx-f2KMfnimBr9tC_RV_qCc5E",
+//           "BMWaBBvAJgFL12fdU6HrEP0D6qR9bVWDd3adjJRi7QhcTDCg8ln5hQXEBNY32ylN9FIcJoeg7vy_9WlFkHknmd4",
 //       });
 //       return curenToken;
 //     } else if (permission === "denied") {
@@ -24,11 +29,6 @@ import { useToast } from "@/components/ui/use-toast";
 //     throw error;
 //   }
 // }
-
-import { useSocket } from "@novu/notification-center";
-import { useEffect } from "react";
-import { ToastAction } from "@/components/ui/toast";
-import { usePathname, useRouter } from "next/navigation";
 
 export default function CustomNotificationCenter() {
   const { socket } = useSocket();
@@ -56,7 +56,6 @@ export default function CustomNotificationCenter() {
           description: data.message.payload.text,
           action: (
             <ToastAction altText="Detail">
-              {/* <Link href={`tasks/${data.message.payload.url}`}>Detail</Link> */}
               <div
                 // @ts-ignore
                 onClick={handleToaskClick(data)}
@@ -77,31 +76,4 @@ export default function CustomNotificationCenter() {
   }, [socket]);
 
   return "";
-}
-
-
-export async function RequestPermission() {
-  try {
-    Notification.requestPermission().then((per) => {
-      if (per === "granted") {
-        const noti = new Notification("Example notification!", {
-          body: "This is more text",
-          data: { hello: "word" }
-        })
-
-        noti.addEventListener('close', e => {
-          console.log(e)
-        })
-      } else if (per === "denied") {
-        // alert("Permission denied!");
-        throw new Error("Permission denied");
-      }
-
-    })
-
-
-  } catch (error) {
-    console.error("Error in RequestPermission:", error);
-    throw error;
-  }
 }

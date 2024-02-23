@@ -27,7 +27,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
 import TableCustom from "../general/tableCustom/table";
-// import RequestPermission from "@/utils/hook/notifications";
+// import { RequestPermission } from "@/utils/hook/notifications";
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   const router = useRouter();

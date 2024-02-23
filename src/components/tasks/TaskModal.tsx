@@ -11,7 +11,7 @@ import {
 } from "../ui/dialog";
 import TaskForm from "./TaskForm";
 import { CompleteTask } from "@/lib/db/schema/tasks";
-// import RequestPermission from "@/utils/hook/notifications";
+// import { RequestPermission } from "@/utils/hook/notifications";
 
 export default function TaskModal({
   task,
