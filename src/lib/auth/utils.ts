@@ -20,6 +20,8 @@ const emailPermission = [
   "networksocialtest@gmail.com",
   "khanh@suzu.vn",
   "tran@dinhkhanh.dk",
+  "dat@suzu.vn",
+  "tamptm@suzu.group",
 ];
 
 export type AuthSession = {
@@ -40,7 +42,11 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = user.id;
         if (
-          ["trieunguyen2806@gmail.com", "khanh@suzu.vn"].includes(user.email)
+          [
+            "trieunguyen2806@gmail.com",
+            "khanh@suzu.vn",
+            "dat@suzu.vn",
+          ].includes(user.email)
         ) {
           session.user.role = "ADMIN";
         } else {
