@@ -50,7 +50,7 @@
     "clsx": "^2.0.0",
     "date-fns": "^3.0.6",
     "embla-carousel-react": "8.0.0-rc19",
-    "firebase": "^10.8.0",
+    "firebase": "^10.7.1",
     "lucide-react": "^0.298.0",
     "luxon": "^3.4.4",
     "moment": "^2.29.4",
@@ -67,6 +67,7 @@
     "superjson": "^2.2.1",
     "tailwind-merge": "^2.1.0",
     "tailwindcss-animate": "^1.0.7",
+    "web-push": "^3.6.7",
     "zod": "^3.22.4"
   },
   "devDependencies": {

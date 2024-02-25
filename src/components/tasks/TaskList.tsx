@@ -27,6 +27,7 @@ import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { Badge } from "../ui/badge";
 import TableCustom from "../general/tableCustom/table";
+
 // import { RequestPermission } from "@/utils/hook/notifications";
 
 export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
@@ -63,6 +64,7 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
   //   };
   //   handlePermission();
   // }, []);
+
   const [selectedRowKeys, setSelectedRowKeys] = useState<React.Key[]>([]);
   const onSelectChange = (newSelectedRowKeys: React.Key[]) => {
     setSelectedRowKeys(newSelectedRowKeys);
@@ -136,23 +138,23 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
               val === "new"
                 ? "bg-gray-300"
                 : val === "readed"
-                ? "bg-blue-300"
-                : val === "inprogress"
-                ? "bg-yellow-300"
-                : val === "reject"
-                ? "bg-red-400"
-                : "bg-green-500"
+                  ? "bg-blue-300"
+                  : val === "inprogress"
+                    ? "bg-yellow-300"
+                    : val === "reject"
+                      ? "bg-red-400"
+                      : "bg-green-500"
             }
           >
             {val === "new"
               ? "Mới tạo"
               : val === "readed"
-              ? "Đã xem"
-              : val === "inprogress"
-              ? "Đang thực hiện"
-              : val === "reject"
-              ? "Chưa hoàn thành"
-              : "Đã hoàn thành"}
+                ? "Đã xem"
+                : val === "inprogress"
+                  ? "Đang thực hiện"
+                  : val === "reject"
+                    ? "Chưa hoàn thành"
+                    : "Đã hoàn thành"}
           </Badge>
         );
       },

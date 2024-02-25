@@ -11,6 +11,7 @@ import {
 } from "../ui/dialog";
 import TaskForm from "./TaskForm";
 import { CompleteTask } from "@/lib/db/schema/tasks";
+
 // import { RequestPermission } from "@/utils/hook/notifications";
 
 export default function TaskModal({
@@ -37,7 +38,8 @@ export default function TaskModal({
   //   };
   //   handlePermission();
   // }, []);
-  // console.log("curenToken taskModal:", curenToken);
+
+  console.log("curenToken taskModal:", curenToken);
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
@@ -78,6 +80,7 @@ export default function TaskModal({
           <TaskForm
             closeModal={closeModal}
             task={task}
+            //@ts-ignore
             curenToken={curenToken}
           />
         </div>
