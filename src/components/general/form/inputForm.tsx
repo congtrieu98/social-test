@@ -8,7 +8,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ROLE } from "@/utils/constant";
 import { useSession } from "next-auth/react";
 import { UseFormReturn } from "react-hook-form";
 
@@ -23,7 +22,7 @@ const InputForm = ({ form, title }: { form: UseFormReturn; title: string }) => {
           <FormItem>
             <FormLabel>{title}</FormLabel>
             <FormControl>
-              <Input {...field} disabled={session?.user?.role !== ROLE.ADMIN} />
+              <Input {...field} />
             </FormControl>
             <FormMessage />
           </FormItem>

@@ -54,15 +54,16 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
+  id            String        @id @default(cuid())
   name          String?
-  email         String?   @unique
+  email         String?       @unique
   emailVerified DateTime?
   image         String?
-  role          UserRole  @default(USER)
+  role          UserRole      @default(USER)
   accounts      Account[]
   sessions      Session[]
   tasks         Task[]
+  taskDefaults  TaskDefault[]
 }
 
 model VerificationToken {
@@ -74,32 +75,32 @@ model VerificationToken {
 }
 
 model Task {
-  id          String     @id @default(cuid())
-  title       String
-  status      String
-  creator     String
-  createAt    DateTime
-  deadlines   DateTime
-  priority    String
-  assignedId  String
-  description String[]
-  checked     String[]
-  tokenNoticafition     String?
-  medias      Media[]
-  todoList    TodoList[]
-  history     History[]
-  user        User       @relation(fields: [assignedId], references: [id], onDelete: Cascade)
+  id                String     @id @default(cuid())
+  title             String
+  status            String
+  creator           String
+  createAt          DateTime
+  deadlines         DateTime
+  priority          String
+  assignedId        String
+  description       String[]
+  checked           String[]
+  tokenNoticafition String?
+  medias            Media[]
+  todoList          TodoList[]
+  history           History[]
+  user              User       @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
 
 model Media {
-  id     String @id @default(cuid())
-  url    String
-  status String?
-  taskId String
-  userId String
+  id       String   @id @default(cuid())
+  url      String
+  status   String?
+  taskId   String
+  userId   String
   createAt DateTime
   updateAt DateTime
-  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 model Report {
@@ -128,4 +129,13 @@ model History {
   createAt DateTime
   userId   String
   task     Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+}
+
+model TaskDefault {
+  id         String   @id @default(cuid())
+  content    String?
+  jobDetails String[]
+  date       DateTime
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }

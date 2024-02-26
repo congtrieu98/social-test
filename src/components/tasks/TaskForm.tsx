@@ -238,17 +238,17 @@ const TaskForm = ({
           name="status"
           placeholder="Chọn trạng thái"
         />
-        {session?.user?.role === ROLE.ADMIN && (
-          <SelectedForm
-            //@ts-ignore
-            form={form}
-            title={"Người thực hiện"}
-            //@ts-ignore
-            dataUser={dataUser}
-            name="assignedId"
-            placeholder="Chọn người thực hiện"
-          />
-        )}
+        {/* {session?.user?.role === ROLE.ADMIN && ( */}
+        <SelectedForm
+          //@ts-ignore
+          form={form}
+          title={"Người thực hiện"}
+          //@ts-ignore
+          dataUser={dataUser}
+          name="assignedId"
+          placeholder="Chọn người thực hiện"
+        />
+        {/* )} */}
 
         <DateForm
           //@ts-ignore
@@ -283,40 +283,40 @@ const TaskForm = ({
           />
         )}
 
-        {session?.user?.role === ROLE.ADMIN && (
-          <>
-            <h1>Mô tả</h1>
-            <ul>
-              {jobs.map((job, index) => (
-                <div key={index} className="flex space-x-4">
-                  <li className="max-w-md">- {job}</li>
-                  <div
-                    className="cursor-pointer"
-                    onClick={() => handleDeleteJob(job)}
-                  >
-                    <TiDelete />
-                  </div>
+        {/* {session?.user?.role === ROLE.ADMIN && ( */}
+        <>
+          <h1>Mô tả</h1>
+          <ul>
+            {jobs.map((job, index) => (
+              <div key={index} className="flex space-x-4">
+                <li className="max-w-md">- {job}</li>
+                <div
+                  className="cursor-pointer"
+                  onClick={() => handleDeleteJob(job)}
+                >
+                  <TiDelete />
                 </div>
-              ))}
-            </ul>
-            <div className="flex w-full">
-              <input
-                ref={inputRef}
-                type="text"
-                className="border border-solid border-gray-100 w-full outline-none shadow-sm p-2"
-                value={job}
-                onChange={(e) => setJob(e.target.value)}
-                onKeyDown={handleEnterKeyPress}
-              />
-              <div
-                className="bg-gray-200 py-2 px-4 cursor-pointer"
-                onClick={handleAddJobDescription}
-              >
-                Add
               </div>
+            ))}
+          </ul>
+          <div className="flex w-full">
+            <input
+              ref={inputRef}
+              type="text"
+              className="border border-solid border-gray-100 w-full outline-none shadow-sm p-2"
+              value={job}
+              onChange={(e) => setJob(e.target.value)}
+              onKeyDown={handleEnterKeyPress}
+            />
+            <div
+              className="bg-gray-200 py-2 px-4 cursor-pointer"
+              onClick={handleAddJobDescription}
+            >
+              Add
             </div>
-          </>
-        )}
+          </div>
+        </>
+        {/* )} */}
 
         <Button
           type="submit"

@@ -5,6 +5,7 @@ import { usersRouter } from "./users";
 import { mediasRouter } from "./medias";
 import { todoListsRouter } from "./todoLists";
 import { historiesRouter } from "./histories";
+import { taskDefaultsRouter } from "./taskDefaults";
 
 export const appRouter = router({
   tasks: tasksRouter,
@@ -13,6 +14,7 @@ export const appRouter = router({
   medias: mediasRouter,
   todoLists: todoListsRouter,
   histories: historiesRouter,
+  taskDefaults: taskDefaultsRouter,
 });
 
 export type AppRouter = typeof appRouter;

@@ -11,9 +11,6 @@ import {
   UpdateTaskByPriority,
 } from "@/lib/db/schema/tasks";
 import { getUserAuth } from "@/lib/auth/utils";
-import { resend } from "@/lib/email";
-import { UpdateTask } from "@/components/emails/UpdateTask";
-import { getBaseUrl } from "@/lib/trpc/utils";
 import { ROLE } from "@/utils/constant";
 import { Novu, PushProviderIdEnum } from "@novu/node";
 
@@ -27,7 +24,9 @@ export const createTask = async (task: NewTaskParams) => {
   try {
     const t = await db.task.create({ data: newTask });
     if (t) {
-      const user = await db.user.findFirst({ where: { id: t?.assignedId } });
+      const userAssigned = await db.user.findFirst({
+        where: { id: t?.assignedId },
+      });
 
       // todo create noti on web chrom
 
@@ -48,15 +47,17 @@ export const createTask = async (task: NewTaskParams) => {
       //   },
       // });
 
-      await novu.trigger("tasks", {
-        to: {
-          subscriberId: user?.id as string,
-        },
-        payload: {
-          text: "You have a new task",
-          url: `${t?.id}`,
-        },
-      });
+      if (t?.creator !== t?.assignedId) {
+        await novu.trigger("tasks", {
+          to: {
+            subscriberId: userAssigned?.id as string,
+          },
+          payload: {
+            text: "Bạn có một công việc mới",
+            url: `${t?.id}`,
+          },
+        });
+      }
     }
 
     return { task: t };
@@ -82,15 +83,17 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
       const userAssignded = await db.user.findFirst({
         where: { id: t?.assignedId },
       });
-      await novu.trigger("tasks", {
-        to: {
-          subscriberId: userAssignded?.id as string,
-        },
-        payload: {
-          text: `Task: ${t?.title}, đã được ${user?.name} thay đổi thông tin`,
-          url: `${t?.id}`,
-        },
-      });
+      if (t?.creator !== t?.assignedId) {
+        await novu.trigger("tasks", {
+          to: {
+            subscriberId: userAssignded?.id as string,
+          },
+          payload: {
+            text: `Task: ${t?.title}, đã được ${user?.name} thay đổi thông tin`,
+            url: `${t?.id}`,
+          },
+        });
+      }
     }
     return { task: t };
   } catch (err) {
@@ -129,20 +132,21 @@ export const updateTaskByStatus = async (
     const userAsigned = await db.user.findFirst({
       where: { id: t?.assignedId },
     });
-    await novu.trigger("tasks", {
-      to: {
-        subscriberId:
-          session?.user.role === ROLE.ADMIN
-            ? (userAsigned?.id as string)
-            : (user?.id as string),
-      },
-      payload: {
-        text: `${
-          session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
-        } ${
-          t.status === "readed"
-            ? `đã xem task: ${t?.title}`
-            : `đã cập nhật trạng thái thành: 
+    if (t?.creator !== t?.assignedId) {
+      await novu.trigger("tasks", {
+        to: {
+          subscriberId:
+            session?.user.role === ROLE.ADMIN
+              ? (userAsigned?.id as string)
+              : (user?.id as string),
+        },
+        payload: {
+          text: `${
+            session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
+          } ${
+            t.status === "readed"
+              ? `đã xem task: ${t?.title}`
+              : `đã cập nhật trạng thái thành: 
             ${
               t.status === "readed"
                 ? "Đã xem"
@@ -153,10 +157,11 @@ export const updateTaskByStatus = async (
                 : "Đã hoàn thành"
             }
             `
-        }`,
-        url: `${t?.id}`,
-      },
-    });
+          }`,
+          url: `${t?.id}`,
+        },
+      });
+    }
   }
   return { task: t };
 };
@@ -179,17 +184,18 @@ export const updateTaskByPriority = async (
     const userAsigned = await db.user.findFirst({
       where: { id: t?.assignedId },
     });
-    await novu.trigger("tasks", {
-      to: {
-        subscriberId:
-          session?.user.role === ROLE.ADMIN
-            ? (userAsigned?.id as string)
-            : (user?.id as string),
-      },
-      payload: {
-        text: `${
-          session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
-        } đã cập nhật Priority thành: 
+    if (t?.creator !== t?.assignedId) {
+      await novu.trigger("tasks", {
+        to: {
+          subscriberId:
+            session?.user.role === ROLE.ADMIN
+              ? (userAsigned?.id as string)
+              : (user?.id as string),
+        },
+        payload: {
+          text: `${
+            session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
+          } đã cập nhật Priority thành: 
         ${
           t.priority === "urgent"
             ? "Cấp thiết"
@@ -199,9 +205,10 @@ export const updateTaskByPriority = async (
             ? "Bình thường"
             : "Thấp"
         }`,
-        url: `${t?.id}`,
-      },
-    });
+          url: `${t?.id}`,
+        },
+      });
+    }
   }
   return { task: t };
 };

@@ -64,7 +64,7 @@ const SelectedForm = ({
             <Select
               onValueChange={field.onChange}
               defaultValue={field.value}
-              disabled={session?.user?.role !== ROLE.ADMIN && !editing}
+              // disabled={!editing}
             >
               <FormControl>
                 <SelectTrigger>
@@ -72,31 +72,43 @@ const SelectedForm = ({
                 </SelectTrigger>
               </FormControl>
               <SelectContent>
-                {dataUser
-                  ? dataUser?.users.map((item) => {
+                {dataUser ? (
+                  session?.user.role === ROLE.USER ? (
+                    <SelectItem
+                      key={session?.user.id}
+                      value={session?.user.id}
+                      spellCheck
+                    >
+                      {session?.user.name}
+                    </SelectItem>
+                  ) : (
+                    dataUser?.users.map((item) => {
                       return (
                         <SelectItem key={item.id} value={item.id} spellCheck>
                           {item.name}
                         </SelectItem>
                       );
                     })
-                  : editing
-                  ? dataOption?.map((item, index) => {
+                  )
+                ) : editing ? (
+                  dataOption?.map((item, index) => {
+                    return (
+                      <SelectItem key={index} value={item.key} spellCheck>
+                        {item.value}
+                      </SelectItem>
+                    );
+                  })
+                ) : (
+                  dataOption
+                    ?.filter((option) => option.key !== "readed")
+                    ?.map((item, index) => {
                       return (
                         <SelectItem key={index} value={item.key} spellCheck>
                           {item.value}
                         </SelectItem>
                       );
                     })
-                  : dataOption
-                      ?.filter((option) => option.key !== "readed")
-                      ?.map((item, index) => {
-                        return (
-                          <SelectItem key={index} value={item.key} spellCheck>
-                            {item.value}
-                          </SelectItem>
-                        );
-                      })}
+                )}
               </SelectContent>
             </Select>
             <FormMessage />

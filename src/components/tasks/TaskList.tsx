@@ -138,23 +138,23 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
               val === "new"
                 ? "bg-gray-300"
                 : val === "readed"
-                  ? "bg-blue-300"
-                  : val === "inprogress"
-                    ? "bg-yellow-300"
-                    : val === "reject"
-                      ? "bg-red-400"
-                      : "bg-green-500"
+                ? "bg-blue-300"
+                : val === "inprogress"
+                ? "bg-yellow-300"
+                : val === "reject"
+                ? "bg-red-400"
+                : "bg-green-500"
             }
           >
             {val === "new"
               ? "Mới tạo"
               : val === "readed"
-                ? "Đã xem"
-                : val === "inprogress"
-                  ? "Đang thực hiện"
-                  : val === "reject"
-                    ? "Chưa hoàn thành"
-                    : "Đã hoàn thành"}
+              ? "Đã xem"
+              : val === "inprogress"
+              ? "Đang thực hiện"
+              : val === "reject"
+              ? "Chưa hoàn thành"
+              : "Đã hoàn thành"}
           </Badge>
         );
       },
@@ -261,9 +261,7 @@ const EmptyState = () => {
       <p className="mt-1 text-sm text-gray-500">
         Get started by creating a new task.
       </p>
-      <div className="mt-6">
-        {session?.user.role === ROLE.ADMIN && <TaskModal emptyState={true} />}
-      </div>
+      <div className="mt-6">{<TaskModal emptyState={true} />}</div>
     </div>
   );
 };

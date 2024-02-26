@@ -3,7 +3,7 @@ export const formatDatetime = "YYYY-MM-DD HH:mm";
 export const formatTimeDate = "HH:mm DD/MM/YYYY";
 export const formatDateFull = "YYYY-MM-DD[T]HH:mm:ss[Z]";
 export const formatDateAPi = "YYYY-MM-DD";
-export const formatDateSlash = "DD/MM/YYYY";
+export const formatDateSlash = "DD/MM/YYYY HH:mm";
 export const formatNo = "YYYY-MM-DDThh:mm";
 
 export const STATUS_IMAGE = {

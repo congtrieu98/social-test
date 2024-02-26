@@ -22,7 +22,7 @@ export default async function Navbar() {
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
         <h1 className="font-semibold transition-hover cursor-pointer space-x-3">
           <Link href="/" className="hover:opacity-75">
-            Logo
+            Home
           </Link>
           <Link href="/tasks" className="hover:opacity-75">
             Tasks
@@ -30,12 +30,9 @@ export default async function Navbar() {
           <Link href="/kpi" className="hover:opacity-75">
             KPI
           </Link>
-          {/* <Link
-            href="https://github.com/congtrieu98/task"
-            className="hover:opacity-75"
-          >
-            Github
-          </Link> */}
+          <Link href="/task-default" className="hover:opacity-75">
+            Sky
+          </Link>
         </h1>
         <div className="space-x-2 flex items-center">
           {session ? (

@@ -3,15 +3,15 @@
 import { Button } from "@/components/ui/button";
 import { signIn, useSession } from "next-auth/react";
 import React, { useEffect } from "react";
-import { noti } from "@/utils/hook/notifi-sw";
+// import { noti } from "@/utils/hook/notifi-sw";
 // import { RequestPermission } from "@/utils/hook/notifications";
 
 export default function Home() {
   const { data: session } = useSession();
 
-  useEffect(() => {
-    noti();
-  }, []);
+  // useEffect(() => {
+  //   noti();
+  // }, []);
 
   // useEffect(() => {
   //   const handlePermission = () => {

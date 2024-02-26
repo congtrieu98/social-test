@@ -1,12 +1,10 @@
 import TaskList from "@/components/tasks/TaskList";
 import TaskModal from "@/components/tasks/TaskModal";
 import { getTasks } from "@/lib/api/tasks/queries";
-import { checkAuth, getUserAuth } from "@/lib/auth/utils";
-import { ROLE } from "@/utils/constant";
+import { checkAuth } from "@/lib/auth/utils";
 
 export default async function Tasks() {
   await checkAuth();
-  const { session } = await getUserAuth();
   const { tasks } = await getTasks();
 
   return (
@@ -17,9 +15,7 @@ export default async function Tasks() {
             Danh sách công việc
           </h1>
         )}
-        {session?.user?.role === ROLE.ADMIN && tasks.length > 0 && (
-          <TaskModal />
-        )}
+        {tasks.length > 0 && <TaskModal />}
       </div>
       <TaskList tasks={tasks} />
     </main>
