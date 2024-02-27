@@ -15,22 +15,11 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 
 import { toast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc/client";
-import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import moment from "moment";
-import { formatDateSlash } from "@/utils/constant";
-import DemoPage from "../general/table/taskDefault";
+import TaskDefaultComponent from "../general/table/taskDefault";
 const items = [
   {
     id: "Tưới cây",
@@ -54,7 +43,6 @@ const FormSchema = z.object({
 
 export default function TaskDefault() {
   const utils = trpc.useContext();
-  const { data: session } = useSession();
   const router = useRouter();
 
   const { mutate: createTaskDefault, isLoading: isCreateTaskDefault } =
@@ -62,9 +50,9 @@ export default function TaskDefault() {
       onSuccess: () => onSuccess(),
     });
 
-  const { data: listTaskDefault } =
+  const { data: td } =
     trpc.taskDefaults.getTaskDefaults.useQuery();
-  console.log("listTaskDefault:", listTaskDefault);
+  // console.log("listTaskDefault:", td);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -82,7 +70,6 @@ export default function TaskDefault() {
   };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log("data jobDetail:", data);
     console.log(data.items.toString());
     createTaskDefault({
       jobDetails: data.items,
@@ -127,10 +114,10 @@ export default function TaskDefault() {
                                   return checked
                                     ? field.onChange([...field.value, item.id])
                                     : field.onChange(
-                                        field.value?.filter(
-                                          (value) => value !== item.id
-                                        )
-                                      );
+                                      field.value?.filter(
+                                        (value) => value !== item.id
+                                      )
+                                    );
                                 }}
                               />
                             </FormControl>
@@ -153,28 +140,8 @@ export default function TaskDefault() {
         </Form>
       </div>
 
-      <div className="rounded-md border">
-        <DemoPage />
-        {/* <Table className="pt-10">
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-[100px]">Người thực hiện</TableHead>
-              <TableHead>Nội dung</TableHead>
-              <TableHead>Ngày</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {listTaskDefault?.taskDefaults.map((item) => (
-              <TableRow key={item.id}>
-                <TableCell className="font-medium">{item.user.name}</TableCell>
-                <TableCell>{item.content}</TableCell>
-                <TableCell>
-                  {moment(item.date, formatDateSlash).format(formatDateSlash)}
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table> */}
+      <div className="rounded-md">
+        <TaskDefaultComponent />
       </div>
     </>
   );

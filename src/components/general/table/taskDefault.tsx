@@ -1,21 +1,22 @@
 import { trpc } from "@/lib/trpc/client";
-import { taskDefault, columns } from "./columns";
+import { columns } from "./columns";
 import { DataTable } from "./data-table";
 
-async function getData(): Promise<taskDefault[]> {
-  // Fetch data from your API here.
-  const { data: listTaskDefault } =
+export default function TaskDefaultComponent() {
+  const { data: td } =
     trpc.taskDefaults.getTaskDefaults.useQuery();
-  //@ts-ignore
-  return listTaskDefault?.taskDefaults;
-}
-
-export default async function DemoPage() {
-  const data = await getData();
-
+  const dataCustom = td?.taskDefaults.map(item => {
+    return {
+      user: item.user.name,
+      content: item.content,
+      date: item.date
+    }
+  })
   return (
     <div className="">
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns}
+        //@ts-ignore 
+        data={dataCustom?.length > 0 ? dataCustom : []} />
     </div>
   );
 }
