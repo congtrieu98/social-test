@@ -38,20 +38,18 @@ export const columns: ColumnDef<TaskDefault[]>[] = [
         aria-label="Select all"
       />
     ),
-    cell: ({ row }) => (
-      <Checkbox
-        checked={row.getIsSelected()}
-        onCheckedChange={(value) => {
-          return row.toggleSelected(!!value)
-        }
-        }
-        onClick={(row) => {
-          console.log("valueCheck:", row)
-
-        }}
-        aria-label="Select row"
-      />
-    ),
+    cell: ({ row }) => {
+      // const idRow = row.original
+      return (
+        <Checkbox
+          checked={row.getIsSelected()}
+          onCheckedChange={(value) =>
+            row.toggleSelected(!!value)
+          }
+          aria-label="Select row"
+        />
+      )
+    },
   },
   {
     accessorKey: "user",

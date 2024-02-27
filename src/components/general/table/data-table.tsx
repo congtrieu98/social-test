@@ -19,6 +19,11 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input"
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { trpc } from "@/lib/trpc/client";
+import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/use-toast";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -29,8 +34,22 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const utils = trpc.useContext();
+  const router = useRouter()
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
   const [rowSelection, setRowSelection] = useState({})
+
+  const onSuccess = async () => {
+    await utils.taskDefaults.getTaskDefaults.invalidate()
+    router.refresh()
+    toast({
+      title: 'Success',
+      description: 'Xóa thành công!'
+    })
+  }
+  const { mutate: deleteTaskDeault, isLoading: isDelete } = trpc.taskDefaults.deleteTaskDefault.useMutation({
+    onSuccess: () => onSuccess()
+  })
 
   const table = useReactTable({
     data,
@@ -56,6 +75,38 @@ export function DataTable<TData, TValue>({
           }}
           className="max-w-sm"
         />
+      </div>
+      <div className="mb-2">
+        {table.getFilteredSelectedRowModel().rows.length > 0 &&
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="outline">Xóa</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  Bạn có chắc chắn muốn xóa user này?
+                </AlertDialogTitle>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={async () => {
+                    table.getFilteredSelectedRowModel().rows.map((item) => {
+                      deleteTaskDeault({
+                        //@ts-ignore
+                        id: item.original.id
+                      })
+                    }
+                    );
+                  }}
+                >
+                  Ok
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        }
       </div>
       <div className="rounded-md border">
         <Table>

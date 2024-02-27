@@ -52,7 +52,6 @@ export default function TaskDefault() {
 
   const { data: td } =
     trpc.taskDefaults.getTaskDefaults.useQuery();
-  // console.log("listTaskDefault:", td);
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -70,7 +69,6 @@ export default function TaskDefault() {
   };
 
   function onSubmit(data: z.infer<typeof FormSchema>) {
-    console.log(data.items.toString());
     createTaskDefault({
       jobDetails: data.items,
       content: `Đã tick chọn: ${data.items.toString()}`,

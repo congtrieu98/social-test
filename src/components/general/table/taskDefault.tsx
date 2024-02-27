@@ -7,6 +7,7 @@ export default function TaskDefaultComponent() {
     trpc.taskDefaults.getTaskDefaults.useQuery();
   const dataCustom = td?.taskDefaults.map(item => {
     return {
+      id: item.id,
       user: item.user.name,
       content: item.content,
       date: item.date
