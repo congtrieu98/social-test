@@ -39,7 +39,7 @@ export default function TaskModal({
   //   handlePermission();
   // }, []);
 
-  console.log("curenToken taskModal:", curenToken);
+  // console.log("curenToken taskModal:", curenToken);
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>

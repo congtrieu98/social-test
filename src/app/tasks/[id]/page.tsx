@@ -34,6 +34,7 @@ import {
 import Link from "next/link";
 import AddTaskPractices from "@/components/taskDetail/AddTaskPractices";
 import { AlertModal } from "@/components/general/alert-modal";
+import TaskModal from "@/components/tasks/TaskModal";
 // import RequestPermission from "@/utils/hook/notifications";
 
 interface FileWithPreview extends File {
@@ -289,12 +290,16 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
       {session ? (
         <div
           className="w-full first-letter:max-w-xl mx-auto
-           items-center"
+           items-center pt-6"
         >
           <div className="mb-5">
-            <div className="text-2xl font-semibold mb-4">
-              Chi tiết công việc
+            <div className="flex justify-between">
+              <div className="text-2xl font-semibold mb-4">
+                Chi tiết công việc
+              </div>
+              <div>{<TaskModal />}</div>
             </div>
+
             {/* @ts-ignore */}
             <CardJobDetail t={t?.tasks} taskId={params?.id} />
             <div className="flex justify-between text-xl font-semibold mb-4">

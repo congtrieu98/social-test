@@ -20,16 +20,22 @@ export default async function Navbar() {
   if (session?.user) {
     return (
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
-        <h1 className="font-semibold transition-hover cursor-pointer space-x-3">
+        <h1 className="font-semibold transition-hover cursor-pointer">
           <Link href="/" className="hover:opacity-75">
             Home
           </Link>
+        </h1>
+        <h1 className="font-semibold transition-hover cursor-pointer">
           <Link href="/tasks" className="hover:opacity-75">
             Tasks
           </Link>
+        </h1>
+        <h1 className="font-semibold transition-hover cursor-pointer">
           <Link href="/kpi" className="hover:opacity-75">
             KPI
           </Link>
+        </h1>
+        <h1 className="font-semibold transition-hover cursor-pointer">
           <Link href="/task-default" className="hover:opacity-75">
             Sky
           </Link>

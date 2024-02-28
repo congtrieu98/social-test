@@ -77,7 +77,8 @@ const TaskForm = ({
     defaultValues: task ?? {
       title: undefined,
       status: "",
-      assignedId: undefined,
+      assignedId:
+        session?.user.role === ROLE.USER ? session?.user?.id : undefined,
       priority: undefined,
       checked: [""] as string[],
       description: jobs,
@@ -238,17 +239,17 @@ const TaskForm = ({
           name="status"
           placeholder="Chọn trạng thái"
         />
-        {/* {session?.user?.role === ROLE.ADMIN && ( */}
-        <SelectedForm
-          //@ts-ignore
-          form={form}
-          title={"Người thực hiện"}
-          //@ts-ignore
-          dataUser={dataUser}
-          name="assignedId"
-          placeholder="Chọn người thực hiện"
-        />
-        {/* )} */}
+        {session?.user?.role === ROLE.ADMIN && (
+          <SelectedForm
+            //@ts-ignore
+            form={form}
+            title={"Người thực hiện"}
+            //@ts-ignore
+            dataUser={dataUser}
+            name="assignedId"
+            placeholder="Chọn người thực hiện"
+          />
+        )}
 
         <DateForm
           //@ts-ignore

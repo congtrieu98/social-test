@@ -2,19 +2,14 @@ import { NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { createTask, deleteTask, updateTask } from "@/lib/api/tasks/mutations";
 import {
-  createTask,
-  deleteTask,
-  updateTask,
-} from "@/lib/api/tasks/mutations";
-import { 
   taskIdSchema,
   insertTaskParams,
-  updateTaskParams 
+  updateTaskParams,
 } from "@/lib/db/schema/tasks";
 
 export async function POST(req: Request) {
-  console.log(req.json())
   try {
     const validatedData = insertTaskParams.parse(await req.json());
     const { task, error } = await createTask(validatedData);
@@ -29,7 +24,6 @@ export async function POST(req: Request) {
     }
   }
 }
-
 
 export async function PUT(req: Request) {
   try {

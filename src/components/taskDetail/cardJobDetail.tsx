@@ -10,14 +10,29 @@ import {
   SelectValue,
 } from "../ui/select";
 import moment from "moment";
-import { formatDateFull, formatDatetime } from "@/utils/constant";
+import {
+  formatDateFull,
+  formatDateSlash,
+  formatDatetime,
+} from "@/utils/constant";
 import { trpc } from "@/lib/trpc/client";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
-import { AlarmClockOff, AudioLines, Loader, Timer, Users } from "lucide-react";
+import {
+  AlarmClockOff,
+  AudioLines,
+  Loader,
+  Pencil,
+  Timer,
+  User,
+  Users,
+} from "lucide-react";
 import { Badge } from "../ui/badge";
 import { useSession } from "next-auth/react";
 import { CompleteTask } from "@/lib/db/schema/tasks";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { ChangeEvent, useState } from "react";
 
 const CardJobDetail = ({
   t,
@@ -30,9 +45,13 @@ const CardJobDetail = ({
   const utils = trpc.useContext();
   const { data: session } = useSession();
   const router = useRouter();
+  const [clickChangeTitle, setClickChangeTitle] = useState(false);
+  const [clickChangeDeadline, setClickChangeDeadline] = useState(false);
+  const [valueInputTitle, setValueInputTitle] = useState("");
+  const [valueInputDeadline, setValueInputDeadline] = useState("");
 
   const { data: h } = trpc.histories.getHistories.useQuery();
-
+  const { data: u } = trpc.users.getUsers.useQuery();
   const { mutate: createHistories } =
     trpc.histories.createHistory.useMutation();
   const { mutate: updateHistories } =
@@ -59,6 +78,34 @@ const CardJobDetail = ({
         toast({
           title: "Success",
           description: `Update priority succesfully!`,
+          variant: "default",
+        });
+      },
+    });
+
+  const { mutate: updateTaskByTitle, isLoading: updateTitle } =
+    trpc.tasks.updateTaskByTitle.useMutation({
+      onSuccess: async () => {
+        await utils.tasks.getTaskById.invalidate();
+        router.refresh();
+        setClickChangeTitle(false);
+        toast({
+          title: "Success",
+          description: "Cập nhật title thành công!",
+          variant: "default",
+        });
+      },
+    });
+
+  const { mutate: updateTaskByDeadline, isLoading: updateDeadline } =
+    trpc.tasks.updateTaskByDeadline.useMutation({
+      onSuccess: async () => {
+        await utils.tasks.getTaskById.invalidate();
+        router.refresh();
+        setClickChangeDeadline(false);
+        toast({
+          title: "Success",
+          description: "Cập nhật Deadline thành công!",
           variant: "default",
         });
       },
@@ -140,16 +187,141 @@ const CardJobDetail = ({
     }
   };
 
+  const handleGetValueNewTitle = (e: ChangeEvent<HTMLInputElement>) => {
+    setValueInputTitle(e.target.value);
+  };
+
+  const handleGetValueNewDeadline = (e: ChangeEvent<HTMLInputElement>) => {
+    setValueInputDeadline(e.target.value);
+  };
+
+  const handleSunmitChangeTitle = () => {
+    if (valueInputTitle !== "") {
+      try {
+        const getHistoryByTaskId = h?.histories.filter(
+          (his) => his.taskId === taskId
+        );
+        const findHisByAction = getHistoryByTaskId?.find(
+          (act) => act.action === "changeTitle"
+        );
+        if (findHisByAction) {
+          updateHistories({
+            id: findHisByAction?.id,
+            taskId: taskId,
+            action: "changeTitle",
+            createAt: new Date(),
+            content: `đã thay đổi title thành ${valueInputTitle}`,
+            userId: session?.user?.name as string,
+          });
+        } else {
+          createHistories({
+            taskId: taskId,
+            createAt: new Date(),
+            action: "changeTitle",
+            content: `đã thay đổi title thành: ${valueInputTitle}`,
+            userId: session?.user?.name as string,
+          });
+        }
+
+        updateTaskByTitle({
+          id: taskId,
+          title: valueInputTitle,
+        });
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error,
+          variant: "default",
+        });
+      }
+    }
+  };
+
+  const handleChangeTime = () => {
+    if (valueInputDeadline !== "") {
+      try {
+        const getHistoryByTaskId = h?.histories.filter(
+          (his) => his.taskId === taskId
+        );
+        const findHisByAction = getHistoryByTaskId?.find(
+          (act) => act.action === "changeDeadline"
+        );
+        if (findHisByAction) {
+          updateHistories({
+            id: findHisByAction?.id,
+            taskId: taskId,
+            action: "changeDeadline",
+            createAt: new Date(),
+            content: `đã thay đổi Deadline thành ${moment(
+              valueInputDeadline
+            ).format(formatDateSlash)}`,
+            userId: session?.user?.name as string,
+          });
+        } else {
+          createHistories({
+            taskId: taskId,
+            createAt: new Date(),
+            action: "changeDeadline",
+            content: `đã thay đổi Deadline thành: ${moment(
+              valueInputDeadline
+            ).format(formatDateSlash)}`,
+            userId: session?.user?.name as string,
+          });
+        }
+        const deadlineToDate = moment(valueInputDeadline).toDate();
+        updateTaskByDeadline({
+          id: taskId,
+          deadlines: deadlineToDate,
+        });
+      } catch (error: any) {
+        toast({
+          title: "Error",
+          description: error,
+          variant: "default",
+        });
+      }
+    }
+  };
+
+  const creatorName = u?.users.find((user) => user.id === t?.creator)?.name;
+
   return (
     <>
       <div className="pb-3 border-b mb-8">
         <Card className="mb-4">
           <CardHeader>
-            <CardTitle>{t?.title}</CardTitle>
+            <div className="flex justify-between">
+              <CardTitle className={updateTitle ? "opacity-75" : ""}>
+                {valueInputTitle ? valueInputTitle : t?.title}
+              </CardTitle>
+              <span
+                className="cursor-pointer"
+                onClick={() => setClickChangeTitle(!clickChangeTitle)}
+              >
+                <Pencil size={16} />
+              </span>
+            </div>
+            {clickChangeTitle && (
+              <div className="flex space-x-2">
+                <Input onChange={(e) => handleGetValueNewTitle(e)} />
+                <Button onClick={handleSunmitChangeTitle}>
+                  {updateTitle ? "Saving..." : "Save"}
+                </Button>
+              </div>
+            )}
           </CardHeader>
           <CardContent className="grid gap-4">
             <div>
               <div className="mb-4 grid grid-cols-[25px_1fr] items-start pb-4 last:mb-0 last:pb-0">
+                <span className="flex mr-2">
+                  <User />
+                </span>
+                <div className="space-y-2 mb-4">
+                  <p className="text-base font-medium">
+                    Người tạo: <br />
+                    <span className="font-semibold">{creatorName}</span>
+                  </p>
+                </div>
                 <span className="flex mr-2">
                   <Users />
                 </span>
@@ -325,7 +497,7 @@ const CardJobDetail = ({
                   <p className="text-sm font-medium ">
                     {t?.createAt
                       ? moment(t?.createAt, formatDateFull).format(
-                          formatDatetime
+                          formatDateSlash
                         )
                       : ""}
                   </p>
@@ -334,14 +506,47 @@ const CardJobDetail = ({
                   <AlarmClockOff />
                 </span>
                 <div className="space-y-2">
-                  <p className="text-base font-medium ">Thời gian kết thúc</p>
+                  <div className="flex justify-between">
+                    <p className="text-base font-medium ">Thời gian kết thúc</p>
+                    <Pencil
+                      className="cursor-pointer"
+                      size={16}
+                      onClick={() =>
+                        setClickChangeDeadline(!clickChangeDeadline)
+                      }
+                    />
+                  </div>
                   <p className="text-sm font-medium ">
                     {t?.deadlines
                       ? moment(t?.deadlines, formatDateFull).format(
-                          formatDatetime
+                          formatDateSlash
                         )
                       : ""}
                   </p>
+                  {clickChangeDeadline && (
+                    <div className="flex space-x-2">
+                      <input
+                        id="dateTime"
+                        type="datetime-local"
+                        name="deadlineDate"
+                        value={
+                          valueInputDeadline
+                            ? moment(valueInputDeadline).format(formatDatetime)
+                            : moment(t?.deadlines).format(formatDatetime)
+                        }
+                        onChange={(e) => handleGetValueNewDeadline(e)}
+                        className="p-2 w-3/4 inline-flex items-center justify-center whitespace-nowrap
+              rounded-md text-sm font-medium ring-offset-background transition-colors
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50
+              border border-input bg-background hover:bg-accent hover:text-accent-foreground
+              "
+                      />
+                      <Button onClick={handleChangeTime}>
+                        {updateDeadline ? "Saving..." : "Save"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
