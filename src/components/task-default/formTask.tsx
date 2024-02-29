@@ -22,16 +22,20 @@ import { useRouter } from "next/navigation";
 import TaskDefaultComponent from "../general/table/taskDefault";
 const items = [
   {
+    id: "Dọn vệ sinh",
+    label: "Dọn vệ sinh",
+  },
+  {
+    id: "Cúng kiếng",
+    label: "Cúng kiếng",
+  },
+  {
     id: "Tưới cây",
     label: "Tưới cây",
   },
   {
     id: "Cho cá ăn",
     label: "Cho cá ăn",
-  },
-  {
-    id: "Lau nhà",
-    label: "Lau nhà",
   },
 ] as const;
 
@@ -91,7 +95,7 @@ export default function TaskDefault() {
                       Việc cố định hàng ngày
                     </FormLabel>
                     <FormDescription>
-                      Được thực hiện từ 5:00 - 7:00.
+                      Được thực hiện từ 5:00 - 9:00.
                     </FormDescription>
                   </div>
                   {items.map((item) => (
