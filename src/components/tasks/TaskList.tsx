@@ -48,6 +48,8 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     initialData: { tasks },
   });
 
+  const { data: u } = trpc.users.getUsers.useQuery();
+
   const { mutate: deleteTask, isLoading: isDeleting } =
     trpc.tasks.deleteTask.useMutation({
       onSuccess: () => onSuccess("delete"),
@@ -83,6 +85,14 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
       title: "Tên công việc",
       render: (record) => {
         return <Link href={`/tasks/${record.id}`}>{record.title}</Link>;
+      },
+    },
+    {
+      title: "Người tạo",
+      render: (record) => {
+        let creatorId = record?.creator;
+        let findCreatorById = u?.users.find((user) => user?.id === creatorId);
+        return <div>{findCreatorById?.name}</div>;
       },
     },
     {

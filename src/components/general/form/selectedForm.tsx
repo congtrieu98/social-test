@@ -82,13 +82,15 @@ const SelectedForm = ({
                       {session?.user.name}
                     </SelectItem>
                   ) : (
-                    dataUser?.users.map((item) => {
-                      return (
-                        <SelectItem key={item.id} value={item.id} spellCheck>
-                          {item.name}
-                        </SelectItem>
-                      );
-                    })
+                    dataUser?.users
+                      .filter((user) => user.id !== session?.user.id)
+                      .map((item) => {
+                        return (
+                          <SelectItem key={item.id} value={item.id} spellCheck>
+                            {item.name}
+                          </SelectItem>
+                        );
+                      })
                   )
                 ) : editing ? (
                   dataOption?.map((item, index) => {

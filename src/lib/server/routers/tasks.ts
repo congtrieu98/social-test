@@ -12,13 +12,17 @@ import {
   updateTaskParamsOnlyChecked,
   updateTaskParamsStatus,
   updateTaskParamsPriority,
+  updateTaskParamsTitle,
+  updateTaskParamsDeadline,
 } from "@/lib/db/schema/tasks";
 import {
   createTask,
   deleteTask,
   updateTask,
+  updateTaskByDeadline,
   updateTaskByPriority,
   updateTaskByStatus,
+  updateTaskByTitle,
   updateTaskOnlyChecked,
 } from "@/lib/api/tasks/mutations";
 
@@ -53,6 +57,16 @@ export const tasksRouter = router({
     .input(updateTaskParamsPriority)
     .mutation(async ({ input }) => {
       return updateTaskByPriority(input.id, input);
+    }),
+  updateTaskByTitle: publicProcedure
+    .input(updateTaskParamsTitle)
+    .mutation(async ({ input }) => {
+      return updateTaskByTitle(input.id, input);
+    }),
+  updateTaskByDeadline: publicProcedure
+    .input(updateTaskParamsDeadline)
+    .mutation(async ({ input }) => {
+      return updateTaskByDeadline(input.id, input);
     }),
   updateTaskOnlyChecked: publicProcedure
     .input(updateTaskParamsOnlyChecked)

@@ -22,6 +22,7 @@ const emailPermission = [
   "tran@dinhkhanh.dk",
   "dat@suzu.vn",
   "tamptm@suzu.group",
+  "hang@suzu.vn",
 ];
 
 export type AuthSession = {
@@ -46,6 +47,7 @@ export const authOptions: NextAuthOptions = {
             "trieunguyen2806@gmail.com",
             "khanh@suzu.vn",
             "dat@suzu.vn",
+            "hang@suzu.vn",
           ].includes(user.email)
         ) {
           session.user.role = "ADMIN";

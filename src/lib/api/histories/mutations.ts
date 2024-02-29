@@ -5,7 +5,7 @@ import {
   UpdateHistoryParams,
   updateHistorySchema,
   insertHistorySchema,
-  historyIdSchema
+  historyIdSchema,
 } from "@/lib/db/schema/histories";
 import { getUserAuth } from "@/lib/auth/utils";
 
@@ -14,12 +14,6 @@ export const createHistory = async (history: NewHistoryParams) => {
   const newHistory = insertHistorySchema.parse({ ...history });
   try {
     const h = await db.history.create({ data: newHistory });
-    console.log("hhhhhhhhhhhh:", h)
-    console.log("hhhhhhhhhhhh:")
-    console.log("hhhhhhhhhhhh:")
-    console.log("hhhhhhhhhhhh:")
-    console.log("hhhhhhhhhhhh:")
-    return { history: h };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
@@ -27,12 +21,18 @@ export const createHistory = async (history: NewHistoryParams) => {
   }
 };
 
-export const updateHistory = async (id: HistoryId, history: UpdateHistoryParams) => {
+export const updateHistory = async (
+  id: HistoryId,
+  history: UpdateHistoryParams
+) => {
   const { session } = await getUserAuth();
   const { id: historyId } = historyIdSchema.parse({ id });
   const newHistory = updateHistorySchema.parse({ ...history });
   try {
-    const h = await db.history.update({ where: { id: historyId }, data: newHistory })
+    const h = await db.history.update({
+      where: { id: historyId },
+      data: newHistory,
+    });
     return { history: h };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
@@ -45,7 +45,9 @@ export const deleteHistory = async (id: HistoryId) => {
   const { session } = await getUserAuth();
   const { id: historyId } = historyIdSchema.parse({ id });
   try {
-    const h = await db.history.delete({ where: { id: historyId, userId: session?.user.id! } })
+    const h = await db.history.delete({
+      where: { id: historyId, userId: session?.user.id! },
+    });
     return { history: h };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
@@ -53,4 +55,3 @@ export const deleteHistory = async (id: HistoryId) => {
     return { error: message };
   }
 };
-

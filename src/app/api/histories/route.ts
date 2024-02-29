@@ -7,15 +7,16 @@ import {
   deleteHistory,
   updateHistory,
 } from "@/lib/api/histories/mutations";
-import { 
+import {
   historyIdSchema,
   insertHistoryParams,
-  updateHistoryParams 
+  updateHistoryParams,
 } from "@/lib/db/schema/histories";
 
 export async function POST(req: Request) {
   try {
     const validatedData = insertHistoryParams.parse(await req.json());
+    //@ts-ignore
     const { history, error } = await createHistory(validatedData);
     if (error) return NextResponse.json({ error }, { status: 500 });
     revalidatePath("/histories"); // optional - assumes you will have named route same as entity
@@ -29,7 +30,6 @@ export async function POST(req: Request) {
   }
 }
 
-
 export async function PUT(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -38,7 +38,10 @@ export async function PUT(req: Request) {
     const validatedData = updateHistoryParams.parse(await req.json());
     const validatedParams = historyIdSchema.parse({ id });
 
-    const { history, error } = await updateHistory(validatedParams.id, validatedData);
+    const { history, error } = await updateHistory(
+      validatedParams.id,
+      validatedData
+    );
 
     if (error) return NextResponse.json({ error }, { status: 500 });
     return NextResponse.json(history, { status: 200 });

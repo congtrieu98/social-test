@@ -66,6 +66,36 @@ export const updateTaskParamsStatus = updateTaskSchema
     assignedId: true,
   });
 
+export const updateTaskParamsTitle = updateTaskSchema
+  .extend({
+    createAt: z.coerce.date(),
+  })
+  .omit({
+    priority: true,
+    status: true,
+    description: true,
+    creator: true,
+    createAt: true,
+    deadlines: true,
+    checked: true,
+    assignedId: true,
+  });
+
+export const updateTaskParamsDeadline = updateTaskSchema
+  .extend({
+    createAt: z.coerce.date(),
+  })
+  .omit({
+    priority: true,
+    title: true,
+    status: true,
+    description: true,
+    creator: true,
+    createAt: true,
+    checked: true,
+    assignedId: true,
+  });
+
 export const taskIdSchema = updateTaskSchema.pick({ id: true });
 export const taskTitleSchema = updateTaskSchema.pick({ title: true });
 export const taskAssignedIdSchema = updateTaskSchema.pick({ assignedId: true });
@@ -80,6 +110,8 @@ export type UpdateTaskParamsOnlyChecked = z.infer<
 >;
 export type UpdateTaskByPriority = z.infer<typeof updateTaskParamsPriority>;
 export type UpdateTaskByStatus = z.infer<typeof updateTaskParamsStatus>;
+export type UpdateTaskByTitle = z.infer<typeof updateTaskParamsTitle>;
+export type UpdateTaskByDeadline = z.infer<typeof updateTaskParamsDeadline>;
 export type TaskId = z.infer<typeof taskIdSchema>["id"];
 export type TaskTitle = z.infer<typeof taskTitleSchema>["title"];
 

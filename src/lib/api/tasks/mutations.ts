@@ -9,10 +9,13 @@ import {
   UpdateTaskParamsOnlyChecked,
   UpdateTaskByStatus,
   UpdateTaskByPriority,
+  UpdateTaskByTitle,
+  UpdateTaskByDeadline,
 } from "@/lib/db/schema/tasks";
 import { getUserAuth } from "@/lib/auth/utils";
-import { ROLE } from "@/utils/constant";
+import { ROLE, formatDateSlash } from "@/utils/constant";
 import { Novu, PushProviderIdEnum } from "@novu/node";
+import moment from "moment";
 
 export const createTask = async (task: NewTaskParams) => {
   const { session } = await getUserAuth();
@@ -70,6 +73,7 @@ export const createTask = async (task: NewTaskParams) => {
 
 export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
   const { id: taskId } = taskIdSchema.parse({ id });
+  const { session } = await getUserAuth();
   const newTask = updateTaskSchema.parse({ ...task });
   const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
   try {
@@ -86,7 +90,10 @@ export const updateTask = async (id: TaskId, task: UpdateTaskParams) => {
       if (t?.creator !== t?.assignedId) {
         await novu.trigger("tasks", {
           to: {
-            subscriberId: userAssignded?.id as string,
+            subscriberId:
+              session?.user.role === ROLE.ADMIN
+                ? (userAssignded?.id as string)
+                : (user?.id as string),
           },
           payload: {
             text: `Task: ${t?.title}, đã được ${user?.name} thay đổi thông tin`,
@@ -210,6 +217,94 @@ export const updateTaskByPriority = async (
       });
     }
   }
+  return { task: t };
+};
+
+export const updateTaskByTitle = async (
+  id: TaskId,
+  task: UpdateTaskByTitle
+) => {
+  const { session } = await getUserAuth();
+  const { id: taskId } = taskIdSchema.parse({ id });
+  const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
+
+  const taskOld = await db.task.findFirst({
+    where: { id: taskId },
+  });
+  const t = await db.task.update({
+    where: { id: taskId },
+    data: task,
+  });
+
+  if (t) {
+    const user = await db.user.findFirst({ where: { id: t?.creator } });
+    const userAsigned = await db.user.findFirst({
+      where: { id: t?.assignedId },
+    });
+    if (t?.creator !== t?.assignedId) {
+      await novu.trigger("tasks", {
+        to: {
+          subscriberId:
+            session?.user.role === ROLE.ADMIN
+              ? (userAsigned?.id as string)
+              : (user?.id as string),
+        },
+        payload: {
+          text: `${
+            session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
+          } đã cập nhật cv: ${taskOld?.title}, thành: 
+        ${t.title}`,
+          url: `${t?.id}`,
+        },
+      });
+    }
+  }
+
+  return { task: t };
+};
+
+export const updateTaskByDeadline = async (
+  id: TaskId,
+  task: UpdateTaskByDeadline
+) => {
+  const { session } = await getUserAuth();
+  const { id: taskId } = taskIdSchema.parse({ id });
+  const novu = new Novu(process.env.NOVU_SECRET_API_KEY as string);
+
+  const taskOld = await db.task.findFirst({
+    where: { id: taskId },
+  });
+  const t = await db.task.update({
+    where: { id: taskId },
+    data: task,
+  });
+
+  if (t) {
+    const user = await db.user.findFirst({ where: { id: t?.creator } });
+    const userAsigned = await db.user.findFirst({
+      where: { id: t?.assignedId },
+    });
+    if (t?.creator !== t?.assignedId) {
+      await novu.trigger("tasks", {
+        to: {
+          subscriberId:
+            session?.user.role === ROLE.ADMIN
+              ? (userAsigned?.id as string)
+              : (user?.id as string),
+        },
+        payload: {
+          text: `${
+            session?.user.role === ROLE.ADMIN ? user?.name : userAsigned?.name
+          } đã cập nhật deadline: ${moment(taskOld?.deadlines)
+            .format(formatDateSlash)
+            .toString()}, thành: 
+        ${moment(t?.deadlines).format(formatDateSlash).toString()}`,
+          url: `${t?.id}`,
+        },
+      });
+    }
+  }
+
   return { task: t };
 };
 
