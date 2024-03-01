@@ -52,8 +52,10 @@ export const deleteTaskDefault = async (id: TaskDefaultId) => {
   const { session } = await getUserAuth();
   const { id: taskDefaultId } = taskDefaultIdSchema.parse({ id });
   try {
-    // const t = await db.taskDefault.delete({ where: { id: taskDefaultId, userId: session?.user.id! }})
-    // return { taskDefault: t };
+    const t = await db.taskDefault.delete({
+      where: { id: taskDefaultId, userId: session?.user.id! },
+    });
+    return { taskDefault: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
