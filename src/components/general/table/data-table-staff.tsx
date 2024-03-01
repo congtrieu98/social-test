@@ -39,26 +39,24 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTableStaff<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const utils = trpc.useContext();
-  const router = useRouter();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   // const [filtering, setFiltering] = useState([""]);
   const [rowSelection, setRowSelection] = useState({});
 
   const onSuccess = async () => {
-    await utils.taskDefaults.getTaskDefaults.invalidate();
-    router.refresh();
+    await utils.staffs.getStaffs.invalidate();
     toast({
       title: "Success",
       description: "Xóa thành công!",
     });
   };
-  const { mutate: deleteTaskDeault, isLoading: isDelete } =
-    trpc.taskDefaults.deleteTaskDefault.useMutation({
+  const { mutate: deleteStaff, isLoading: isDelete } =
+    trpc.staffs.deleteStaff.useMutation({
       onSuccess: () => onSuccess(),
     });
 
@@ -81,13 +79,13 @@ export function DataTable<TData, TValue>({
     <>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter user"
+          placeholder="Filter email"
           type="text"
           // value={filtering}
           // onChange={(e) => setFiltering([e.target.value])}
-          value={(table.getColumn("user")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
           onChange={(event) => {
-            return table.getColumn("user")?.setFilterValue(event.target.value);
+            return table.getColumn("email")?.setFilterValue(event.target.value);
           }}
           className="max-w-sm"
         />
@@ -109,7 +107,7 @@ export function DataTable<TData, TValue>({
                 <AlertDialogAction
                   onClick={async () => {
                     table.getFilteredSelectedRowModel().rows.map((item) => {
-                      deleteTaskDeault({
+                      deleteStaff({
                         //@ts-ignore
                         id: item.original.id,
                       });

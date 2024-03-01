@@ -1,7 +1,6 @@
 "use client";
 
 import { Checkbox } from "@/components/ui/checkbox";
-import { CompleteTaskDefault } from "@/lib/db/schema/taskDefaults";
 import { formatDateSlash } from "@/utils/constant";
 import { $Enums } from "@prisma/client";
 import { ColumnDef } from "@tanstack/react-table";
@@ -18,13 +17,13 @@ type TaskDefault = {
     emailVerified: Date | null;
     image: string | null;
     role: $Enums.UserRole;
-  },
+  };
   id: string;
   content: string | null;
   jobDetails: string[];
   date: Date;
   userId: string;
-}
+};
 export const columns: ColumnDef<TaskDefault[]>[] = [
   {
     id: "select",
@@ -43,12 +42,10 @@ export const columns: ColumnDef<TaskDefault[]>[] = [
       return (
         <Checkbox
           checked={row.getIsSelected()}
-          onCheckedChange={(value) =>
-            row.toggleSelected(!!value)
-          }
+          onCheckedChange={(value) => row.toggleSelected(!!value)}
           aria-label="Select row"
         />
-      )
+      );
     },
   },
   {

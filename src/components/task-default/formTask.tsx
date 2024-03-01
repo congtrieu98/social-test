@@ -37,6 +37,10 @@ const items = [
     id: "Cho cá ăn",
     label: "Cho cá ăn",
   },
+  {
+    id: "Cho gà ăn",
+    label: "Cho gà ăn",
+  },
 ] as const;
 
 const FormSchema = z.object({
@@ -54,8 +58,6 @@ export default function TaskDefault() {
       onSuccess: () => onSuccess(),
     });
 
-  const { data: td } =
-    trpc.taskDefaults.getTaskDefaults.useQuery();
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -95,7 +97,7 @@ export default function TaskDefault() {
                       Việc cố định hàng ngày
                     </FormLabel>
                     <FormDescription>
-                      Được thực hiện từ 5:00 - 9:00.
+                      Được thực hiện từ 6:00 - 9:00.
                     </FormDescription>
                   </div>
                   {items.map((item) => (
@@ -116,10 +118,10 @@ export default function TaskDefault() {
                                   return checked
                                     ? field.onChange([...field.value, item.id])
                                     : field.onChange(
-                                      field.value?.filter(
-                                        (value) => value !== item.id
-                                      )
-                                    );
+                                        field.value?.filter(
+                                          (value) => value !== item.id
+                                        )
+                                      );
                                 }}
                               />
                             </FormControl>

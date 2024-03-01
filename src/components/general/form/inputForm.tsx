@@ -8,16 +8,22 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useSession } from "next-auth/react";
 import { UseFormReturn } from "react-hook-form";
 
-const InputForm = ({ form, title }: { form: UseFormReturn; title: string }) => {
-  const { data: session } = useSession();
+const InputForm = ({
+  form,
+  title,
+  name,
+}: {
+  form: UseFormReturn;
+  title: string;
+  name: string;
+}) => {
   return (
     <>
       <FormField
         control={form.control}
-        name="title"
+        name={name}
         render={({ field }) => (
           <FormItem>
             <FormLabel>{title}</FormLabel>

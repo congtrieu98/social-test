@@ -8,15 +8,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import SignOutButton from "./auth/SignOutButton";
-import { ROLE } from "@/utils/constant";
 import NotificationMenu from "./NotificationMenu";
+import { ROLE } from "@/utils/constant";
 
 export default async function Navbar() {
   const { session } = await getUserAuth();
   const nameExists = !!session?.user.name && session?.user.name.length > 5;
-
   if (session?.user) {
     return (
       <nav className="py-2 flex items-center justify-between transition-all duration-300">
@@ -47,16 +46,11 @@ export default async function Navbar() {
               <DropdownMenu>
                 <DropdownMenuTrigger>
                   <Avatar>
-                    <AvatarFallback>
-                      {nameExists
-                        ? session.user.role === ROLE.ADMIN
-                          ? "AD"
-                          : session.user.name
-                              ?.split(" ")
-                              .map((word) => word[0].toUpperCase())
-                              .join("")
-                        : "~"}
-                    </AvatarFallback>
+                    <AvatarImage
+                      src={session?.user.image ? session?.user.image : ""}
+                      alt="@shadcn"
+                    />
+                    <AvatarFallback>CN</AvatarFallback>
                   </Avatar>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-56">
@@ -71,6 +65,13 @@ export default async function Navbar() {
                       Account
                     </DropdownMenuItem>
                   </Link>
+                  {session?.user.role === ROLE.ADMIN && (
+                    <Link href="/staffs">
+                      <DropdownMenuItem className="cursor-pointer">
+                        Staffs
+                      </DropdownMenuItem>
+                    </Link>
+                  )}
                   <SignOutButton />
                 </DropdownMenuContent>
               </DropdownMenu>

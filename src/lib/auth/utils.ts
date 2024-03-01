@@ -4,6 +4,7 @@ import { DefaultSession, getServerSession, NextAuthOptions } from "next-auth";
 import { redirect } from "next/navigation";
 import { env } from "@/lib/env.mjs";
 import GoogleProvider from "next-auth/providers/google";
+import { getStaffs } from "../api/staffs/queries";
 
 declare module "next-auth" {
   interface Session {
@@ -14,16 +15,16 @@ declare module "next-auth" {
   }
 }
 
-const emailPermission = [
-  "trieunguyen2806@gmail.com",
-  "trieunc@suzu.group",
-  "networksocialtest@gmail.com",
-  "khanh@suzu.vn",
-  "tran@dinhkhanh.dk",
-  "dat@suzu.vn",
-  "tamptm@suzu.group",
-  "hang@suzu.vn",
-];
+// const emailPermission = [
+//   "trieunguyen2806@gmail.com",
+//   "trieunc@suzu.group",
+//   "networksocialtest@gmail.com",
+//   "khanh@suzu.vn",
+//   "tran@dinhkhanh.dk",
+//   "dat@suzu.vn",
+//   "tamptm@suzu.group",
+//   "hang@suzu.vn",
+// ];
 
 export type AuthSession = {
   session: {
@@ -32,6 +33,7 @@ export type AuthSession = {
       name?: string;
       email?: string;
       role?: string;
+      image?: string;
     };
   } | null;
 };
@@ -58,7 +60,13 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
     async signIn({ user }) {
-      if (user.email && emailPermission.includes(user.email)) {
+      const dataUser = await getStaffs();
+      const emailPermission = dataUser.staffs.map((item) => item.email);
+      if (
+        user.email &&
+        (emailPermission.includes(user.email) ||
+          user.email === "trieunguyen2806@gmail.com")
+      ) {
         return true;
       } else {
         return false;

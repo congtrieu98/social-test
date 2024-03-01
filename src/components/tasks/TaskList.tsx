@@ -264,7 +264,6 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
 }
 
 const EmptyState = () => {
-  const { data: session } = useSession();
   return (
     <div className="text-center">
       <h3 className="mt-2 text-sm font-semibold text-gray-900">No tasks</h3>
