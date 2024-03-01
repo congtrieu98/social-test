@@ -125,7 +125,7 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
         const findHisByAction = h?.histories.find(
           (his) => his.action === "readedTask" && his.taskId === params?.id
         );
-        if (!findHisByAction) {
+        if (findHisByAction === undefined) {
           createHistories({
             taskId: params?.id as string,
             createAt: new Date(),
@@ -166,7 +166,6 @@ export default function TaskDetail({ params }: { params: { id: string } }) {
   });
 
   const onSubmit = (values: z.infer<typeof FormSchema>) => {
-    // console.log(values);
     if (files?.length > 0 && values?.checked?.length === 0) {
       files.forEach((file: FileWithPreview) => {
         if (file.preview) {

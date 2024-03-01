@@ -9,10 +9,10 @@ const Staffs = async () => {
   //@ts-ignore
   return (
     <main className="max-w-full mx-auto p-5 md:p-0 sm:pt-4">
-      <div className="flex justify-between">
+      <div className="pt-6 flex justify-between">
         {staffs.length > 0 && (
           <h1 className="font-semibold text-[18px] my-2">
-            Danh sách nhân viên
+            Danh sách người dùng
           </h1>
         )}
         {staffs.length > 0 && <StaffModal />}

@@ -62,13 +62,13 @@ export default async function Navbar() {
                   <DropdownMenuSeparator />
                   <Link href="/account">
                     <DropdownMenuItem className="cursor-pointer">
-                      Account
+                      Tài khoản
                     </DropdownMenuItem>
                   </Link>
                   {session?.user.role === ROLE.ADMIN && (
                     <Link href="/staffs">
                       <DropdownMenuItem className="cursor-pointer">
-                        Staffs
+                        Người dùng
                       </DropdownMenuItem>
                     </Link>
                   )}

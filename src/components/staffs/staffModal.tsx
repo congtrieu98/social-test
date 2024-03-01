@@ -26,9 +26,6 @@ export default function StaffModal({
   const closeModal = () => setOpen(false);
 
   const editing = !!staff?.id;
-
-  console.log("editing:", editing);
-
   // useEffect(() => {
   //   const handlePermission = async () => {
   //     try {

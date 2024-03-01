@@ -44,14 +44,12 @@ export function DataTableTaskDefault<TData, TValue>({
   data,
 }: DataTableProps<TData, TValue>) {
   const utils = trpc.useContext();
-  const router = useRouter();
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   // const [filtering, setFiltering] = useState([""]);
   const [rowSelection, setRowSelection] = useState({});
 
   const onSuccess = async () => {
     await utils.taskDefaults.getTaskDefaults.invalidate();
-    router.refresh();
     toast({
       title: "Success",
       description: "Xóa thành công!",
