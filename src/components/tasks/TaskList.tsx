@@ -20,7 +20,7 @@ import moment from "moment";
 import { Layout } from "antd";
 import type { ColumnsType } from "antd/es/table";
 import { useEffect, useState } from "react";
-import { ROLE, formatDateFull, formatDatetime } from "@/utils/constant";
+import { ROLE, formatDate, formatDateFull, formatDatetime } from "@/utils/constant";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/use-toast";
 import Link from "next/link";
@@ -148,23 +148,23 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
               val === "new"
                 ? "bg-gray-300"
                 : val === "readed"
-                ? "bg-blue-300"
-                : val === "inprogress"
-                ? "bg-yellow-300"
-                : val === "reject"
-                ? "bg-red-400"
-                : "bg-green-500"
+                  ? "bg-blue-300"
+                  : val === "inprogress"
+                    ? "bg-yellow-300"
+                    : val === "reject"
+                      ? "bg-red-400"
+                      : "bg-green-500"
             }
           >
             {val === "new"
               ? "Mới tạo"
               : val === "readed"
-              ? "Đã xem"
-              : val === "inprogress"
-              ? "Đang thực hiện"
-              : val === "reject"
-              ? "Chưa hoàn thành"
-              : "Đã hoàn thành"}
+                ? "Đã xem"
+                : val === "inprogress"
+                  ? "Đang thực hiện"
+                  : val === "reject"
+                    ? "Chưa hoàn thành"
+                    : "Đã hoàn thành"}
           </Badge>
         );
       },
@@ -199,7 +199,18 @@ export default function TaskList({ tasks }: { tasks: CompleteTask[] }) {
     {
       title: "Thời gian bắt đầu",
       dataIndex: "createAt",
-      render: (value) => moment(value, formatDateFull).format(formatDatetime),
+      render: (value) => moment(value, formatDatetime).format(formatDatetime),
+      filters: t.tasks.map((item) => (
+        {
+          text: moment(item?.createAt, formatDate).format(formatDate),
+          value: item?.createAt.toDateString(),
+        }
+      )),
+      filterMode: "tree",
+      filterSearch: true,
+      // @ts-ignore
+      onFilter: (value: string, record) => record.createAt.toDateString() === value,
+      width: "15%",
     },
     {
       title: "Thời gian kết thúc",

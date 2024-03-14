@@ -57,8 +57,8 @@ const DateForm = ({
                   editing
                     ? changeTime === false
                       ? moment(field.value, formatDateFull)
-                          .format(formatDatetime)
-                          .toString()
+                        .format(formatDatetime)
+                        .toString()
                       : date
                     : date
                 }

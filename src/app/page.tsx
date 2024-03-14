@@ -33,11 +33,9 @@ export default function Home() {
           back!
         </div>
       ) : (
-        <div className="text-xl leading-7">
-          You are not logged in{" "}
-          <p>
-            <Button onClick={() => signIn("google")}>Sign in</Button>
-          </p>
+        <div className="text-xl leading-7 ">
+          <div className="p-2 text-center font-semibold">Vui lòng đăng nhập</div>
+          <Button className="w-full" onClick={() => signIn("google")}>Sign in</Button>
         </div>
       )}
     </>

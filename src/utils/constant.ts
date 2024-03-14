@@ -1,4 +1,4 @@
-export const formatDate = "DD-MM-YYYY";
+export const formatDate = "DD/MM/YYYY";
 export const formatDatetime = "YYYY-MM-DD HH:mm";
 export const formatTimeDate = "HH:mm DD/MM/YYYY";
 export const formatDateFull = "YYYY-MM-DD[T]HH:mm:ss[Z]";
