@@ -1,6 +1,8 @@
 import { trpc } from "@/lib/trpc/client";
 import { columns } from "./columns";
 import { DataTableTaskDefault } from "./data-table-taskdefalt";
+import { formatDateSlash } from "@/utils/constant";
+import moment from "moment";
 
 export default function TaskDefaultComponent() {
   const { data: td } = trpc.taskDefaults.getTaskDefaults.useQuery();
@@ -9,7 +11,7 @@ export default function TaskDefaultComponent() {
       id: item.id,
       user: item.user.name,
       content: item.content,
-      date: item.date,
+      date: moment(item.date, formatDateSlash).format(formatDateSlash),
     };
   });
   return (

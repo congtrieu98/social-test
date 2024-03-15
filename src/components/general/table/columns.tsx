@@ -51,11 +51,6 @@ export const columns: ColumnDef<TaskDefault[]>[] = [
   {
     accessorKey: "user",
     header: "Người thực hiện",
-    // cell: ({ row }) => {
-    //   const user = row.getValue("user");
-    //   //@ts-ignore
-    //   return user?.name;
-    // },
   },
   {
     accessorKey: "content",
@@ -63,10 +58,6 @@ export const columns: ColumnDef<TaskDefault[]>[] = [
   },
   {
     accessorKey: "date",
-    header: "Ngày",
-    cell: ({ row }) => {
-      const date = row.getValue("date");
-      return moment(date as Date, formatDateSlash).format(formatDateSlash);
-    },
+    header: "Ngày submit",
   },
 ];

@@ -67,7 +67,6 @@ export default function TaskDefault() {
 
   const onSuccess = async () => {
     await utils.taskDefaults.getTaskDefaults.invalidate();
-    router.refresh();
     toast({
       title: "Success",
       description: "Submit thành công!",
@@ -137,7 +136,7 @@ export default function TaskDefault() {
                 </FormItem>
               )}
             />
-            <Button type="submit">
+            <Button type="submit" disabled={isCreateTaskDefault}>
               {isCreateTaskDefault ? "Submiting..." : "Submit"}
             </Button>
           </form>

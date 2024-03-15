@@ -40,9 +40,6 @@ const StaffForm = ({
   const { data: session } = useSession();
 
   const form = useForm<z.infer<typeof insertStaffParams>>({
-    // latest Zod release has introduced a TS error with zodResolver
-    // open issue: https://github.com/colinhacks/zod/issues/2663
-    // errors locally but not in production
     resolver: zodResolver(insertStaffParams),
     defaultValues: staff ?? {
       email: undefined,
@@ -98,7 +95,7 @@ const StaffForm = ({
         />
         <Button
           type="submit"
-          className="mr-1"
+          className={`${isCreating ? "pointer-events-none" : ""} mr-1`}
           disabled={isCreating || isUpdating}
         >
           {editing
