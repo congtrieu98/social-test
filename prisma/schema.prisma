@@ -64,6 +64,7 @@ model User {
   sessions      Session[]
   tasks         Task[]
   taskDefaults  TaskDefault[]
+  weeklyWorks   WeeklyWork[]
 }
 
 model VerificationToken {
@@ -75,7 +76,7 @@ model VerificationToken {
 }
 
 model Task {
-  id                String     @id @default(cuid())
+  id                String    @id @default(cuid())
   title             String
   status            String
   creator           String
@@ -88,7 +89,7 @@ model Task {
   tokenNoticafition String?
   medias            Media[]
   history           History[]
-  user              User       @relation(fields: [assignedId], references: [id], onDelete: Cascade)
+  user              User      @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
 
 model Media {
@@ -135,4 +136,21 @@ model TaskDefault {
 model Staff {
   id    String @id @default(cuid())
   email String
+}
+
+model WeeklyWork {
+  id     String @id @default(cuid())
+  name   String
+  userId String
+  tools   Tool[]
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Tool {
+  id                String @id @default(cuid())
+  name              String
+  status            String
+  weeklyWorkId      String
+  quantityRemaining String
+  weeklyWork   WeeklyWork   @relation(fields: [weeklyWorkId], references: [id], onDelete: Cascade)
 }

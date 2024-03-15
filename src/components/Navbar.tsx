@@ -40,7 +40,7 @@ export default async function Navbar() {
           </Link>
         </h1>
         <div className="space-x-2 flex items-center">
-          {session ? (
+          {session?.user ? (
             <>
               <NotificationMenu />
               <DropdownMenu>
