@@ -87,7 +87,6 @@ model Task {
   checked           String[]
   tokenNoticafition String?
   medias            Media[]
-  todoList          TodoList[]
   history           History[]
   user              User       @relation(fields: [assignedId], references: [id], onDelete: Cascade)
 }
@@ -112,13 +111,6 @@ model Report {
   jobCompletedPrecent  Int
   jobUnfinishedPercent Int
   kpi                  String
-}
-
-model TodoList {
-  id        String   @id @default(cuid())
-  isChecked String[]
-  taskId    String
-  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
 }
 
 model History {

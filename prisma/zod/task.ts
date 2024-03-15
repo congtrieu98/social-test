@@ -1,5 +1,5 @@
 import * as z from "zod"
-import { CompleteMedia, relatedMediaSchema, CompleteTodoList, relatedTodoListSchema, CompleteHistory, relatedHistorySchema, CompleteUser, relatedUserSchema } from "./index"
+import { CompleteMedia, relatedMediaSchema, CompleteHistory, relatedHistorySchema, CompleteUser, relatedUserSchema } from "./index"
 
 export const taskSchema = z.object({
   id: z.string(),
@@ -17,7 +17,6 @@ export const taskSchema = z.object({
 
 export interface CompleteTask extends z.infer<typeof taskSchema> {
   medias: CompleteMedia[]
-  todoList: CompleteTodoList[]
   history: CompleteHistory[]
   user: CompleteUser
 }
@@ -29,7 +28,6 @@ export interface CompleteTask extends z.infer<typeof taskSchema> {
  */
 export const relatedTaskSchema: z.ZodSchema<CompleteTask> = z.lazy(() => taskSchema.extend({
   medias: relatedMediaSchema.array(),
-  todoList: relatedTodoListSchema.array(),
   history: relatedHistorySchema.array(),
   user: relatedUserSchema,
 }))
