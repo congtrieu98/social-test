@@ -12,6 +12,15 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
@@ -27,7 +36,7 @@ const ToolForm = ({
   closeModal: () => void;
 }) => {
   const { toast } = useToast();
-  
+
   const editing = !!tool?.id;
 
   const router = useRouter();
@@ -40,15 +49,15 @@ const ToolForm = ({
     resolver: zodResolver(insertToolParams),
     defaultValues: tool ?? {
       name: "",
-     status: "",
-     quantityRemaining: ""
+      status: "",
+      quantityRemaining: ""
     },
   });
 
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tools.getTools.invalidate();
     router.refresh();
-    closeModal();toast({
+    closeModal(); toast({
       title: 'Success',
       description: `Tool ${action}d!`,
       variant: "default",
@@ -71,6 +80,7 @@ const ToolForm = ({
     });
 
   const handleSubmit = (values: NewToolParams) => {
+    console.log("values:", values)
     if (editing) {
       updateTool({ ...values, id: tool.id });
     } else {
@@ -84,24 +94,33 @@ const ToolForm = ({
           control={form.control}
           name="name"
           render={({ field }) => (<FormItem>
-              <FormLabel>Name</FormLabel>
-                <FormControl>
-            <Input {...field} />
-          </FormControl>
-
-              <FormMessage />
-            </FormItem>
+            <FormLabel>Tên</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
           )}
         />
         <FormField
           control={form.control}
           name="status"
-          render={({ field }) => (<FormItem>
-              <FormLabel>Status</FormLabel>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Trạng thái</FormLabel>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
-            <Input {...field} />
-          </FormControl>
-
+                  <SelectTrigger>
+                    <SelectValue placeholder="Chọn trạng thái" />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  <SelectItem value="normal">Bình thường</SelectItem>
+                  <SelectItem value="damaged">Bị hư/hỏng</SelectItem>
+                  <SelectItem value="hight">Còn &gt;=50% </SelectItem>
+                  <SelectItem value="low">Còn &lt;50% </SelectItem>
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}
@@ -110,13 +129,12 @@ const ToolForm = ({
           control={form.control}
           name="quantityRemaining"
           render={({ field }) => (<FormItem>
-              <FormLabel>Quantity Remaining</FormLabel>
-                <FormControl>
-            <Input {...field} />
-          </FormControl>
-
-              <FormMessage />
-            </FormItem>
+            <FormLabel>Số lần còn sử dụng được</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
           )}
         />
         <Button

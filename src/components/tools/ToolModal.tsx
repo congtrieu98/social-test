@@ -12,10 +12,10 @@ import {
 import ToolForm from "./ToolForm";
 import { Tool } from "@/lib/db/schema/tools";
 
-export default function ToolModal({ 
+export default function ToolModal({
   tool,
   emptyState,
-}: { 
+}: {
   tool?: Tool;
   emptyState?: boolean;
 }) {
@@ -25,7 +25,7 @@ export default function ToolModal({
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-      { emptyState ? (
+        {emptyState ? (
           <Button>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -42,19 +42,19 @@ export default function ToolModal({
               <path d="M5 12h14" />
               <path d="M12 5v14" />
             </svg>
-            New Tool
+            Tạo mới
           </Button>
         ) : (
-        <Button
-          variant={editing ? "ghost" : "outline"}
-          size={editing ? "sm" : "icon"}
-        >
-          {editing ? "Edit" : "+"}
-        </Button> )}
+          <Button
+            variant={editing ? "ghost" : "outline"}
+            size={editing ? "sm" : "icon"}
+          >
+            {editing ? "Edit" : "+"}
+          </Button>)}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5">
-          <DialogTitle>{ editing ? "Edit" : "Create" } Tool</DialogTitle>
+          <DialogTitle>{editing ? "Chỉnh sữa" : "Tạo"} dụng cụ</DialogTitle>
         </DialogHeader>
         <div className="px-5 pb-5">
           <ToolForm closeModal={closeModal} tool={tool} />

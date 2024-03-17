@@ -12,10 +12,10 @@ import {
 import WeeklyWorkForm from "./WeeklyWorkForm";
 import { WeeklyWork } from "@/lib/db/schema/weeklyWorks";
 
-export default function WeeklyWorkModal({ 
+export default function WeeklyWorkModal({
   weeklyWork,
   emptyState,
-}: { 
+}: {
   weeklyWork?: WeeklyWork;
   emptyState?: boolean;
 }) {
@@ -25,7 +25,7 @@ export default function WeeklyWorkModal({
   return (
     <Dialog onOpenChange={setOpen} open={open}>
       <DialogTrigger asChild>
-      { emptyState ? (
+        {emptyState ? (
           <Button>
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -42,19 +42,19 @@ export default function WeeklyWorkModal({
               <path d="M5 12h14" />
               <path d="M12 5v14" />
             </svg>
-            New Weekly Work
+            Tạo mới
           </Button>
         ) : (
-        <Button
-          variant={editing ? "ghost" : "outline"}
-          size={editing ? "sm" : "icon"}
-        >
-          {editing ? "Edit" : "+"}
-        </Button> )}
+          <Button
+            variant={editing ? "ghost" : "outline"}
+            size={editing ? "sm" : "icon"}
+          >
+            {editing ? "Edit" : "+"}
+          </Button>)}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5">
-          <DialogTitle>{ editing ? "Edit" : "Create" } Weekly Work</DialogTitle>
+          <DialogTitle>{editing ? "Chỉnh sữa" : "Tạo"} công việc</DialogTitle>
         </DialogHeader>
         <div className="px-5 pb-5">
           <WeeklyWorkForm closeModal={closeModal} weeklyWork={weeklyWork} />

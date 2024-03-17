@@ -26,13 +26,15 @@ export default function Home() {
 
   return (
     <>
-      {session?.user ? (
+      {session?.user && (
         <div className="text-base">
           Welcome to{" "}
           <span className="font-semibold">{session?.user?.name}</span> come
           back!
         </div>
-      ) : (
+      )}
+
+      {!session && (
         <div className="text-xl leading-7 ">
           <div className="p-2 text-center font-semibold">Vui lòng đăng nhập</div>
           <Button className="w-full" onClick={() => signIn("google")}>Sign in</Button>

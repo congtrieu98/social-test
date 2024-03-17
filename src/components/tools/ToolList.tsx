@@ -37,10 +37,7 @@ const Tool = ({ tool }: { tool: CompleteTool }) => {
 const EmptyState = () => {
   return (
     <div className="text-center">
-      <h3 className="mt-2 text-sm font-semibold text-gray-900">No tools</h3>
-      <p className="mt-1 text-sm text-gray-500">
-        Get started by creating a new tool.
-      </p>
+      <h3 className="mt-2 text-sm font-semibold text-gray-900">Chưa có dụng cụ nào được tạo</h3>
       <div className="mt-6">
         <ToolModal emptyState={true} />
       </div>

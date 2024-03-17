@@ -6,8 +6,13 @@ import { getTools } from "@/lib/api/tools/queries";
 // Schema for tools - used to validate API requests
 export const insertToolSchema = toolSchema.omit({ id: true });
 
-export const insertToolParams = toolSchema.extend({}).omit({ 
-  id: true
+export const insertToolParams = toolSchema.extend({
+  name: z.string().min(1, { message: "Field required" }),
+  status: z.string().min(1, { message: "Field required" }),
+  weeklyWorkId: z.string().min(1, { message: "Field required" }),
+  quantityRemaining: z.string().min(1, { message: "Field required" }),
+}).omit({
+  id: true,
 });
 
 export const updateToolSchema = toolSchema;
@@ -22,7 +27,7 @@ export type NewTool = z.infer<typeof insertToolSchema>;
 export type NewToolParams = z.infer<typeof insertToolParams>;
 export type UpdateToolParams = z.infer<typeof updateToolParams>;
 export type ToolId = z.infer<typeof toolIdSchema>["id"];
-    
+
 // this type infers the return from getTools() - meaning it will include any joins
 export type CompleteTool = Awaited<ReturnType<typeof getTools>>["tools"][number];
 

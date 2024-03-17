@@ -27,7 +27,7 @@ const WeeklyWorkForm = ({
   closeModal: () => void;
 }) => {
   const { toast } = useToast();
-  
+
   const editing = !!weeklyWork?.id;
 
   const router = useRouter();
@@ -40,14 +40,13 @@ const WeeklyWorkForm = ({
     resolver: zodResolver(insertWeeklyWorkParams),
     defaultValues: weeklyWork ?? {
       name: "",
-     glassCleaningTools: ""
     },
   });
 
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.weeklyWorks.getWeeklyWorks.invalidate();
     router.refresh();
-    closeModal();toast({
+    closeModal(); toast({
       title: 'Success',
       description: `Weekly Work ${action}d!`,
       variant: "default",
@@ -83,26 +82,13 @@ const WeeklyWorkForm = ({
           control={form.control}
           name="name"
           render={({ field }) => (<FormItem>
-              <FormLabel>Name</FormLabel>
-                <FormControl>
-            <Input {...field} />
-          </FormControl>
+            <FormLabel>Name</FormLabel>
+            <FormControl>
+              <Input {...field} />
+            </FormControl>
 
-              <FormMessage />
-            </FormItem>
-          )}
-        />
-        <FormField
-          control={form.control}
-          name="glassCleaningTools"
-          render={({ field }) => (<FormItem>
-              <FormLabel>Glass Cleaning Tools</FormLabel>
-                <FormControl>
-            <Input {...field} />
-          </FormControl>
-
-              <FormMessage />
-            </FormItem>
+            <FormMessage />
+          </FormItem>
           )}
         />
         <Button
