@@ -12,9 +12,8 @@ export const createTool = async (tool: NewToolParams) => {
   const newTool = insertToolSchema.parse(tool);
   console.log("newTool:", newTool)
   try {
-    // const t = await db.tool.create({ data: newTool });
-    // return { tool: t };
-    return newTool
+    const t = await db.tool.create({ data: newTool });
+    return { tool: t };
   } catch (err) {
     const message = (err as Error).message ?? "Error, please try again";
     console.error(message);
