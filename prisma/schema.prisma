@@ -21,9 +21,8 @@ generator zod {
 }
 
 datasource db {
-  provider          = "postgresql"
-  url               = env("DATABASE_URL")
-  shadowDatabaseUrl = env("POSTGRES_URL_NON_POOLING")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Account {
@@ -142,15 +141,15 @@ model WeeklyWork {
   id     String @id @default(cuid())
   name   String
   userId String
-  tools   Tool[]
+  tools  Tool[]
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Tool {
-  id                String @id @default(cuid())
+  id                String     @id @default(cuid())
   name              String
   status            String
   weeklyWorkId      String
   quantityRemaining String
-  weeklyWork   WeeklyWork   @relation(fields: [weeklyWorkId], references: [id], onDelete: Cascade)
+  weeklyWork        WeeklyWork @relation(fields: [weeklyWorkId], references: [id], onDelete: Cascade)
 }
