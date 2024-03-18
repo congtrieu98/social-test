@@ -20,7 +20,7 @@ import {
   SelectLabel,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
@@ -50,19 +50,23 @@ const ToolForm = ({
     defaultValues: tool ?? {
       name: "",
       status: "",
-      quantityRemaining: ""
+      weeklyWorkId: "",
+      quantityRemaining: "",
     },
   });
 
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tools.getTools.invalidate();
     router.refresh();
-    closeModal(); toast({
-      title: 'Success',
+    closeModal();
+    toast({
+      title: "Success",
       description: `Tool ${action}d!`,
       variant: "default",
     });
   };
+
+  const { data: w } = trpc.weeklyWorks.getWeeklyWorks.useQuery();
 
   const { mutate: createTool, isLoading: isCreating } =
     trpc.tools.createTool.useMutation({
@@ -80,7 +84,6 @@ const ToolForm = ({
     });
 
   const handleSubmit = (values: NewToolParams) => {
-    console.log("values:", values)
     if (editing) {
       updateTool({ ...values, id: tool.id });
     } else {
@@ -93,32 +96,34 @@ const ToolForm = ({
         <FormField
           control={form.control}
           name="name"
-          render={({ field }) => (<FormItem>
-            <FormLabel>Tên</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Tên</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <FormField
           control={form.control}
-          name="status"
+          name="weeklyWorkId"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Trạng thái</FormLabel>
+              <FormLabel>Thuộc công việc</FormLabel>
               <Select onValueChange={field.onChange} defaultValue={field.value}>
                 <FormControl>
                   <SelectTrigger>
-                    <SelectValue placeholder="Chọn trạng thái" />
+                    <SelectValue placeholder="Chọn công việc" />
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  <SelectItem value="normal">Bình thường</SelectItem>
-                  <SelectItem value="damaged">Bị hư/hỏng</SelectItem>
-                  <SelectItem value="hight">Còn &gt;=50% </SelectItem>
-                  <SelectItem value="low">Còn &lt;50% </SelectItem>
+                  {w?.weeklyWorks.map((wlw) => (
+                    <SelectItem value={wlw.name} key={wlw.id} spellCheck>
+                      {wlw.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <FormMessage />
@@ -127,14 +132,54 @@ const ToolForm = ({
         />
         <FormField
           control={form.control}
+          name="status"
+          render={({ field }) => {
+            console.log("field:", field.value);
+            return (
+              <FormItem>
+                <FormLabel>Trạng thái</FormLabel>
+                <Select
+                  onValueChange={field.onChange}
+                  defaultValue={
+                    field.value === "Bình thường"
+                      ? "normal"
+                      : field.value === "Bị hư/hỏng"
+                      ? "damaged"
+                      : field.value === "Còn >= 50%"
+                      ? "hight"
+                      : field.value === "Còn < 50%"
+                      ? "low"
+                      : ""
+                  }
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Chọn trạng thái" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    <SelectItem value="normal">Bình thường</SelectItem>
+                    <SelectItem value="damaged">Bị hư/hỏng</SelectItem>
+                    <SelectItem value="hight">Còn &gt;=50% </SelectItem>
+                    <SelectItem value="low">Còn &lt;50% </SelectItem>
+                  </SelectContent>
+                </Select>
+                <FormMessage />
+              </FormItem>
+            );
+          }}
+        />
+        <FormField
+          control={form.control}
           name="quantityRemaining"
-          render={({ field }) => (<FormItem>
-            <FormLabel>Số lần còn sử dụng được</FormLabel>
-            <FormControl>
-              <Input {...field} />
-            </FormControl>
-            <FormMessage />
-          </FormItem>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Số lần còn sử dụng được</FormLabel>
+              <FormControl>
+                <Input {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
           )}
         />
         <Button

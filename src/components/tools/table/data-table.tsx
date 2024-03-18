@@ -38,13 +38,13 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export function DataTableStaff<TData, TValue>({
+export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
   const utils = trpc.useContext();
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  // const [filtering, setFiltering] = useState([""]);
+  //   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [filtering, setFiltering] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
   const onSuccess = async () => {
@@ -63,13 +63,13 @@ export function DataTableStaff<TData, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onColumnFiltersChange: setColumnFilters,
-    // onGlobalFilterChange: setFiltering,
+    // onColumnFiltersChange: setColumnFilters,
+    onGlobalFilterChange: setFiltering,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     state: {
-      columnFilters,
-      // globalFilter: filtering,
+      //   columnFilters,
+      globalFilter: filtering,
       rowSelection,
     },
   });
@@ -78,14 +78,10 @@ export function DataTableStaff<TData, TValue>({
     <>
       <div className="flex items-center py-4">
         <Input
-          placeholder="Filter email"
+          placeholder="Filter everything"
           type="text"
-          // value={filtering}
-          // onChange={(e) => setFiltering([e.target.value])}
-          value={(table.getColumn("email")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => {
-            return table.getColumn("email")?.setFilterValue(event.target.value);
-          }}
+          value={filtering}
+          onChange={(e) => setFiltering(e.target.value)}
           className="max-w-sm"
         />
       </div>

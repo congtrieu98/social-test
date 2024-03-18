@@ -42,7 +42,7 @@ export default function WeeklyWorkModal({
               <path d="M5 12h14" />
               <path d="M12 5v14" />
             </svg>
-            Tạo mới
+            Tạo việc
           </Button>
         ) : (
           <Button
@@ -50,7 +50,8 @@ export default function WeeklyWorkModal({
             size={editing ? "sm" : "icon"}
           >
             {editing ? "Edit" : "+"}
-          </Button>)}
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5">

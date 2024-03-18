@@ -15,13 +15,19 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-
 import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { toast } from "@/components/ui/use-toast";
 import { trpc } from "@/lib/trpc/client";
@@ -29,7 +35,7 @@ import TaskDefaultComponent from "../general/table/taskDefault";
 import NewWeeklyWorkModal from "@/components/weeklyWorks/WeeklyWorkModal";
 import { CompleteWeeklyWork } from "@/lib/db/schema/weeklyWorks";
 import WeeklyWorkList from "../weeklyWorks/WeeklyWorkList";
-
+import Link from "next/link";
 const items = [
   {
     id: "Dọn vệ sinh",
@@ -52,7 +58,6 @@ const items = [
     label: "Cho gà ăn",
   },
 ] as const;
-
 
 const FormSchema = z.object({
   items: z.array(z.string()).refine((value) => value.some((item) => item), {
@@ -97,7 +102,6 @@ export default function TaskDefault() {
 
   return (
     <>
-
       <Tabs defaultValue="tasksDaily">
         <TabsList className="grid w-full grid-cols-2">
           <TabsTrigger value="tasksDaily">Tasks Daily</TabsTrigger>
@@ -107,7 +111,10 @@ export default function TaskDefault() {
         <TabsContent value="tasksDaily">
           <div className="pb-10">
             <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <form
+                onSubmit={form.handleSubmit(onSubmit)}
+                className="space-y-8"
+              >
                 <FormField
                   control={form.control}
                   name="items"
@@ -137,12 +144,15 @@ export default function TaskDefault() {
                                     checked={field.value?.includes(item.id)}
                                     onCheckedChange={(checked) => {
                                       return checked
-                                        ? field.onChange([...field.value, item.id])
+                                        ? field.onChange([
+                                            ...field.value,
+                                            item.id,
+                                          ])
                                         : field.onChange(
-                                          field.value?.filter(
-                                            (value) => value !== item.id
-                                          )
-                                        );
+                                            field.value?.filter(
+                                              (value) => value !== item.id
+                                            )
+                                          );
                                     }}
                                   />
                                 </FormControl>
@@ -175,9 +185,13 @@ export default function TaskDefault() {
             <NewWeeklyWorkModal />
           </div>
           <div className="w-full py-5">
-            <Button>New task</Button>
+            <Link href="/tools">
+              <Button variant="outline">Kiểm tra dụng cụ</Button>
+            </Link>
           </div>
-          <WeeklyWorkList weeklyWorks={w?.weeklyWorks as CompleteWeeklyWork[]} />
+          <WeeklyWorkList
+            weeklyWorks={w?.weeklyWorks as CompleteWeeklyWork[]}
+          />
         </TabsContent>
       </Tabs>
     </>

@@ -81,7 +81,7 @@ export default function TaskModal({
             closeModal={closeModal}
             task={task}
             //@ts-ignore
-            curenToken={curenToken}
+            // curenToken={curenToken}
           />
         </div>
       </DialogContent>
