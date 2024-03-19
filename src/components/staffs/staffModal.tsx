@@ -59,7 +59,7 @@ export default function StaffModal({
               <path d="M5 12h14" />
               <path d="M12 5v14" />
             </svg>
-            New Staff
+            Tạo mới
           </Button>
         ) : (
           <Button
@@ -67,13 +67,13 @@ export default function StaffModal({
             size={editing ? "sm" : "icon"}
             className="w-auto py-2 px-4"
           >
-            {editing ? "Edit" : "New Staff"}
+            {editing ? "Edit" : "+"}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent>
         <DialogHeader className="px-5 pt-5">
-          <DialogTitle>{editing ? "Edit" : "Create"} Staff</DialogTitle>
+          <DialogTitle>{editing ? "Edit" : "Tạo"} user</DialogTitle>
         </DialogHeader>
         <div className="px-5 pb-5">
           <StaffForm closeModal={closeModal} staff={staff} />

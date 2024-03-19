@@ -5,7 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   useReactTable,
-  ColumnFiltersState,
   getFilteredRowModel,
 } from "@tanstack/react-table";
 
@@ -17,7 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
+import { CompleteTool } from "@/lib/db/schema/tools";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import {
@@ -33,6 +32,8 @@ import {
 import { trpc } from "@/lib/trpc/client";
 import { toast } from "@/components/ui/use-toast";
 import LoadingComponent from "@/components/ui/loading";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -43,68 +44,99 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
+  const router = useRouter()
+  const { data: session } = useSession()
   const utils = trpc.useContext();
-  //   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [filtering, setFiltering] = useState("");
   const [rowSelection, setRowSelection] = useState({});
 
-  const onSuccess = async () => {
-    await utils.tools.getTools.invalidate();
-    toast({
-      title: "Success",
-      description: "Xóa thành công!",
-    });
-  };
-  const { mutate: deleteTool, isLoading: isDelete } =
-    trpc.tools.deleteTool.useMutation({
-      onSuccess: () => onSuccess(),
+  const { data: t } = trpc.tools.getTools.useQuery()
+  const { mutate: createWeeklyWorkDefault, isLoading: isCreateWeeklyWorkDefault } =
+    trpc.weeklyWorkDefaults.createWeeklyWorkDefault.useMutation({
+      onSuccess: async () => {
+        await utils.weeklyWorks.getWeeklyWorks.invalidate();
+        await utils.weeklyWorkDefaults.getWeeklyWorkDefaults.invalidate();
+        toast({
+          title: "Success",
+          description: "Gửi xác nhận thành công!",
+        });
+        setRowSelection({})
+      },
     });
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    onGlobalFilterChange: setFiltering,
     getFilteredRowModel: getFilteredRowModel(),
     onRowSelectionChange: setRowSelection,
     state: {
-      globalFilter: filtering,
       rowSelection,
     },
   });
 
   return (
     <>
-      <div className="flex justify-between py-4">
-        <Input
-          placeholder="Filter everything"
-          type="text"
-          value={filtering}
-          onChange={(e) => setFiltering(e.target.value)}
-          className="max-w-sm"
-        />
+      <div className="flex justify-between">
         <div className="mb-2 ml-2">
           {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="destructive">Xóa</Button>
+                <Button variant="default">Xác nhận</Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
                 <AlertDialogHeader>
                   <AlertDialogTitle>
-                    Bạn chắc chắn muốn xóa dụng cụ này này?
+                    Bạn chắc chắn muốn gửi xác nhận?
                   </AlertDialogTitle>
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={async () => {
+                      // Check dụng cụ 
+                      if (t?.tools.length! > 0) {
+                        // 2. Đã có thì:
+                        // 2.1 Check xem có dụng cụ nào hư hỏng hay hết hay không
+                        // =>> check status và quantityRemaining
+                        // Check dụng cụ theo tên cv
+                        // vd: lau kính sẽ có các dụng cụ nào, bón phân cây có dụng cụ nào
+                        const nameWorkId: string[] = table.getFilteredSelectedRowModel().rows
+                          .map((item) =>
+                            //@ts-ignore
+                            item.original.id
+                          );
+                        const checkStatus = t?.tools.filter(cs => cs.status)
+
+                        nameWorkId.map(item => {
+                          const toolsByParentId: CompleteTool[] = []
+                          t?.tools.map((cs: CompleteTool) => {
+                            if (cs.weeklyWorkId === item) {
+                              toolsByParentId.push(cs)
+                            }
+                          })
+                        })
+
+
+
+                        // Nếu có thì k cho submit
+
+
+                        // không có thì cho submit
+                      } else {
+                        // 1. Chưa có thì cảnh báo tạo
+
+                      }
+
+                      const contentArray: string[] = [];
                       table.getFilteredSelectedRowModel().rows.map((item) => {
-                        deleteTool({
-                          //@ts-ignore
-                          id: item.original.id,
-                        });
+                        //@ts-ignore
+                        contentArray.push(item.original.name)
                       });
+                      createWeeklyWorkDefault({
+                        username: session?.user.name as string,
+                        content: `Đã thực hiện công việc ${contentArray.toString()}`,
+                        createdAt: new Date()
+                      })
                     }}
                   >
                     Ok
@@ -117,7 +149,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="rounded-md border">
-        {isDelete ?
+        {isCreateWeeklyWorkDefault ?
           <LoadingComponent>
             <Table>
               <TableHeader>
@@ -221,60 +253,6 @@ export function DataTable<TData, TValue>({
             </TableBody>
           </Table>
         }
-        {/* <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext()
-                        )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel()?.rows?.length ? (
-              table.getRowModel()?.rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table> */}
-      </div>
-      <div className="flex-1 text-sm text-muted-foreground">
-        {table.getFilteredSelectedRowModel().rows.length} of{" "}
-        {table.getFilteredRowModel().rows.length} row(s) selected.
       </div>
     </>
   );

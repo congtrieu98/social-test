@@ -2,8 +2,10 @@
 import { CompleteWeeklyWork } from "@/lib/db/schema/weeklyWorks";
 import { trpc } from "@/lib/trpc/client";
 import WeeklyWorkModal from "./WeeklyWorkModal";
-import Link from "next/link";
-import { Button } from "../ui/button";
+import { DataTable } from "./table/data-table";
+import { columns } from "./table/columns";
+import { DataTableWeeklyDefault } from "./table/data-table-wwd";
+import { columnsWeeklyDefault } from "./table/columns-wwd";
 
 
 export default function WeeklyWorkList({ weeklyWorks }: { weeklyWorks: CompleteWeeklyWork[] }) {
@@ -12,29 +14,30 @@ export default function WeeklyWorkList({ weeklyWorks }: { weeklyWorks: CompleteW
     refetchOnMount: false,
   });
 
+  const { data: wd } = trpc.weeklyWorkDefaults.getWeeklyWorkDefaults.useQuery()
+
   if (w?.weeklyWorks?.length === 0) {
     return <EmptyState />;
   }
 
   return (
-    <ul>
-      {w?.weeklyWorks?.map((weeklyWork: CompleteWeeklyWork) => (
-        <WeeklyWork weeklyWork={weeklyWork} key={weeklyWork.id} />
-      ))}
-    </ul>
+    <>
+      <DataTable
+        //@ts-ignore
+        data={w?.weeklyWorks.length > 0 ? w?.weeklyWorks : []}
+        columns={columns}
+      />
+
+      <h1 className="text-2xl font-semibold my-5">Công việc đã thực hiện</h1>
+      <DataTableWeeklyDefault
+        //@ts-ignore
+        data={wd?.weeklyWorkDefaults.length! > 0 ? wd?.weeklyWorkDefaults : []}
+        columns={columnsWeeklyDefault}
+      />
+    </>
+
   );
 }
-
-const WeeklyWork = ({ weeklyWork }: { weeklyWork: CompleteWeeklyWork }) => {
-  return (
-    <li className="flex justify-between my-2">
-      <div className="w-full">
-        <div>{weeklyWork.name}</div>
-      </div>
-      <WeeklyWorkModal weeklyWork={weeklyWork} />
-    </li>
-  );
-};
 
 const EmptyState = () => {
   return (

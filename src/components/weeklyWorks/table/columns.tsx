@@ -1,18 +1,15 @@
 "use client";
 
-import StaffModal from "@/components/staffs/staffModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import ToolModal from "../ToolModal";
+import WeeklyWorkModal from "../WeeklyWorkModal";
+// import ToolModal from "../ToolModal";
 
-type Tool = {
+type weeklyWorks = {
   id: string;
   name: string;
-  weeklyId: string;
-  status: string;
-  quantityRemaining: string;
 };
-export const columns: ColumnDef<Tool[]>[] = [
+export const columns: ColumnDef<weeklyWorks[]>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -37,26 +34,14 @@ export const columns: ColumnDef<Tool[]>[] = [
   },
   {
     accessorKey: "name",
-    header: "Tên dụng cụ",
-  },
-  {
-    accessorKey: "weeklyWorkId",
-    header: "Thuộc cv",
-  },
-  {
-    accessorKey: "status",
-    header: "Trạng thái",
-  },
-  {
-    accessorKey: "quantityRemaining",
-    header: "Số lần còn sd được",
+    header: "Tên công việc",
   },
   {
     accessorKey: "action",
     header: "Action",
     cell: ({ row }) => {
       //@ts-ignore
-      return <ToolModal tool={row.original} />;
+      return <WeeklyWorkModal weeklyWork={row.original} />;
     },
   },
 ];

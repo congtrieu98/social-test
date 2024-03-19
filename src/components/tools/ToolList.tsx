@@ -19,18 +19,17 @@ export default function ToolList({ tools }: { tools: CompleteTool[] }) {
         item.status === "normal"
           ? "Bình thường"
           : item.status === "damaged"
-          ? "Bị hư/hỏng"
-          : item.status === "hight"
-          ? "Còn >= 50%"
-          : item.status === "low"
-          ? "Còn < 50%"
-          : "",
+            ? "Bị hư/hỏng"
+            : item.status === "hight"
+              ? "Còn >= 50%"
+              : item.status === "low"
+                ? "Còn < 50%"
+                : "",
       weeklyWorkId: w?.weeklyWorks.find((wly) => wly.id === item.weeklyWorkId)
         ?.name,
       quantityRemaining: item.quantityRemaining,
     };
   });
-  console.log(dataCustom);
 
   if (t.tools.length === 0) {
     return <EmptyState />;
@@ -44,17 +43,6 @@ export default function ToolList({ tools }: { tools: CompleteTool[] }) {
     />
   );
 }
-
-const Tool = ({ tool }: { tool: CompleteTool }) => {
-  return (
-    <li className="flex justify-between my-2">
-      <div className="w-full">
-        <div>{tool.name}</div>
-      </div>
-      <ToolModal tool={tool} />
-    </li>
-  );
-};
 
 const EmptyState = () => {
   return (

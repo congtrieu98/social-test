@@ -15,10 +15,7 @@ const StaffList = ({ staffs }: { staffs: CompleteStaff[] }) => {
 const EmptyState = () => {
   return (
     <div className="text-center">
-      <h3 className="mt-2 text-sm font-semibold text-gray-900">No tasks</h3>
-      <p className="mt-1 text-sm text-gray-500">
-        Get started by creating a new staff.
-      </p>
+      <h3 className="mt-2 text-sm font-semibold text-gray-900">Chưa có nhân viên</h3>
       <div className="mt-6">{<StaffModal emptyState={true} />}</div>
     </div>
   );

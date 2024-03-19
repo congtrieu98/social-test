@@ -80,8 +80,8 @@ export default function TaskModal({
           <TaskForm
             closeModal={closeModal}
             task={task}
-            //@ts-ignore
-            // curenToken={curenToken}
+          //@ts-ignore
+          // curenToken={curenToken}
           />
         </div>
       </DialogContent>
