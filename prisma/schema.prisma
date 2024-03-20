@@ -155,3 +155,10 @@ model Tool {
   quantityRemaining String
   weeklyWork        WeeklyWork @relation(fields: [weeklyWorkId], references: [id], onDelete: Cascade)
 }
+
+model WeeklyWorkDefault {
+  id        String   @id @default(cuid())
+  username  String
+  content   String
+  createdAt DateTime
+}

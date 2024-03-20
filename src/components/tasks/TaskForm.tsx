@@ -25,9 +25,7 @@ import {
   DATASTATUS,
   ROLE,
   STATUS_IMAGE,
-  formatDateFull,
   formatDatetime,
-  formatNo,
 } from "@/utils/constant";
 import DateForm from "../general/form/dateForm";
 import UploadImage from "../taskDetail/uploadImage";
@@ -43,11 +41,11 @@ const TaskForm = ({
   task,
   closeModal,
 }: // curenToken,
-{
-  task?: CompleteTask;
-  closeModal: () => void;
-  // curenToken: string;
-}) => {
+  {
+    task?: CompleteTask;
+    closeModal: () => void;
+    // curenToken: string;
+  }) => {
   const { toast } = useToast();
 
   const editing = !!task?.id;

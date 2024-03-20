@@ -15,9 +15,7 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -25,7 +23,6 @@ import { Input } from "@/components/ui/input";
 import { trpc } from "@/lib/trpc/client";
 import { Button } from "@/components/ui/button";
 import { z } from "zod";
-import { useRouter } from "next/navigation";
 import { useToast } from "@/components/ui/use-toast";
 
 const ToolForm = ({
@@ -39,13 +36,9 @@ const ToolForm = ({
 
   const editing = !!tool?.id;
 
-  const router = useRouter();
   const utils = trpc.useContext();
 
   const form = useForm<z.infer<typeof insertToolParams>>({
-    // latest Zod release has introduced a TS error with zodResolver
-    // open issue: https://github.com/colinhacks/zod/issues/2663
-    // errors locally but not in production
     resolver: zodResolver(insertToolParams),
     defaultValues: tool ?? {
       name: "",
@@ -57,7 +50,6 @@ const ToolForm = ({
 
   const onSuccess = async (action: "create" | "update" | "delete") => {
     await utils.tools.getTools.invalidate();
-    router.refresh();
     closeModal();
     toast({
       title: "Success",
@@ -67,6 +59,7 @@ const ToolForm = ({
   };
 
   const { data: w } = trpc.weeklyWorks.getWeeklyWorks.useQuery();
+  const { data: t } = trpc.tools.getTools.useQuery();
 
   const { mutate: createTool, isLoading: isCreating } =
     trpc.tools.createTool.useMutation({
@@ -84,7 +77,14 @@ const ToolForm = ({
     });
 
   const handleSubmit = (values: NewToolParams) => {
+    console.log("values ngoiaf", values);
     if (editing) {
+      const weeklyWorksCustom = w?.weeklyWorks.find(
+        (item) => item.name === values.weeklyWorkId
+      );
+      const weeklyId = weeklyWorksCustom?.id;
+      values.weeklyWorkId = weeklyId as string;
+      console.log(values);
       updateTool({ ...values, id: tool.id });
     } else {
       createTool(values);
@@ -112,7 +112,12 @@ const ToolForm = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Thuộc công việc</FormLabel>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={field.onChange}
+                defaultValue={
+                  w?.weeklyWorks.find((item) => item.name === field.value)?.id
+                }
+              >
                 <FormControl>
                   <SelectTrigger>
                     <SelectValue placeholder="Chọn công việc" />
@@ -120,7 +125,7 @@ const ToolForm = ({
                 </FormControl>
                 <SelectContent>
                   {w?.weeklyWorks.map((wlw) => (
-                    <SelectItem value={wlw.name} key={wlw.id} spellCheck>
+                    <SelectItem value={wlw.id} key={wlw.id} spellCheck>
                       {wlw.name}
                     </SelectItem>
                   ))}
@@ -134,7 +139,6 @@ const ToolForm = ({
           control={form.control}
           name="status"
           render={({ field }) => {
-            console.log("field:", field.value);
             return (
               <FormItem>
                 <FormLabel>Trạng thái</FormLabel>

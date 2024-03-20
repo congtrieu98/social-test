@@ -8,6 +8,7 @@ import { taskDefaultsRouter } from "./taskDefaults";
 import { staffsRouter } from "./staffs";
 import { weeklyWorksRouter } from "./weeklyWorks";
 import { toolsRouter } from "./tools";
+import { weeklyWorkDefaultsRouter } from "./weeklyWorkDefaults";
 
 export const appRouter = router({
   tasks: tasksRouter,
@@ -19,6 +20,7 @@ export const appRouter = router({
   staffs: staffsRouter,
   weeklyWorks: weeklyWorksRouter,
   tools: toolsRouter,
+  weeklyWorkDefaults: weeklyWorkDefaultsRouter,
 });
 
 export type AppRouter = typeof appRouter;

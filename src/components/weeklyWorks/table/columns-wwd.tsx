@@ -1,18 +1,18 @@
 "use client";
 
-import StaffModal from "@/components/staffs/staffModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import ToolModal from "../ToolModal";
+import WeeklyWorkModal from "../WeeklyWorkModal";
+import moment from "moment";
+import { formatDatetime } from "@/utils/constant";
 
-type Tool = {
+type weeklyWorksDefault = {
   id: string;
-  name: string;
-  weeklyId: string;
-  status: string;
-  quantityRemaining: string;
+  username: string;
+  content: string;
+  createdAt: Date;
 };
-export const columns: ColumnDef<Tool[]>[] = [
+export const columnsWeeklyDefault: ColumnDef<weeklyWorksDefault[]>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -36,27 +36,20 @@ export const columns: ColumnDef<Tool[]>[] = [
     },
   },
   {
-    accessorKey: "name",
-    header: "Tên dụng cụ",
+    accessorKey: "username",
+    header: "Người thực hiện",
   },
   {
-    accessorKey: "weeklyWorkId",
-    header: "Thuộc cv",
+    accessorKey: "content",
+    header: "Nội dung",
   },
   {
-    accessorKey: "status",
-    header: "Trạng thái",
-  },
-  {
-    accessorKey: "quantityRemaining",
-    header: "Số lần còn sd được",
-  },
-  {
-    accessorKey: "action",
-    header: "Action",
+    accessorKey: "createdAt",
+    header: "Ngày submit",
     cell: ({ row }) => {
+      const date = row.getValue("createdAt")
       //@ts-ignore
-      return <ToolModal tool={row.original} />;
+      return moment(date, formatDatetime).format(formatDatetime);
     },
   },
 ];

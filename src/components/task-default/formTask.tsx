@@ -145,14 +145,14 @@ export default function TaskDefault() {
                                     onCheckedChange={(checked) => {
                                       return checked
                                         ? field.onChange([
-                                            ...field.value,
-                                            item.id,
-                                          ])
+                                          ...field.value,
+                                          item.id,
+                                        ])
                                         : field.onChange(
-                                            field.value?.filter(
-                                              (value) => value !== item.id
-                                            )
-                                          );
+                                          field.value?.filter(
+                                            (value) => value !== item.id
+                                          )
+                                        );
                                     }}
                                   />
                                 </FormControl>
@@ -184,11 +184,14 @@ export default function TaskDefault() {
             <h1 className="font-semibold text-2xl my-2">Công việc theo tuần</h1>
             <NewWeeklyWorkModal />
           </div>
-          <div className="w-full py-5">
-            <Link href="/tools">
-              <Button variant="outline">Kiểm tra dụng cụ</Button>
-            </Link>
-          </div>
+          {w?.weeklyWorks.length! > 0 &&
+            <div className="w-full py-5">
+              <Link href="/tools">
+                <Button variant="outline">Kiểm tra dụng cụ</Button>
+              </Link>
+            </div>
+          }
+
           <WeeklyWorkList
             weeklyWorks={w?.weeklyWorks as CompleteWeeklyWork[]}
           />
