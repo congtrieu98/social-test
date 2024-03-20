@@ -18,7 +18,7 @@ export default async function Navbar() {
   const nameExists = !!session?.user.name && session?.user.name.length > 5;
   if (session?.user) {
     return (
-      <nav className="py-2 flex items-center justify-between transition-all duration-300">
+      <nav className="py-4 flex items-start justify-between transition-all duration-300">
         <h1 className="font-semibold transition-hover cursor-pointer">
           <Link href="/" className="hover:opacity-75">
             Home
@@ -30,16 +30,11 @@ export default async function Navbar() {
           </Link>
         </h1>
         <h1 className="font-semibold transition-hover cursor-pointer">
-          <Link href="/kpi" className="hover:opacity-75">
-            KPI
-          </Link>
-        </h1>
-        <h1 className="font-semibold transition-hover cursor-pointer">
           <Link href="/task-default" className="hover:opacity-75">
             Sky
           </Link>
         </h1>
-        <div className="space-x-2 flex items-center">
+        <div className="space-x-2 flex items-center -mt-2">
           {session?.user ? (
             <>
               <NotificationMenu />
@@ -63,6 +58,11 @@ export default async function Navbar() {
                   <Link href="/account">
                     <DropdownMenuItem className="cursor-pointer">
                       Tài khoản
+                    </DropdownMenuItem>
+                  </Link>
+                  <Link href="/kpi">
+                    <DropdownMenuItem className="cursor-pointer">
+                      KPI
                     </DropdownMenuItem>
                   </Link>
                   {session?.user.role === ROLE.ADMIN && (
