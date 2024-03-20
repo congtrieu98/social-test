@@ -44,24 +44,26 @@ export function DataTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
-  const router = useRouter()
-  const { data: session } = useSession()
+  const router = useRouter();
+  const { data: session } = useSession();
   const utils = trpc.useContext();
   const [rowSelection, setRowSelection] = useState({});
 
-  const { data: t } = trpc.tools.getTools.useQuery()
-  const { mutate: createWeeklyWorkDefault, isLoading: isCreateWeeklyWorkDefault } =
-    trpc.weeklyWorkDefaults.createWeeklyWorkDefault.useMutation({
-      onSuccess: async () => {
-        await utils.weeklyWorks.getWeeklyWorks.invalidate();
-        await utils.weeklyWorkDefaults.getWeeklyWorkDefaults.invalidate();
-        toast({
-          title: "Success",
-          description: "Gửi xác nhận thành công!",
-        });
-        setRowSelection({})
-      },
-    });
+  const { data: t } = trpc.tools.getTools.useQuery();
+  const {
+    mutate: createWeeklyWorkDefault,
+    isLoading: isCreateWeeklyWorkDefault,
+  } = trpc.weeklyWorkDefaults.createWeeklyWorkDefault.useMutation({
+    onSuccess: async () => {
+      await utils.weeklyWorks.getWeeklyWorks.invalidate();
+      await utils.weeklyWorkDefaults.getWeeklyWorkDefaults.invalidate();
+      toast({
+        title: "Success",
+        description: "Gửi xác nhận thành công!",
+      });
+      setRowSelection({});
+    },
+  });
 
   const table = useReactTable({
     data,
@@ -93,50 +95,79 @@ export function DataTable<TData, TValue>({
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
                   <AlertDialogAction
                     onClick={async () => {
-                      // Check dụng cụ 
-                      if (t?.tools.length! > 0) {
+                      // 1. Không cho chọn cùng lúc 2 việc
+                      if (
+                        table.getFilteredSelectedRowModel().rows.length >= 2
+                      ) {
+                        toast({
+                          title: "Cảnh báo",
+                          description:
+                            "Bạn không thể thực hiện cùng lúc 2 việc!",
+                          variant: "destructive",
+                        });
+                      } else if (t?.tools.length! > 0) {
+                        // Check dụng cụ
+
                         // 2. Đã có thì:
                         // 2.1 Check xem có dụng cụ nào hư hỏng hay hết hay không
                         // =>> check status và quantityRemaining
                         // Check dụng cụ theo tên cv
                         // vd: lau kính sẽ có các dụng cụ nào, bón phân cây có dụng cụ nào
-                        const nameWorkId: string[] = table.getFilteredSelectedRowModel().rows
-                          .map((item) =>
-                            //@ts-ignore
-                            item.original.id
+                        const nameWorkId: string[] = table
+                          .getFilteredSelectedRowModel()
+                          .rows.map(
+                            (item) =>
+                              //@ts-ignore
+                              item.original.id
                           );
-                        const checkStatus = t?.tools.filter(cs => cs.status)
 
-                        nameWorkId.map(item => {
-                          const toolsByParentId: CompleteTool[] = []
+                        nameWorkId.map((item) => {
+                          const toolsByParentId: CompleteTool[] = [];
                           t?.tools.map((cs: CompleteTool) => {
                             if (cs.weeklyWorkId === item) {
-                              toolsByParentId.push(cs)
+                              toolsByParentId.push(cs);
                             }
-                          })
-                        })
+                          });
+                          const statusArr = toolsByParentId.map(
+                            (s) => s.status
+                          );
 
+                          const quantityArr = toolsByParentId.find(
+                            (q) => q.quantityRemaining <= "1"
+                          );
+                          const checkStatus = statusArr.includes("damaged");
 
-
-                        // Nếu có thì k cho submit
-
-
-                        // không có thì cho submit
+                          if (quantityArr || checkStatus) {
+                            toast({
+                              title: "Cảnh báo",
+                              description:
+                                "Có dụng cụ bị hư hỏng hoặc sắp hết, vui lòng kiểm tra lại!",
+                              variant: "destructive",
+                            });
+                          } else {
+                            // Nếu có thì k cho submit
+                            const contentArray: string[] = [];
+                            table
+                              .getFilteredSelectedRowModel()
+                              .rows.map((item) => {
+                                //@ts-ignore
+                                contentArray.push(item.original.name);
+                              });
+                            createWeeklyWorkDefault({
+                              username: session?.user.name as string,
+                              content: `Đã thực hiện công việc ${contentArray.toString()}`,
+                              createdAt: new Date(),
+                            });
+                          }
+                        });
                       } else {
                         // 1. Chưa có thì cảnh báo tạo
-
+                        toast({
+                          title: "Cảnh báo",
+                          description:
+                            "Chưa có dụng cụ nào, hãy click button kiểm tra dụng cụ để tạo!",
+                        });
                       }
-
-                      const contentArray: string[] = [];
-                      table.getFilteredSelectedRowModel().rows.map((item) => {
-                        //@ts-ignore
-                        contentArray.push(item.original.name)
-                      });
-                      createWeeklyWorkDefault({
-                        username: session?.user.name as string,
-                        content: `Đã thực hiện công việc ${contentArray.toString()}`,
-                        createdAt: new Date()
-                      })
                     }}
                   >
                     Ok
@@ -149,7 +180,7 @@ export function DataTable<TData, TValue>({
       </div>
 
       <div className="rounded-md border">
-        {isCreateWeeklyWorkDefault ?
+        {isCreateWeeklyWorkDefault ? (
           <LoadingComponent>
             <Table>
               <TableHeader>
@@ -161,9 +192,9 @@ export function DataTable<TData, TValue>({
                           {header.isPlaceholder
                             ? null
                             : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
+                                header.column.columnDef.header,
+                                header.getContext()
+                              )}
                         </TableHead>
                       );
                     })}
@@ -201,7 +232,8 @@ export function DataTable<TData, TValue>({
                 )}
               </TableBody>
             </Table>
-          </LoadingComponent> :
+          </LoadingComponent>
+        ) : (
           <Table>
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
@@ -212,9 +244,9 @@ export function DataTable<TData, TValue>({
                         {header.isPlaceholder
                           ? null
                           : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
                       </TableHead>
                     );
                   })}
@@ -252,7 +284,7 @@ export function DataTable<TData, TValue>({
               )}
             </TableBody>
           </Table>
-        }
+        )}
       </div>
     </>
   );
