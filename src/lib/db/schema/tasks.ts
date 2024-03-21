@@ -1,4 +1,4 @@
-import { taskSchema, tasksInputDateSchema } from "@/zodAutoGenSchemas";
+import { taskSchema } from "@/zodAutoGenSchemas";
 import { z } from "zod";
 import { getTasks } from "@/lib/api/tasks/queries";
 
@@ -96,9 +96,9 @@ export const updateTaskParamsDeadline = updateTaskSchema
     assignedId: true,
   });
 
-export const taskDateParams = tasksInputDateSchema.extend({
-  from: z.coerce.date(),
-  to: z.coerce.date(),
+export const taskDateParams = z.object({
+  from: z.date(),
+  to: z.date(),
 });
 
 export const taskIdSchema = updateTaskSchema.pick({ id: true });
@@ -120,7 +120,6 @@ export type UpdateTaskByDeadline = z.infer<typeof updateTaskParamsDeadline>;
 export type TaskDateParams = z.infer<typeof taskDateParams>;
 export type TaskId = z.infer<typeof taskIdSchema>["id"];
 export type TaskTitle = z.infer<typeof taskTitleSchema>["title"];
-export type TasksInputDate = z.infer<typeof tasksInputDateSchema>;
 
 // this type infers the return from getTasks() - meaning it will include any joins
 export type CompleteTask = Awaited<

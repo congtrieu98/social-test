@@ -27,7 +27,6 @@ import {
   updateTaskByTitle,
   updateTaskOnlyChecked,
 } from "@/lib/api/tasks/mutations";
-import { tasksInputDateSchema } from "prisma/zod/task";
 
 export const tasksRouter = router({
   getTasks: publicProcedure.query(async () => {

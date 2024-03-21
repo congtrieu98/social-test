@@ -1,12 +1,5 @@
-import * as z from "zod";
-import {
-  CompleteMedia,
-  relatedMediaSchema,
-  CompleteHistory,
-  relatedHistorySchema,
-  CompleteUser,
-  relatedUserSchema,
-} from "./index";
+import * as z from "zod"
+import { CompleteMedia, relatedMediaSchema, CompleteHistory, relatedHistorySchema, CompleteUser, relatedUserSchema } from "./index"
 
 export const taskSchema = z.object({
   id: z.string(),
@@ -20,17 +13,12 @@ export const taskSchema = z.object({
   description: z.string().array(),
   checked: z.string().array(),
   tokenNoticafition: z.string().nullish(),
-});
-
-export const tasksInputDateSchema = z.object({
-  from: z.date(),
-  to: z.date(),
-});
+})
 
 export interface CompleteTask extends z.infer<typeof taskSchema> {
-  medias: CompleteMedia[];
-  history: CompleteHistory[];
-  user: CompleteUser;
+  medias: CompleteMedia[]
+  history: CompleteHistory[]
+  user: CompleteUser
 }
 
 /**
@@ -38,10 +26,8 @@ export interface CompleteTask extends z.infer<typeof taskSchema> {
  *
  * NOTE: Lazy required in case of potential circular dependencies within schema
  */
-export const relatedTaskSchema: z.ZodSchema<CompleteTask> = z.lazy(() =>
-  taskSchema.extend({
-    medias: relatedMediaSchema.array(),
-    history: relatedHistorySchema.array(),
-    user: relatedUserSchema,
-  })
-);
+export const relatedTaskSchema: z.ZodSchema<CompleteTask> = z.lazy(() => taskSchema.extend({
+  medias: relatedMediaSchema.array(),
+  history: relatedHistorySchema.array(),
+  user: relatedUserSchema,
+}))

@@ -3,8 +3,6 @@ import { getUserAuth } from "@/lib/auth/utils";
 import {
   type TaskId,
   taskIdSchema,
-  TasksInputDate,
-  UpdateTaskByDeadline,
   TaskDateParams,
 } from "@/lib/db/schema/tasks";
 import { ROLE, formatDateAPi } from "@/utils/constant";
