@@ -1,4 +1,5 @@
 import {
+  getTaskByDate,
   getTaskById,
   getTaskByUserAssign,
   getTasks,
@@ -14,6 +15,7 @@ import {
   updateTaskParamsPriority,
   updateTaskParamsTitle,
   updateTaskParamsDeadline,
+  taskDateParams,
 } from "@/lib/db/schema/tasks";
 import {
   createTask,
@@ -25,6 +27,7 @@ import {
   updateTaskByTitle,
   updateTaskOnlyChecked,
 } from "@/lib/api/tasks/mutations";
+import { tasksInputDateSchema } from "prisma/zod/task";
 
 export const tasksRouter = router({
   getTasks: publicProcedure.query(async () => {
@@ -33,6 +36,11 @@ export const tasksRouter = router({
   getTaskById: publicProcedure.input(taskIdSchema).query(async ({ input }) => {
     return getTaskById(input.id);
   }),
+  getTaskByDate: publicProcedure
+    .input(taskDateParams)
+    .query(async ({ input }) => {
+      return getTaskByDate(input);
+    }),
   getTaskByUserAssign: publicProcedure
     .input(taskAssignedIdSchema)
     .query(async ({ input }) => {

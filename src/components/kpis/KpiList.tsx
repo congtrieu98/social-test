@@ -15,10 +15,11 @@ import {
 import moment from "moment";
 import { ROLE, formatDate, formatDateSlash } from "@/utils/constant";
 import { useSession } from "next-auth/react";
-import { CompleteTask } from "@/lib/db/schema/tasks";
+import { CompleteTask, TasksInputDate } from "@/lib/db/schema/tasks";
 import { DataTable } from "./table/data-table";
 import { columns } from "./table/columns";
 import { CompleteUser } from "@/lib/db/schema/users";
+import { trpc } from "@/lib/trpc/client";
 
 const KpiList = ({
   tasks,
@@ -31,7 +32,16 @@ const KpiList = ({
   const taskByStatus = tasks.filter(
     (item: CompleteTask) => item.status !== "completed"
   );
-  const taskByStatusCustom = taskByStatus.map((t) => {
+  const [date, setDate] = React.useState({
+    from: new Date(),
+    to: addDays(new Date(), 3),
+  });
+
+  const { data: t } = trpc.tasks.getTaskByDate.useQuery(date);
+  const taskByStatusFillter = t?.taskByDate;
+  const taskByStatusCustom = (
+    taskByStatusFillter?.length! > 0 ? taskByStatusFillter! : taskByStatus
+  ).map((t) => {
     return {
       id: t.id,
       assigndedId: users.find((u) => u.id === t.assignedId)?.name,
@@ -70,12 +80,7 @@ const KpiList = ({
     };
   });
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(),
-    to: addDays(new Date(), 3),
-  });
-
-  console.log(moment(date?.from).format(formatDateSlash));
+  // console.log(moment(date?.from).format(formatDateSlash));
   return (
     <>
       <div className={cn("flex space-x-2")}>
@@ -110,6 +115,7 @@ const KpiList = ({
               mode="range"
               defaultMonth={date?.from}
               selected={date}
+              //@ts-ignore
               onSelect={setDate}
               numberOfMonths={2}
             />
