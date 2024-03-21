@@ -1,11 +1,9 @@
 "use client";
 
-import StaffModal from "@/components/staffs/staffModal";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-// import ToolModal from "../ToolModal";
 
-type Task = {
+export type Task = {
   id: string;
   assigndedId: string;
   title: string;

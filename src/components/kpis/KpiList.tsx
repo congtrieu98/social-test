@@ -2,7 +2,6 @@
 import * as React from "react";
 import { CalendarIcon } from "@radix-ui/react-icons";
 import { addDays, format } from "date-fns";
-import { DateRange } from "react-day-picker";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,7 @@ import {
 import moment from "moment";
 import { ROLE, formatDate, formatDateSlash } from "@/utils/constant";
 import { useSession } from "next-auth/react";
-import { CompleteTask, TasksInputDate } from "@/lib/db/schema/tasks";
+import { CompleteTask } from "@/lib/db/schema/tasks";
 import { DataTable } from "./table/data-table";
 import { columns } from "./table/columns";
 import { CompleteUser } from "@/lib/db/schema/users";
@@ -41,7 +40,7 @@ const KpiList = ({
   const taskByStatusFillter = t?.taskByDate;
   const taskByStatusCustom = (
     taskByStatusFillter?.length! > 0 ? taskByStatusFillter! : taskByStatus
-  ).map((t) => {
+  ).map((t: any) => {
     return {
       id: t.id,
       assigndedId: users.find((u) => u.id === t.assignedId)?.name,
@@ -109,7 +108,6 @@ const KpiList = ({
               <CalendarIcon className="ml-auto h-4 w-4" />
             </Button>
           </PopoverTrigger>
-          <Button>Submit</Button>
           <PopoverContent className="w-auto p-0" align="start">
             <Calendar
               mode="range"
